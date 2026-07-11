@@ -3454,6 +3454,58 @@ grid-template-columns:1fr;
 }
 
 
+
+/*==========================
+CONTACT FORM STATUS
+==========================*/
+
+#formStatus{
+
+margin-top:20px;
+
+font-weight:600;
+
+font-size:15px;
+
+}
+
+#formStatus.success{
+
+color:#2e7d32;
+
+}
+
+#formStatus.error{
+
+color:#d32f2f;
+
+}
+
+#sendBtn{
+
+display:inline-flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:10px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+#sendBtn:disabled{
+
+opacity:.7;
+
+cursor:not-allowed;
+
+}
+
+
 /* Map  */
 
 .office-map{
@@ -3796,3 +3848,203 @@ font-size:28px;
     text-decoration:none;
 
 }
+
+
+/*==========================
+LEGAL HERO
+==========================*/
+
+.legal-hero{
+
+background:
+
+linear-gradient(rgba(11,35,65,.85),
+
+rgba(11,35,65,.85)),
+
+url("../images/legal-banner.jpg");
+
+background-size:cover;
+
+background-position:center;
+
+}
+
+
+
+/*==========================
+LEGAL PAGE
+==========================*/
+
+.legal-section{
+
+padding:100px 0;
+
+background:#fff;
+
+}
+
+.legal-section.gray{
+
+background:#F8F9FB;
+
+}
+
+.legal-card{
+
+background:#fff;
+
+padding:45px;
+
+border-radius:18px;
+
+box-shadow:0 10px 30px rgba(0,0,0,.06);
+
+}
+
+.legal-card h2{
+
+color:#0B2341;
+
+margin-bottom:20px;
+
+}
+
+.legal-card h3{
+
+color:#0B2341;
+
+margin:35px 0 15px;
+
+}
+
+.legal-card p{
+
+line-height:1.9;
+
+color:#666;
+
+margin-bottom:20px;
+
+}
+
+.legal-card ul{
+
+padding-left:20px;
+
+}
+
+.legal-card li{
+
+margin-bottom:12px;
+
+line-height:1.8;
+
+color:#666;
+
+}
+
+.legal-alert{
+
+background:#fff;
+
+padding:50px;
+
+border-left:6px solid #B89B52;
+
+border-radius:18px;
+
+text-align:center;
+
+box-shadow:0 15px 35px rgba(0,0,0,.08);
+
+}
+
+.legal-alert i{
+
+font-size:55px;
+
+color:#B89B52;
+
+margin-bottom:20px;
+
+}
+
+.legal-alert h2{
+
+color:#0B2341;
+
+margin-bottom:20px;
+
+}
+
+.legal-alert p{
+
+color:#666;
+
+line-height:1.9;
+
+}
+
+.legal-cta{
+
+padding:100px 0;
+
+background:#0B2341;
+
+text-align:center;
+
+color:#fff;
+
+}
+
+.legal-cta h2{
+
+font-size:42px;
+
+margin-bottom:20px;
+
+}
+
+.legal-cta p{
+
+max-width:700px;
+
+margin:0 auto 40px;
+
+color:#ddd;
+
+line-height:1.9;
+
+}
+
+@media(max-width:768px){
+
+.legal-section{
+
+padding:70px 0;
+
+}
+
+.legal-card,
+
+.legal-alert{
+
+padding:30px;
+
+}
+
+.legal-cta{
+
+padding:80px 20px;
+
+}
+
+.legal-cta h2{
+
+font-size:32px;
+
+}
+
+}
+
