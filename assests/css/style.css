@@ -1598,6 +1598,7 @@ FOOTER
 .social-icons a:hover {
 
     background: #B89B52;
+    color: #fff;
 
 }
 
@@ -1671,9 +1672,9 @@ FOOTER
 
     right: 30px;
 
-    width: 55px;
+    width: 20px;
 
-    height: 55px;
+    height: 30px;
 
     border: none;
 
