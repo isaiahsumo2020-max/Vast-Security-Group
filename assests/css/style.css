@@ -12,6 +12,8 @@
 
     --light: #F8F9FB;
 
+    --button-radius: 8px;
+
 }
 
 /* Alll Css */
@@ -196,6 +198,19 @@ img {
 
 }
 
+button,
+input[type="button"],
+input[type="submit"],
+a[class*="btn"],
+.btn,
+.btn-primary,
+.btn-secondary,
+.verify-btn,
+.verify-mobile a {
+
+    border-radius: var(--button-radius);
+
+}
 
 
 /*==========================
@@ -411,7 +426,7 @@ header {
 
     padding: 14px 28px;
 
-    border-radius: 40px;
+    border-radius: var(--button-radius);
 
     font-weight: 700;
 
@@ -825,7 +840,7 @@ HERO
 
     padding: 16px 34px;
 
-    border-radius: 50px;
+    border-radius: var(--button-radius);
 
     font-weight: 700;
 
@@ -849,7 +864,7 @@ HERO
 
     padding: 16px 34px;
 
-    border-radius: 50px;
+    border-radius: var(--button-radius);
 
     font-weight: 700;
 
@@ -1666,7 +1681,7 @@ FOOTER
 
     color: #fff;
 
-    border-radius: 50%;
+    border-radius: var(--button-radius);
 
     cursor: pointer;
 
@@ -3771,7 +3786,7 @@ font-size:28px;
 
     padding:15px 38px;
 
-    border-radius:50px;
+    border-radius:var(--button-radius);
 
     font-size:16px;
 
