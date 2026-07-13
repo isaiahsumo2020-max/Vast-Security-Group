@@ -110,7 +110,7 @@
 
                     <li><a href="/services.html">Services</a></li>
 
-                    <li><a href="/recuritment.html">Recruitment</a></li>
+                    <li><a href="/recruitment.html">Recruitment</a></li>
 
                     <li><a href="/contact.html">Contact</a></li>
 
@@ -280,86 +280,135 @@
 
     <section class="verification-result" id="resultBox" style="display:none;">
         <div class="container">
-
             <div class="result-card">
 
-                <div class="result-image">
+                <div class="result-header">
+                    <div class="company">
 
-                    <img id="officerPhoto" src="/assests/images/officer-placeholder.jpg" alt="Officer">
+                        <img src="/assests/images/VAST LOGO.png" alt="VAST Logo">
 
+                        <div>
+
+                            <h2>VAST SECURITY GROUP</h2>
+
+                            <p>Vigilance Asset Security Team</p>
+
+                        </div>
+
+                    </div>
+                    <div class="verification-seal">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        Official Verification
+
+                    </div>
+                    <div>
+                        <span id="officerStatus" class="status-badge">
+                            VERIFIED ACTIVE
+                        </span>
+
+                    </div>
                 </div>
 
-                <div class="result-details">
+                <!-- Result Body -->
+                <div class="result-body">
 
-                    <h2>Officer Information</h2>
+                    <div class="result-image">
 
-                    <table>
+                        <img id="officerPhoto" src="images/officer-placeholder.jpg" alt="Officer">
 
-                        <tr>
+                    </div>
 
-                            <td><strong>Name</strong></td>
 
-                            <td id="officerName">----------</td>
+                    <div class="result-details">
 
-                        </tr>
+                        <div class="info">
 
-                        <tr>
+                            <span>Officer Name</span>
 
-                            <td><strong>Officer ID</strong></td>
+                            <h3 id="officerName">----------</h3>
 
-                            <td id="officerId">----------</td>
+                        </div>
 
-                        </tr>
+                        <div class="info">
 
-                        <tr>
+                            <span>Officer ID</span>
 
-                            <td><strong>Position</strong></td>
+                            <p id="officerId">----------</p>
 
-                            <td id="officerPosition">----------</td>
+                        </div>
 
-                        </tr>
+                        <div class="info">
 
-                        <tr>
+                            <span>Position</span>
 
-                            <td><strong>Department</strong></td>
+                            <p id="officerPosition">----------</p>
 
-                            <td id="officerDepartment">----------</td>
+                        </div>
 
-                        </tr>
+                        <div class="info">
 
-                        <tr>
+                            <span>Department</span>
 
-                            <td><strong>Status</strong></td>
+                            <p id="officerDepartment">----------</p>
 
-                            <td>
+                        </div>
+                        <div class="info-box">
 
-                                <span id="officerStatus" class="verified">
+                            <span>Employment</span>
 
-                                    Verified Active
+                            <p id="officerEmployment"></p>
 
-                                </span>
+                        </div>
+                        <div class="info">
 
-                            </td>
+                            <span>Issue Date</span>
 
-                        </tr>
+                            <p id="officerIssue">----------</p>
 
-                        <tr>
+                        </div>
 
-                            <td><strong>Issue Date</strong></td>
+                        <div class="info">
 
-                            <td id="officerIssue">----------</td>
+                            <span>Expiry Date</span>
 
-                        </tr>
+                            <p id="officerExpiry">----------</p>
 
-                        <tr>
+                        </div>
 
-                            <td><strong>Expiry Date</strong></td>
+                    </div>
 
-                            <td id="officerExpiry">----------</td>
 
-                        </tr>
+                    <!-- Footer -->
 
-                    </table>
+                    <div class="verification-footer">
+
+                        <div>
+
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                            Verified by VAST Security Group
+
+                        </div>
+
+                        <div>
+
+                            Verified:
+
+                            <span id="verifyTime"></span>
+
+                        </div>
+
+                        <div>
+
+                            Reference:
+
+                            <span id="referenceNo"></span>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -368,7 +417,7 @@
         </div>
 
     </section>
- 
+
     <!-- Result not found -->
     <section class="verification-result" id="notFoundBox" style="display:none;">
 
