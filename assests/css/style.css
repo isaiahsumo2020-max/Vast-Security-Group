@@ -2216,7 +2216,6 @@ CEO MESSAGE
 .position {
 
     font-weight: 600;
-
     color: #B89B52;
 
 }
@@ -2237,6 +2236,10 @@ CEO MESSAGE
 
         margin: auto;
 
+    }
+
+    .ceo-text p {
+        text-align: start;
     }
 
 }
@@ -3696,19 +3699,36 @@ transform:translateY(0);
 
 }
 
+
+
+.result-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:350px;
+
+    height:350px;
+
+    top:50%;
+
+    left:50%;
+
+    transform:translate(-50%,-50%) rotate(-25deg);
+
+    background:url("/assests/images/VAST\ LOGO.png") center no-repeat;
+
+    background-size:contain;
+
+    opacity:.05;
+
+    filter:blur(1px);
+
+}
+
+
 .result-card {
-    background-image: url("/assests/images/VAST\ LOGO.png");
-
-    background-repeat: no-repeat;
-
-    background-position: center;
-
-    background-size: 250px;
-
-    background-blend-mode: soft-light;
-
-    background: #fff;
-
     border-radius: 22px;
 
     overflow: hidden;

@@ -25,7 +25,7 @@ photo:"/assests/images/officers/CEO.png"
 {
 id:"VSG-2026-002",
 
-name:"Levi Sendolo",
+name:"Levi B. Sendolo",
 
 position:"Co. CEO",
 
@@ -45,7 +45,7 @@ photo:"/assests/images/officers/Co-CEO.png"
 {
 id:"VSG-2026-003",
 
-name:"Bequizzy N. Sumo",
+name:"Isaiah N. B. Sumo",
 
 position:"Administrictor",
 
@@ -59,7 +59,7 @@ issueDate:"20 July 2026",
 
 expiryDate:"20 July 2028",
 
-photo:"/assests/images/officers/officer2.jpg"
+photo:"/assests/images/officers/Isaiah N Sumo.jpg"
 },
 
 
