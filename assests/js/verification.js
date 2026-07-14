@@ -287,11 +287,11 @@ showNotFound();
 
 function showOfficer(officer){
 
-notFoundBox.style.display="none";
-
-resultBox.style.display="block";
+setSectionVisibility(resultBox, true);
+setSectionVisibility(notFoundBox, false);
 
 resultBox.classList.add("show");
+notFoundBox.classList.remove("show");
 
 document.getElementById("officerPhoto").src=officer.photo;
 
@@ -363,15 +363,25 @@ behavior:"smooth"
 // Officer not found 
 function showNotFound(){
 
-resultBox.style.display="none";
+setSectionVisibility(notFoundBox, true);
+setSectionVisibility(resultBox, false);
 
-notFoundBox.style.display="block";
+notFoundBox.classList.add("show");
+resultBox.classList.remove("show");
 
 notFoundBox.scrollIntoView({
 
 behavior:"smooth"
 
 });
+
+}
+
+function setSectionVisibility(section, isVisible){
+
+section.style.display = isVisible ? "block" : "none";
+
+section.classList.toggle("show", isVisible);
 
 }
 

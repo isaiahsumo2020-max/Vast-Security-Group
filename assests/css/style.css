@@ -3683,6 +3683,8 @@ transition:.5s;
 
 .verification-result.show{
 
+display:block;
+
 opacity:1;
 
 transform:translateY(0);
