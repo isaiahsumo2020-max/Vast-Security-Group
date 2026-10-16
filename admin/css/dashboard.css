@@ -1016,6 +1016,11 @@ body {
     .admin-header-actions {
         margin-left: auto;
     }
+
+    .admin-notification-button,
+    .admin-notification-button:hover {
+        color: var(--white);
+    }
 }
 
 
