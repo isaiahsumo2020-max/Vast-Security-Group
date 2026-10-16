@@ -13,6 +13,7 @@ import {
 import {
     updateApplication
 } from "../../backend/recruitment/updateApplication.js";
+import { deleteApplication } from "../../backend/recruitment/deleteApplication.js";
 
 
 /* =========================================================
@@ -1109,13 +1110,20 @@ Add private notes about this applicant...
             type="button"
             class="save-application-btn"
             id="saveApplicationBtn"
-            data-application-id="
-                ${application.id}
-            "
+            data-application-id="${escapeHTML(application.id)}"
         >
 
             Save Changes
 
+        </button>
+
+        <button
+            type="button"
+            class="delete-application-btn"
+            id="deleteApplicationBtn"
+            data-application-id="${escapeHTML(application.id)}"
+        >
+            Delete Application
         </button>
 
 
@@ -1261,8 +1269,9 @@ async function saveApplicationChanges(
 
 
         saveMessage.textContent =
-
-            "Unable to save changes.";
+            error instanceof Error
+                ? `Unable to save changes: ${error.message}`
+                : "Unable to save changes due to an unexpected error.";
 
 
         saveMessage.style.color =
@@ -1285,6 +1294,17 @@ applicationModalBody.addEventListener(
     "click",
     function(event){
 
+        const deleteButton =
+            event.target.closest("#deleteApplicationBtn");
+
+        if (deleteButton) {
+            deleteApplicationRecord(
+                deleteButton.dataset.applicationId.trim(),
+                deleteButton
+            );
+            return;
+        }
+
         const saveButton =
 
             event.target.closest(
@@ -1301,7 +1321,7 @@ applicationModalBody.addEventListener(
 
         const applicationID =
 
-            saveButton.dataset.applicationId;
+            saveButton.dataset.applicationId.trim();
 
 
         saveApplicationChanges(
@@ -1310,6 +1330,37 @@ applicationModalBody.addEventListener(
 
     }
 );
+
+async function deleteApplicationRecord(applicationID, button) {
+    const application = applications.find(
+        item => item.id === applicationID
+    );
+    const applicantName = application?.full_name || "this application";
+
+    if (!window.confirm(
+        `Permanently delete ${applicantName} and its uploaded files? This cannot be undone.`
+    )) {
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Deleting...";
+
+    try {
+        await deleteApplication(applicationID);
+        closeApplicationDetails();
+        await loadApplications();
+    } catch (error) {
+        console.error("Unable to delete recruitment application:", error);
+        const saveMessage = document.getElementById("applicationSaveMessage");
+        saveMessage.textContent = error instanceof Error
+            ? `Unable to delete application: ${error.message}`
+            : "Unable to delete application due to an unexpected error.";
+        saveMessage.style.color = "#DC3545";
+        button.disabled = false;
+        button.textContent = "Delete Application";
+    }
+}
 
 
 

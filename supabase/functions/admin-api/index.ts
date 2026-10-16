@@ -268,6 +268,47 @@ async function recordAudit(
     }
 }
 
+function recruitmentStoragePath(
+    fileUrl: string | null,
+    bucket: string,
+    applicationId: string
+): string | null {
+    if (!fileUrl) {
+        return null;
+    }
+
+    let url: URL;
+    try {
+        url = new URL(fileUrl);
+    } catch {
+        throw new HttpError(500, "An application file has an invalid URL.");
+    }
+
+    const prefix = `/storage/v1/object/public/${bucket}/`;
+    if (!url.pathname.startsWith(prefix)) {
+        throw new HttpError(
+            500,
+            `An application file is not stored in the expected ${bucket} bucket.`
+        );
+    }
+
+    let objectPath: string;
+    try {
+        objectPath = decodeURIComponent(url.pathname.slice(prefix.length));
+    } catch {
+        throw new HttpError(500, "An application file has an invalid storage path.");
+    }
+
+    if (!objectPath.startsWith(`${applicationId}/`)) {
+        throw new HttpError(
+            500,
+            "An application file is outside its application storage folder."
+        );
+    }
+
+    return objectPath;
+}
+
 async function handlePublicRequest(
     request: Request,
     client: ReturnType<typeof createClient>,
@@ -1373,6 +1414,94 @@ async function handleRequest(
                 client: data
             }, 201);
         }
+    }
+
+    if (
+        segments[0] === "recruitment-applications" &&
+        method === "DELETE" &&
+        segments.length === 2
+    ) {
+        requirePermission(admin, "recruitment_manage");
+        const applicationId = segments[1];
+        if (
+            !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+                .test(applicationId)
+        ) {
+            throw new HttpError(400, "Invalid application ID.");
+        }
+
+        const { data: application, error: applicationError } = await client
+            .from("recruitment_applications")
+            .select("id, full_name, photo_url")
+            .eq("id", applicationId)
+            .maybeSingle();
+        throwIfError(applicationError);
+        if (!application) {
+            throw new HttpError(404, "Application not found.");
+        }
+
+        const { data: documents, error: documentsError } = await client
+            .from("recruitment_documents")
+            .select("file_url")
+            .eq("application_id", applicationId);
+        throwIfError(documentsError);
+
+        const filesByBucket = new Map<string, string[]>();
+        const photoPath = recruitmentStoragePath(
+            application.photo_url,
+            "recruitment-photos",
+            applicationId
+        );
+        if (photoPath) {
+            filesByBucket.set("recruitment-photos", [photoPath]);
+        }
+
+        for (const document of documents || []) {
+            const objectPath = recruitmentStoragePath(
+                document.file_url,
+                "recruitment-documents",
+                applicationId
+            );
+            if (objectPath) {
+                const paths = filesByBucket.get("recruitment-documents") || [];
+                paths.push(objectPath);
+                filesByBucket.set("recruitment-documents", paths);
+            }
+        }
+
+        for (const [bucket, paths] of filesByBucket) {
+            const { error } = await client.storage.from(bucket).remove(paths);
+            if (error) {
+                console.error(
+                    `Unable to remove files for application ${applicationId}:`,
+                    error
+                );
+                throw new HttpError(
+                    500,
+                    "Unable to remove the application's uploaded files."
+                );
+            }
+        }
+
+        const { error: deleteError } = await client
+            .from("recruitment_applications")
+            .delete()
+            .eq("id", applicationId);
+        throwIfError(deleteError);
+
+        await recordAudit(
+            client,
+            admin,
+            "recruitment_application.deleted",
+            "recruitment_application",
+            applicationId,
+            { full_name: application.full_name }
+        );
+
+        return respond({
+            success: true,
+            message: "Application and uploaded files deleted."
+        });
     }
 
     if (segments[0] === "officers") {

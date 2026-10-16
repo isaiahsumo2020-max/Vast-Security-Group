@@ -11,6 +11,8 @@ export async function updateApplication(
     applicationID,
     updates
 ){
+    const normalizedApplicationID =
+        applicationID.trim();
 
     const {
 
@@ -36,7 +38,7 @@ export async function updateApplication(
 
         .eq(
             "id",
-            applicationID
+            normalizedApplicationID
         )
 
         .select()
