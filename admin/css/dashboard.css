@@ -860,6 +860,137 @@ body {
     padding: 18px 16px;
 }
 
+.admin-notification-view-all {
+    display: block;
+    padding: 13px 16px;
+    border-top: 1px solid var(--border);
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+}
+
+.admin-notification-view-all:hover {
+    background: #f7f8fa;
+}
+
+.notification-page-controls,
+.notification-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.notification-page-controls {
+    margin-bottom: 12px;
+}
+
+.notification-page-controls label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.notification-page-controls select {
+    min-height: 40px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--white);
+    color: var(--text);
+}
+
+.notification-page-controls p,
+.notification-pagination span {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.admin-notification-page-list {
+    display: grid;
+    gap: 12px;
+}
+
+.admin-notification-card {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 18px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--white);
+}
+
+.admin-notification-card.is-unread {
+    border-left: 4px solid var(--primary);
+    background: #f6f8fc;
+}
+
+.admin-notification-card-content {
+    min-width: 0;
+}
+
+.admin-notification-card h2 {
+    margin: 0 0 6px;
+    color: var(--primary);
+    font-size: 16px;
+}
+
+.admin-notification-card p {
+    margin: 0 0 8px;
+    overflow-wrap: anywhere;
+}
+
+.admin-notification-card time {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.admin-notification-card-actions {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.admin-notification-card-actions .primary-btn,
+.admin-notification-card-actions .secondary-btn {
+    padding: 9px 12px;
+    font-size: 12px;
+}
+
+.admin-notification-page-empty {
+    padding: 26px;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    color: var(--muted);
+    text-align: center;
+}
+
+.notification-pagination {
+    justify-content: center;
+    margin-top: 20px;
+}
+
+@media (max-width: 600px) {
+    .notification-page-controls,
+    .admin-notification-card {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .notification-page-controls label {
+        justify-content: space-between;
+    }
+
+    .admin-notification-card-actions {
+        flex: 1 1 auto;
+    }
+}
+
 .admin-profile-avatar-preview {
     width: 92px;
     height: 92px;

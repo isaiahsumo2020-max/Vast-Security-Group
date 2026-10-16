@@ -81,7 +81,11 @@ function createHeaderActions(profile, email) {
 
     const list = document.createElement("ul");
     list.className = "admin-notification-list";
-    panel.append(panelHeading, status, list);
+    const viewAllLink = document.createElement("a");
+    viewAllLink.className = "admin-notification-view-all";
+    viewAllLink.href = "/admin/notifications/notifications.html";
+    viewAllLink.textContent = "View all notifications";
+    panel.append(panelHeading, status, list, viewAllLink);
     notificationArea.append(notificationButton, panel);
 
     const profileArea = document.createElement("div");

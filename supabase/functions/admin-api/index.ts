@@ -624,6 +624,55 @@ async function handleRequest(
     }
 
     if (segments[0] === "notifications") {
+        if (
+            method === "GET" &&
+            segments.length === 3 &&
+            segments[1] === "page"
+        ) {
+            const page = Number.parseInt(segments[2], 10);
+            if (!Number.isSafeInteger(page) || page < 1) {
+                throw new HttpError(400, "A valid notification page is required.");
+            }
+            const pageSize = 30;
+            const from = (page - 1) * pageSize;
+            const [
+                { data, error },
+                { count, error: countError },
+                { count: unreadCount, error: unreadError }
+            ] = await Promise.all([
+                client
+                    .from("vsg_admin_notifications")
+                    .select(
+                        "id, notification_type, title, body, target_path, entity_id, created_at, read_at",
+                        { count: "exact" }
+                    )
+                    .eq("admin_user_id", admin.user.id)
+                    .order("created_at", { ascending: false })
+                    .range(from, from + pageSize - 1),
+                client
+                    .from("vsg_admin_notifications")
+                    .select("id", { count: "exact", head: true })
+                    .eq("admin_user_id", admin.user.id),
+                client
+                    .from("vsg_admin_notifications")
+                    .select("id", { count: "exact", head: true })
+                    .eq("admin_user_id", admin.user.id)
+                    .is("read_at", null)
+            ]);
+            throwIfError(error);
+            throwIfError(countError);
+            throwIfError(unreadError);
+
+            return respond({
+                success: true,
+                notifications: data || [],
+                unreadCount: unreadCount || 0,
+                totalCount: count || 0,
+                page,
+                pageSize
+            });
+        }
+
         if (method === "GET" && segments.length === 1) {
             const [{ data, error }, { count, error: countError }] =
                 await Promise.all([
