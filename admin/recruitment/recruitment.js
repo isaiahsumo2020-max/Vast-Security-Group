@@ -274,9 +274,7 @@ function renderApplications(
                     <button
                         type="button"
                         class="view-application-btn"
-                        data-application-id="
-                            ${application.id}
-                        "
+                        data-application-id="${escapeHTML(application.id)}"
                     >
 
                         View
@@ -1356,6 +1354,19 @@ refreshApplicationsBtn.addEventListener(
     "click",
     loadApplications
 );
+
+applicationsTableBody.addEventListener("click", event => {
+    const viewButton = event.target.closest(".view-application-btn");
+
+    if (!viewButton) {
+        return;
+    }
+
+    const applicationID = viewButton.dataset.applicationId?.trim();
+    if (applicationID) {
+        openApplicationDetails(applicationID);
+    }
+});
 
 
 /* =========================================================

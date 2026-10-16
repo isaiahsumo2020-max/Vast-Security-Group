@@ -3,6 +3,7 @@ import { addOfficer } from "../../backend/officers/addOfficer.js";
 import { editOfficer } from "../../backend/officers/editOfficer.js";
 import { deleteOfficer } from "../../backend/officers/deleteOfficer.js";
 import { getPostStatistics } from "../../backend/posts/getPostStatistics.js";
+import { getPendingApplicationCount } from "../../backend/recruitment/getPendingApplicationCount.js";
 import { renderOfficerStatistics } from "./statistics.js";
 import {
     previewImageFile,
@@ -650,7 +651,23 @@ async function loadPostStatistics() {
         );
 
     }
+}
 
+async function loadPendingApplicationCount() {
+    const pendingApplicationsElement =
+        document.getElementById("pendingApplications");
+
+    if (!pendingApplicationsElement) {
+        return;
+    }
+
+    try {
+        const count = await getPendingApplicationCount();
+        pendingApplicationsElement.textContent = String(count);
+    } catch (error) {
+        console.error("Unable to load pending application count:", error);
+        pendingApplicationsElement.textContent = "—";
+    }
 }
 
 
@@ -875,4 +892,9 @@ window.addEventListener(
 window.addEventListener(
     "DOMContentLoaded",
     loadPostStatistics
+);
+
+window.addEventListener(
+    "DOMContentLoaded",
+    loadPendingApplicationCount
 );
