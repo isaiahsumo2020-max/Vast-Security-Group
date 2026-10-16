@@ -1,5 +1,6 @@
 import { getCurrentAdmin } from "../../backend/auth/session.js";
 import { apiRequest } from "../../backend/services/api.js";
+import { confirmAction } from "../auth/confirmDialog.js";
 
 const profileForm = document.getElementById("profileForm");
 const passwordForm = document.getElementById("passwordForm");
@@ -177,13 +178,22 @@ for (const button of websiteContentForm.querySelectorAll("[data-image-upload-but
 
 websiteContentForm.addEventListener("submit", async event => {
     event.preventDefault();
-    saveWebsiteContentButton.disabled = true;
-    setStatus(websiteContentStatus, "Saving public website content...");
 
     const settings = Object.fromEntries(
         [...websiteContentForm.querySelectorAll("[data-site-content-key]")]
             .map(field => [field.dataset.siteContentKey, field.value.trim()])
     );
+
+    if (!await confirmAction({
+        title: "Publish website changes?",
+        message: "Save and publish the current public website content?",
+        confirmLabel: "Publish changes"
+    })) {
+        return;
+    }
+
+    saveWebsiteContentButton.disabled = true;
+    setStatus(websiteContentStatus, "Saving public website content...");
 
     try {
         await apiRequest("/site-content", {
@@ -205,6 +215,14 @@ websiteContentForm.addEventListener("submit", async event => {
 
 profileForm.addEventListener("submit", async event => {
     event.preventDefault();
+    if (!await confirmAction({
+        title: "Save profile changes?",
+        message: "Update your administrator profile with the current details?",
+        confirmLabel: "Save changes"
+    })) {
+        return;
+    }
+
     saveProfileButton.disabled = true;
     setStatus(profileStatus, "");
 
@@ -228,7 +246,6 @@ profileForm.addEventListener("submit", async event => {
 
 passwordForm.addEventListener("submit", async event => {
     event.preventDefault();
-    changePasswordButton.disabled = true;
     setStatus(passwordStatus, "");
     const password = document.getElementById("newPassword").value;
     const confirmation = document.getElementById("confirmPassword").value;
@@ -241,10 +258,18 @@ passwordForm.addEventListener("submit", async event => {
 
     if (password !== confirmation) {
         setStatus(passwordStatus, "The passwords do not match.", true);
-        changePasswordButton.disabled = false;
         return;
     }
 
+    if (!await confirmAction({
+        title: "Change administrator password?",
+        message: "This will replace your current password.",
+        confirmLabel: "Change password"
+    })) {
+        return;
+    }
+
+    changePasswordButton.disabled = true;
     try {
         await apiRequest("/auth/password", {
             method: "POST",

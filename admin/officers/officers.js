@@ -4,6 +4,7 @@ import { deleteOfficer } from "../../backend/officers/deleteOfficer.js";
 import { editOfficer } from "../../backend/officers/editOfficer.js";
 import { getOfficers } from "../../backend/officers/getOfficers.js";
 import { apiRequest } from "../../backend/services/api.js";
+import { confirmAction } from "../auth/confirmDialog.js";
 import {
     previewImageFile,
     validateImageFile
@@ -367,10 +368,17 @@ elements.tableBody.addEventListener("click", async event => {
         return;
     }
 
-    if (
-        button.dataset.action === "delete" &&
-        window.confirm(`Permanently delete officer ${officer.name} (${officer.officer_id})?`)
-    ) {
+    if (button.dataset.action === "delete") {
+        const confirmed = await confirmAction({
+            title: "Delete officer?",
+            message: `Permanently delete officer ${officer.name} (${officer.officer_id})? This cannot be undone.`,
+            confirmLabel: "Delete officer",
+            destructive: true
+        });
+        if (!confirmed) {
+            return;
+        }
+
         button.disabled = true;
         try {
             await deleteOfficer(officer.officer_id);
@@ -404,6 +412,14 @@ elements.form.addEventListener("submit", async event => {
         };
 
         if (editingOfficerId) {
+            const confirmed = await confirmAction({
+                title: "Save officer changes?",
+                message: `Update ${officerData.name}'s officer record with these details?`,
+                confirmLabel: "Save changes"
+            });
+            if (!confirmed) {
+                return;
+            }
             await editOfficer(editingOfficerId, officerData, photoFile);
             setMessage(elements.formMessage, "Officer updated successfully.");
         } else {

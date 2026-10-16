@@ -5,6 +5,7 @@ import { deleteOfficer } from "../../backend/officers/deleteOfficer.js";
 import { getPostStatistics } from "../../backend/posts/getPostStatistics.js";
 import { getPendingApplicationCount } from "../../backend/recruitment/getPendingApplicationCount.js";
 import { renderOfficerStatistics } from "./statistics.js";
+import { confirmAction } from "../auth/confirmDialog.js";
 import {
     previewImageFile,
     validateImageFile
@@ -560,13 +561,12 @@ officerTableBody.addEventListener(
 
 async function handleDeleteOfficer(officerID) {
 
-    const confirmed =
-        window.confirm(
-
-            "Are you sure you want to delete this officer?\n\n" +
-            "This will permanently remove the officer record."
-
-        );
+    const confirmed = await confirmAction({
+        title: "Delete officer?",
+        message: "Are you sure you want to delete this officer? This will permanently remove the officer record.",
+        confirmLabel: "Delete officer",
+        destructive: true
+    });
 
 
     if (!confirmed) {
@@ -684,6 +684,16 @@ officerForm.addEventListener(
 
         officerFormMessage.textContent = "";
 
+        if (currentEditingOfficerID) {
+            const confirmed = await confirmAction({
+                title: "Save officer changes?",
+                message: `Update officer ${currentEditingOfficerID} with the current details?`,
+                confirmLabel: "Save changes"
+            });
+            if (!confirmed) {
+                return;
+            }
+        }
 
         saveOfficerBtn.disabled = true;
 

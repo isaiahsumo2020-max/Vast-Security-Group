@@ -1,4 +1,5 @@
 import { apiRequest } from "../../backend/services/api.js";
+import { confirmAction } from "../auth/confirmDialog.js";
 import {
     populateLiberiaCountySelect,
     setLiberiaCountySelectValue
@@ -284,6 +285,15 @@ document
                 document.getElementById(
                     "editPostMessageStatus"
                 );
+
+            const confirmed = await confirmAction({
+                title: "Save post changes?",
+                message: "Update this post with the current details?",
+                confirmLabel: "Save changes"
+            });
+            if (!confirmed) {
+                return;
+            }
 
             try {
 
@@ -1087,6 +1097,15 @@ function attachAssignmentActions() {
                             `.assignment-notes[data-id="${assignmentId}"]`
                         ).value.trim();
 
+                    const confirmed = await confirmAction({
+                        title: "Save deployment changes?",
+                        message: "Update this officer's deployment details with the current values?",
+                        confirmLabel: "Save changes"
+                    });
+                    if (!confirmed) {
+                        return;
+                    }
+
                     try {
 
                         button.disabled =
@@ -1170,10 +1189,12 @@ function attachAssignmentActions() {
                     const assignmentId =
                         button.dataset.id;
 
-                    const confirmed =
-                        confirm(
-                            "Are you sure you want to end this officer's deployment?"
-                        );
+                    const confirmed = await confirmAction({
+                        title: "End deployment?",
+                        message: "Are you sure you want to end this officer's deployment?",
+                        confirmLabel: "End deployment",
+                        destructive: true
+                    });
 
                     if (!confirmed) {
                         return;

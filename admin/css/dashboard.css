@@ -3410,3 +3410,85 @@ body {
     flex-wrap: wrap;
     margin-top: 15px;
 }
+
+.action-confirm-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgb(7 24 45 / 58%);
+}
+
+.action-confirm-dialog {
+    width: min(100%, 440px);
+    padding: 28px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--white);
+    box-shadow: 0 24px 70px rgb(7 24 45 / 28%);
+}
+
+.action-confirm-title {
+    margin: 0 0 12px;
+    color: var(--primary);
+    font-size: 1.25rem;
+    line-height: 1.35;
+}
+
+.action-confirm-message {
+    margin: 0;
+    color: var(--text);
+    line-height: 1.6;
+    white-space: pre-line;
+}
+
+.action-confirm-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.action-confirm-buttons button {
+    min-height: 42px;
+    padding: 9px 16px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--white);
+    color: var(--text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.action-confirm-buttons button:focus-visible {
+    outline: 3px solid rgb(184 155 82 / 55%);
+    outline-offset: 2px;
+}
+
+.action-confirm-buttons .action-confirm-accept {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: var(--white);
+}
+
+.action-confirm-buttons .action-confirm-accept.is-destructive {
+    border-color: #b42318;
+    background: #b42318;
+}
+
+@media (max-width: 480px) {
+    .action-confirm-dialog {
+        padding: 22px;
+    }
+
+    .action-confirm-buttons {
+        flex-direction: column-reverse;
+    }
+
+    .action-confirm-buttons button {
+        width: 100%;
+    }
+}

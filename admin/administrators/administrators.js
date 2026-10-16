@@ -2,6 +2,7 @@ import {
     getCurrentSession,
     getCurrentAdmin
 } from "../../backend/auth/session.js";
+import { confirmAction } from "../auth/confirmDialog.js";
 
 import { apiRequest } from "../../backend/services/api.js";
 
@@ -558,16 +559,14 @@ administratorsList.addEventListener(
                 : "Inactive";
 
 
-        if (newStatus === "Inactive") {
-
-            const confirmed =
-                confirm(
-                    "Are you sure you want to deactivate this administrator?"
-                );
-
-            if (!confirmed) {
-                return;
-            }
+        const confirmed = await confirmAction({
+            title: `${newStatus === "Active" ? "Activate" : "Deactivate"} administrator?`,
+            message: `Are you sure you want to ${newStatus === "Active" ? "activate" : "deactivate"} this administrator?`,
+            confirmLabel: `${newStatus === "Active" ? "Activate" : "Deactivate"} administrator`,
+            destructive: newStatus !== "Active"
+        });
+        if (!confirmed) {
+            return;
         }
 
 

@@ -14,6 +14,7 @@ import {
     updateApplication
 } from "../../backend/recruitment/updateApplication.js";
 import { deleteApplication } from "../../backend/recruitment/deleteApplication.js";
+import { confirmAction } from "../auth/confirmDialog.js";
 
 
 /* =========================================================
@@ -1211,6 +1212,14 @@ async function saveApplicationChanges(
                 "applicationSaveMessage"
             );
 
+    const confirmed = await confirmAction({
+        title: "Save application changes?",
+        message: "This will update the applicant's status and administrative notes.",
+        confirmLabel: "Save changes"
+    });
+    if (!confirmed) {
+        return;
+    }
 
     saveButton.disabled =
         true;
@@ -1337,9 +1346,12 @@ async function deleteApplicationRecord(applicationID, button) {
     );
     const applicantName = application?.full_name || "this application";
 
-    if (!window.confirm(
-        `Permanently delete ${applicantName} and its uploaded files? This cannot be undone.`
-    )) {
+    if (!await confirmAction({
+        title: "Delete application?",
+        message: `Permanently delete ${applicantName} and its uploaded files? This cannot be undone.`,
+        confirmLabel: "Delete application",
+        destructive: true
+    })) {
         return;
     }
 

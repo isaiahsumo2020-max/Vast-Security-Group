@@ -1,4 +1,5 @@
 import { apiRequest } from "../../backend/services/api.js";
+import { confirmAction } from "../auth/confirmDialog.js";
 
 const serviceForm = document.getElementById("serviceForm");
 const serviceIdInput = document.getElementById("serviceId");
@@ -119,7 +120,6 @@ async function loadServices() {
 
 serviceForm.addEventListener("submit", async event => {
     event.preventDefault();
-    saveButton.disabled = true;
     setStatus(serviceFormStatus, "");
     const displayOrder = Number(serviceOrderInput.value);
 
@@ -138,6 +138,15 @@ serviceForm.addEventListener("submit", async event => {
     };
     const serviceId = serviceIdInput.value;
 
+    if (serviceId && !await confirmAction({
+        title: "Save service changes?",
+        message: `Update "${body.title}" with the current details?`,
+        confirmLabel: "Save changes"
+    })) {
+        return;
+    }
+
+    saveButton.disabled = true;
     try {
         await apiRequest(
             serviceId ? `/services/${encodeURIComponent(serviceId)}` : "/services",
@@ -174,7 +183,12 @@ tableBody.addEventListener("click", async event => {
         return;
     }
 
-    if (!window.confirm(`Permanently delete "${service.title}"?`)) {
+    if (!await confirmAction({
+        title: "Delete service?",
+        message: `Permanently delete "${service.title}"? This cannot be undone.`,
+        confirmLabel: "Delete service",
+        destructive: true
+    })) {
         return;
     }
 
