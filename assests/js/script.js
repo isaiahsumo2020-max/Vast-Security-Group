@@ -6,7 +6,11 @@ const overlay = document.getElementById("overlay");
 function openMenu(){
 
     navLinks.classList.add("active");
-    overlay.classList.add("active");
+    if (overlay) {
+        overlay.classList.add("active");
+    }
+    menuBtn.setAttribute("aria-expanded", "true");
+    menuBtn.setAttribute("aria-label", "Close navigation menu");
     document.body.classList.add("menu-open");
 
 }
@@ -14,18 +18,41 @@ function openMenu(){
 function closeMenu(){
 
     navLinks.classList.remove("active");
-    overlay.classList.remove("active");
+    if (overlay) {
+        overlay.classList.remove("active");
+    }
+    if (menuBtn) {
+        menuBtn.setAttribute("aria-expanded", "false");
+        menuBtn.setAttribute("aria-label", "Open navigation menu");
+    }
     document.body.classList.remove("menu-open");
 
 }
 
-if(menuBtn && closeBtn && navLinks && overlay){
+if (menuBtn && navLinks) {
 
-menuBtn.addEventListener("click", openMenu);
+    menuBtn.addEventListener("click", () => {
+        if (navLinks.classList.contains("active")) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
+    });
 
-closeBtn.addEventListener("click", closeMenu);
+    if (closeBtn) {
+        closeBtn.addEventListener("click", closeMenu);
+    }
 
-overlay.addEventListener("click", closeMenu);
+    if (overlay) {
+        overlay.addEventListener("click", closeMenu);
+    }
+
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && navLinks.classList.contains("active")) {
+            closeMenu();
+            menuBtn.focus();
+        }
+    });
 
 }
 
