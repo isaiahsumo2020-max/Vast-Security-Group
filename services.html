@@ -7,11 +7,11 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>VAST Security Group | Vigilance Asset Security Team</title>
+    <title data-site-content-title>VAST Security Group | Vigilance Asset Security Team</title>
 
     <meta name="description" content="Professional Security Services in Liberia">
 
-    <link rel="icon" href="/assests/images/VAST LOGO.png">
+    <link rel="icon" data-site-content-image="site_logo_url">
 
     <!-- Google Fonts -->
 
@@ -89,11 +89,11 @@
 
                 <a href="index.html" class="logo">
 
-                    <img src="/assests/images/VAST LOGO.png" alt="VAST Logo">
+                    <img alt="VAST Logo" data-site-content-image="site_logo_url" hidden>
 
                     <div class="logo-text">
 
-                        <h2>VAST SECURITY GROUP</h2>
+                        <h2 data-site-content-text="site_name">VAST SECURITY GROUP</h2>
 
                         <p>Vigilance Asset Security Team</p>
 
@@ -221,7 +221,7 @@
 
     <!-- Services section  -->
 
-    <section class="page-hero services-hero">
+    <section class="page-hero services-hero" data-site-banner="services_banner_url">
 
         <div class="container">
 
@@ -275,7 +275,7 @@
 
 <div class="container">
 
-<div class="services-grid">
+<div class="services-grid" id="servicesGrid">
 
 <div class="service-card">
 
@@ -740,9 +740,9 @@ Call Us Today
 
                 <div class="footer-col">
 
-                    <img src="/assests/images/VAST LOGO.png" alt="VAST Logo" class="footer-logo">
+                    <img alt="VAST Logo" class="footer-logo" data-site-content-image="site_logo_url" hidden>
 
-                    <h3>VAST SECURITY GROUP</h3>
+                    <h3 data-site-content-text="site_name">VAST SECURITY GROUP</h3>
 
                     <p>
 
@@ -899,7 +899,11 @@ Call Us Today
 
     </button>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="/assests/js/publicSiteContent.js"></script>
     <script src="/assests/js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="/assests/js/services.js"></script>
 
 </body>
 

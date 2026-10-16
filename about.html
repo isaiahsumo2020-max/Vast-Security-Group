@@ -7,11 +7,11 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>VAST Security Group | Vigilance Asset Security Team</title>
+    <title data-site-content-title>VAST Security Group | Vigilance Asset Security Team</title>
 
     <meta name="description" content="Professional Security Services in Liberia">
 
-    <link rel="icon" href="/assests/images/VAST LOGO.png">
+    <link rel="icon" data-site-content-image="site_logo_url">
 
     <!-- Google Fonts -->
 
@@ -91,11 +91,11 @@
 
                 <a href="index.html" class="logo">
 
-                    <img src="/assests/images/VAST LOGO.png" alt="VAST Logo">
+                    <img alt="VAST Logo" data-site-content-image="site_logo_url" hidden>
 
                     <div class="logo-text">
 
-                        <h2>VAST SECURITY GROUP</h2>
+                        <h2 data-site-content-text="site_name">VAST SECURITY GROUP</h2>
 
                         <p>Vigilance Asset Security Team</p>
 
@@ -222,7 +222,7 @@
 
     <!-- hero section -->
 
-    <section class="page-hero">
+    <section class="page-hero" data-site-banner="about_banner_url">
 
         <div class="container">
 
@@ -252,7 +252,7 @@
 
             <div>
 
-                <img src="/assests/images/VAST About.png">
+                <img alt="VAST Security Group team and operations" data-site-content-image="about_story_image_url" hidden>
 
             </div>
 
@@ -482,7 +482,7 @@
 
             <div class="ceo-image">
 
-                <img src="/assests/images/officers/CEO.png" alt="CEO">
+                <img alt="CEO" data-site-content-image="ceo_photo_url" hidden>
 
             </div>
 
@@ -490,35 +490,13 @@
 
                 <span>Leadership Message</span>
 
-                <h2>Message from the CEO</h2>
+                <h2 data-site-content-text="ceo_heading"></h2>
 
-                <p>
+                <p data-site-content-text="ceo_message" class="managed-leadership-message"></p>
 
-                    Welcome to VAST Security Group.
+                <h4 data-site-content-text="ceo_name"></h4>
 
-                    Our commitment is simple: to provide professional, reliable, and trusted security services that
-                    protect lives, assets, and businesses. We believe security is built on discipline, integrity,
-                    vigilance, and respect for those we serve.
-
-                    As we continue to grow, our focus remains on delivering exceptional service through well-trained
-                    personnel and continuous improvement. We value every client and every opportunity to make a positive
-                    impact on the safety of our communities.
-
-                    Thank you for considering VAST Security Group as your trusted security partner.
-
-                </p>
-
-                <h4>
-
-                    Mr. Moses Sumo
-
-                </h4>
-
-                <p class="position">
-
-                    Chief Executive Officer
-
-                </p>
+                <p class="position" data-site-content-text="ceo_title"></p>
 
             </div>
 
@@ -535,40 +513,20 @@
 
             <div class="ceo-image">
 
-                <img src="/assests/images/officers/Co-CEO.png" alt="CEO">
+                <img alt="Co-CEO" data-site-content-image="co_ceo_photo_url" hidden>
 
             </div>
 
             <div class="ceo-text">
 
-                <h2>Message from the Co-Chief Executive Officer</h2>
+                <h2 data-site-content-text="co_ceo_heading"></h2>
 
 
-                <p>
-                    At VAST Security Group, we recognize that true security goes beyond physical presence, it is built
-                    on professionalism, integrity, discipline, and an unwavering commitment to those we serve. Every
-                    assignment entrusted to us is approached with diligence and a strong sense of responsibility.
-                </p>
+                <p data-site-content-text="co_ceo_message" class="managed-leadership-message"></p>
 
-                <p>
-                    Our vision is to build lasting partnerships with our clients by delivering dependable security
-                    solutions tailored to their unique needs. Through continuous training, ethical conduct, and
-                    teamwork, we strive to exceed expectations while maintaining the highest standards of service.
-                </p>
+                <h4 data-site-content-text="co_ceo_name"></h4>
 
-                <p>
-                    As Co-Chief Executive Officer, I remain committed to supporting the growth of our organization,
-                    empowering our personnel, and ensuring that VAST Security Group continues to be recognized as a
-                    trusted partner in safeguarding people, property, businesses, and communities across Liberia.
-                </p>
-
-                <h4>Levi B. Sendolo</h4>
-
-                <p class="position">
-
-                    Chief Executive Officer
-
-                </p>
+                <p class="position" data-site-content-text="co_ceo_title"></p>
 
             </div>
         </div>
@@ -707,9 +665,9 @@
 
                 <div class="footer-col">
 
-                    <img src="/assests/images/VAST LOGO.png" alt="VAST Logo" class="footer-logo">
+                    <img alt="VAST Logo" class="footer-logo" data-site-content-image="site_logo_url" hidden>
 
-                    <h3>VAST SECURITY GROUP</h3>
+                    <h3 data-site-content-text="site_name">VAST SECURITY GROUP</h3>
 
                     <p>
 
@@ -867,6 +825,8 @@
 
     </button>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="/assests/js/publicSiteContent.js"></script>
     <script src="/assests/js/script.js"></script>
 
 </body>

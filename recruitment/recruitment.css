@@ -1,0 +1,379 @@
+/* =========================================================
+   RECRUITMENT APPLICATION PAGE
+========================================================= */
+
+.recruitment-page {
+
+    padding: 70px 0;
+
+    background: #f5f7fa;
+
+}
+
+
+.recruitment-intro {
+
+    max-width: 800px;
+
+    margin: 0 auto 25px;
+
+}
+
+
+.recruitment-intro h1 {
+
+    color: var(--primary);
+
+    font-size: clamp(28px, 4vw, 42px);
+
+    margin-bottom: 10px;
+
+}
+
+
+.recruitment-intro p {
+
+    color: #6b7280;
+
+    line-height: 1.7;
+
+}
+
+
+/* =========================================================
+   SINGLE FORM CARD
+========================================================= */
+
+.recruitment-form {
+
+    max-width: 900px;
+
+    margin: auto;
+
+    background: #ffffff;
+
+    padding: 45px;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 15px 45px
+        rgba(0,0,0,.08);
+
+}
+
+
+/* =========================================================
+   FORM HEADINGS
+========================================================= */
+
+.form-heading {
+
+    margin-bottom: 22px;
+
+}
+
+
+.form-heading-space {
+
+    margin-top: 38px;
+
+}
+
+
+.form-heading h2 {
+
+    color: var(--primary);
+
+    font-size: 21px;
+
+    margin-bottom: 6px;
+
+}
+
+
+.form-heading p {
+
+    color: #6b7280;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+
+}
+
+
+/* =========================================================
+   FORM GRID
+========================================================= */
+
+.recruitment-form-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 20px;
+
+}
+
+
+.recruitment-form .full-width {
+
+    grid-column: 1 / -1;
+
+}
+
+
+/* =========================================================
+   INPUTS
+========================================================= */
+
+.recruitment-form .form-group {
+
+    margin-bottom: 20px;
+
+}
+
+
+.recruitment-form label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--primary);
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+.recruitment-form input,
+.recruitment-form select,
+.recruitment-form textarea {
+
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border: 1px solid #d7dce2;
+
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    font-size: 14px;
+
+    font-family: inherit;
+
+    outline: none;
+
+    transition: border .2s ease;
+
+}
+
+
+.recruitment-form input:focus,
+.recruitment-form select:focus,
+.recruitment-form textarea:focus {
+
+    border-color: var(--primary);
+
+}
+
+
+.recruitment-form textarea {
+
+    resize: vertical;
+
+    min-height: 180px;
+
+}
+
+
+.recruitment-form small {
+
+    display: block;
+
+    margin-top: 8px;
+
+    color: #6b7280;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+
+}
+
+
+/* =========================================================
+   APPLICATION LETTER OPTIONS
+========================================================= */
+
+.letter-field {
+
+    display: none;
+
+}
+
+.letter-field[hidden] {
+
+    display: none !important;
+
+}
+
+
+.letter-field.is-active {
+
+    display: block;
+
+}
+
+.application-letter-choice {
+
+    display: flex;
+
+    gap: 25px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.letter-option {
+
+    display: flex !important;
+
+    align-items: center;
+
+    gap: 8px;
+
+    cursor: pointer;
+
+}
+
+
+.letter-option input {
+
+    width: auto !important;
+
+}
+
+
+/* =========================================================
+   SUBMIT AREA
+========================================================= */
+
+.recruitment-submit-area {
+
+    margin-top: 40px;
+
+    padding-top: 25px;
+
+    border-top:
+        1px solid #e4e7eb;
+
+}
+
+
+.recruitment-submit-area p {
+
+    color: #6b7280;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+    margin-bottom: 18px;
+
+}
+
+
+.recruitment-submit-btn {
+
+    border: none;
+
+    background: var(--primary);
+
+    color: #ffffff;
+
+    padding: 14px 28px;
+
+    border-radius: 7px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .25s ease;
+
+}
+
+
+.recruitment-submit-btn:hover {
+
+    background: var(--gold);
+
+}
+
+
+.application-message {
+
+    margin-top: 18px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:768px){
+
+    .recruitment-page {
+
+        padding: 45px 0;
+
+    }
+
+
+    .recruitment-form {
+
+        padding: 28px 20px;
+
+    }
+
+
+    .recruitment-form-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .recruitment-form .full-width {
+
+        grid-column: auto;
+
+    }
+
+
+    .application-letter-choice {
+
+        flex-direction: column;
+
+        gap: 12px;
+
+    }
+
+}

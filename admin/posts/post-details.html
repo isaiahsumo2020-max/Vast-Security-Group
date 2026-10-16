@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Recruitment Management | VAST</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+
+    <!-- Shared Admin CSS -->
+    <link rel="stylesheet" href="../css/dashboard.css">
+
+</head>
+
+
+<body>
+
+    <div class="admin-layout">
+
+
+        <!-- ==========================
+         SIDEBAR
+    =========================== -->
+
+        <aside class="admin-sidebar">
+
+
+            <div class="admin-brand">
+
+                <img src="../../assests/images/VAST LOGO.png" alt="VAST Logo">
+
+
+                <div>
+
+                    <strong>VAST</strong>
+
+                    <span>ADMIN</span>
+
+                </div>
+
+            </div>
+
+
+            <nav class="admin-nav">
+
+                <a href="../dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="../administrators/administrators.html">
+                    Administrators
+                </a>
+
+                <a href="../posts/posts.html" class="active">
+                    Guard Posts
+                </a>
+                <a href="../clients/clients.html">
+                    Clients
+                </a>
+
+                <a href="../officers/officers.html">
+                    Officers
+                </a>
+
+
+                <a href="../recruitment/recruitment.html">
+                    Recruitment
+                </a>
+
+
+                <a href="../shortlist/shortlist.html">
+                    Shortlist
+                </a>
+
+                <a href="../communication/communication.html">
+                    Communication
+                </a>
+
+                <a href="../messages/messages.html">
+                    Messages
+                </a>
+
+                <a href="../services/services.html">
+                    Services
+                </a>
+
+                <a href="../auditlog/auditlog.html">
+                    Audit Log
+                </a>
+
+                <a href="../settings/settings.html">
+                    Settings
+                </a>
+
+            </nav>
+
+
+            <button id="logoutBtn" class="logout-btn">
+                Logout
+            </button>
+
+
+        </aside>
+
+        <main class="dashboard-main">
+
+            <div class="dashboard-container">
+
+                <div class="dashboard-page-header">
+
+                    <div>
+
+                        <h1 id="postTitle">
+                            Security Post
+                        </h1>
+
+                        <p id="postSubtitle">
+                            Post details and deployment roster
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- POST INFORMATION -->
+
+                <section class="communication-card">
+
+                    <div class="form-heading">
+
+                        <h2>Post Information</h2>
+
+                    </div>
+
+
+                    <div class="communication-form-grid">
+
+                        <div class="form-group">
+                            <label>Client</label>
+                            <p id="detailClient">—</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Location</label>
+                            <p id="detailLocation">—</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>County</label>
+                            <p id="detailCounty">—</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Required Officers</label>
+                            <p id="detailRequiredOfficers">—</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Shift System</label>
+                            <p id="detailShiftSystem">—</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Supervisor</label>
+                            <p id="detailSupervisor">—</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Service Start</label>
+                            <p id="detailStartDate">—</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Service End</label>
+                            <p id="detailEndDate">—</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Status</label>
+                            <p id="detailStatus">—</p>
+                        </div>
+
+                        <div class="form-group communication-full-width">
+
+                            <label>Special Instructions</label>
+
+                            <p id="detailInstructions">
+                                —
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- SHIFT INFORMATION -->
+
+                <section class="communication-card">
+
+                    <div class="form-heading">
+
+                        <h2>Shift Schedule</h2>
+
+                    </div>
+
+
+                    <div id="shiftSchedule" class="communication-history"></div>
+
+                </section>
+
+
+                <!-- DEPLOYMENT ROSTER -->
+
+                <section class="communication-card">
+
+                    <div class="form-heading">
+
+                        <h2>Deployment Roster</h2>
+
+                        <p>
+                            Officers currently assigned to this security post.
+                        </p>
+
+                    </div>
+
+
+                    <div id="deploymentRoster" class="communication-history"></div>
+
+                </section>
+
+            </div>
+
+
+            <!-- EDIT POST -->
+            <section class="communication-card">
+                <h2 class="form-heading">Edit Security Post</h2>
+
+                <form id="editPostForm">
+                    <div class="communication-form-grid">
+
+                        <div class="form-group">
+                            <label for="editPostClient">Client</label>
+                            <select id="editPostClient">
+                                <option value="">Select Client</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editPostName">Post Name</label>
+                            <input type="text" id="editPostName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editPostLocation">Location</label>
+                            <input type="text" id="editPostLocation" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editPostCounty">County</label>
+                            <select id="editPostCounty">
+                                <option value="">Select county</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editRequiredOfficers">Required Officers</label>
+                            <input type="number" id="editRequiredOfficers" min="1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editShiftSystem">Shift System</label>
+                            <select id="editShiftSystem">
+                                <option value="1 Shift">1 Shift</option>
+                                <option value="2 Shifts">2 Shifts</option>
+                                <option value="3 Shifts">3 Shifts</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editPostSupervisor">Post Supervisor</label>
+                            <select id="editPostSupervisor">
+                                <option value="">No Supervisor</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editPostStatus">Status</label>
+                            <select id="editPostStatus">
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                                <option value="Suspended">Suspended</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editServiceStartDate">Service Start Date</label>
+                            <input type="date" id="editServiceStartDate">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editServiceEndDate">Service End Date</label>
+                            <input type="date" id="editServiceEndDate">
+                        </div>
+
+                        <div class="form-group communication-full-width">
+                            <label for="editSpecialInstructions">
+                                Special Instructions
+                            </label>
+                            <textarea id="editSpecialInstructions" rows="5"></textarea>
+                        </div>
+
+                        <div class="form-group communication-full-width">
+                            <button type="submit" class="dashboard-btn">
+                                Save Post Changes
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+
+                <div id="editPostMessageStatus"></div>
+            </section>
+
+
+            <!-- DEPLOYMENT MANAGEMENT -->
+            <section class="communication-card">
+                <h2 class="form-heading">Manage Deployment</h2>
+
+                <div id="deploymentManagement"></div>
+            </section>
+
+
+
+
+            <section class="communication-card">
+                <h2 class="form-heading">Assign New Officer</h2>
+
+                <form id="detailAssignmentForm">
+
+                    <div class="communication-form-grid">
+
+                        <div class="form-group">
+                            <label for="detailAssignmentOfficer">
+                                Officer
+                            </label>
+
+                            <select id="detailAssignmentOfficer" required>
+                                <option value="">
+                                    Select Officer
+                                </option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="detailAssignmentShift">
+                                Shift
+                            </label>
+
+                            <select id="detailAssignmentShift" required>
+                                <option value="1">Shift 1</option>
+                                <option value="2">Shift 2</option>
+                                <option value="3">Shift 3</option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="detailAssignmentDate">
+                                Assigned Date
+                            </label>
+
+                            <input type="date" id="detailAssignmentDate">
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="detailAssignmentStatus">
+                                Status
+                            </label>
+
+                            <select id="detailAssignmentStatus">
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group communication-full-width">
+                            <label for="detailAssignmentNotes">
+                                Notes
+                            </label>
+
+                            <textarea id="detailAssignmentNotes" rows="4"
+                                placeholder="Optional deployment notes..."></textarea>
+                        </div>
+
+
+                        <div class="form-group communication-full-width">
+
+                            <button type="submit" class="dashboard-btn" id="detailAssignOfficerBtn">
+                                Assign Officer
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+                <div id="detailAssignmentMessageStatus"></div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="../auth/guard.js"></script>
+    <script type="module" src="./post-details.js"></script>
+
+</body>
+
+</html>

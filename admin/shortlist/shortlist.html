@@ -1,0 +1,387 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Recruitment Management | VAST</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+
+    <!-- Shared Admin CSS -->
+    <link
+        rel="stylesheet"
+        href="../css/dashboard.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="admin-layout">
+
+
+    <!-- ==========================
+         SIDEBAR
+    =========================== -->
+
+    <aside class="admin-sidebar">
+
+
+        <div class="admin-brand">
+
+            <img
+                src="../../assests/images/VAST LOGO.png"
+                alt="VAST Logo"
+            >
+
+
+            <div>
+
+                <strong>VAST</strong>
+
+                <span>ADMIN</span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="admin-nav">
+
+            <a href="../dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="../administrators/administrators.html">
+                    Administrators
+                </a>
+
+                <a href="../posts/posts.html">
+                    Guard Posts
+                </a>
+                <a href="../clients/clients.html">
+                    Clients
+                </a>
+
+            <a href="../officers/officers.html">
+                Officers
+            </a>
+
+
+            <a
+                href="../recruitment/recruitment.html">
+                Recruitment
+            </a>
+
+            <a href="shortlist.html" class="active">
+                Shortlist
+            </a>
+
+            <a
+                href="../communication/communication.html"
+            >
+                Communication
+            </a>
+
+            <a href="../messages/messages.html">
+                Messages
+            </a>
+
+            <a href="../services/services.html">
+                Services
+            </a>
+
+            <a href="../auditlog/auditlog.html">
+                Audit Log
+            </a>
+
+            <a href="../settings/settings.html">
+                Settings
+            </a>
+
+
+        </nav>
+
+
+        <button
+            id="logoutBtn"
+            class="logout-btn"
+        >
+            Logout
+        </button>
+
+
+    </aside>
+
+<!-- =========================================
+     SHORTLIST MANAGEMENT
+========================================= -->
+
+<main class="dashboard-main">
+
+    <div class="dashboard-container">
+
+
+        <!-- PAGE HEADER -->
+
+        <div class="dashboard-page-header">
+
+            <div>
+
+                <span class="page-eyebrow">
+                    Recruitment Management
+                </span>
+
+                <h1>
+                    Shortlisted Applicants
+                </h1>
+
+                <p>
+                    Manage applicants progressing through
+                    the VAST Security Group recruitment process.
+                </p>
+
+            </div>
+
+
+            <div class="page-header-actions">
+
+                <button
+                    type="button"
+                    class="dashboard-refresh-btn"
+                    id="refreshShortlistBtn"
+                >
+
+                    Refresh
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- SHORTLIST STATISTICS -->
+
+        <div class="recruitment-stats-grid">
+
+
+            <div class="recruitment-stat-card">
+
+                <span>
+                    Shortlisted
+                </span>
+
+                <strong id="shortlistedCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="recruitment-stat-card">
+
+                <span>
+                    Interview
+                </span>
+
+                <strong id="interviewCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="recruitment-stat-card">
+
+                <span>
+                    Training
+                </span>
+
+                <strong id="trainingCount">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="recruitment-stat-card">
+
+                <span>
+                    Accepted
+                </span>
+
+                <strong id="acceptedCount">
+                    0
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- FILTER -->
+
+        <div class="dashboard-table-controls">
+
+
+            <div class="dashboard-search-box">
+
+                <input
+                    type="search"
+                    id="shortlistSearch"
+                    placeholder="Search applicant name or phone..."
+                >
+
+            </div>
+
+
+            <div class="dashboard-filter-box">
+
+                <select
+                    id="shortlistStatusFilter"
+                >
+
+                    <option value="all">
+
+                        All Recruitment Stages
+
+                    </option>
+
+
+                    <option value="Shortlisted">
+
+                        Shortlisted
+
+                    </option>
+
+
+                    <option value="Interview">
+
+                        Interview
+
+                    </option>
+
+
+                    <option value="Training">
+
+                        Training
+
+                    </option>
+
+
+                    <option value="Accepted">
+
+                        Accepted
+
+                    </option>
+
+                </select>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- SHORTLIST TABLE -->
+
+        <div class="dashboard-table-wrapper">
+
+            <table class="dashboard-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Applicant
+                        </th>
+
+                        <th>
+                            Position
+                        </th>
+
+                        <th>
+                            Phone
+                        </th>
+
+                        <th>
+                            Recruitment Stage
+                        </th>
+
+                        <th>
+                            Date Applied
+                        </th>
+
+                        <th>
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody
+                    id="shortlistTableBody"
+                >
+
+                    <tr>
+
+                        <td
+                            colspan="6"
+                            class="dashboard-empty-state"
+                        >
+
+                            Loading shortlisted applicants...
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+    </div>
+
+</main>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+<script
+    type="module"
+    src="../auth/guard.js"
+></script>
+<script
+    type="module"
+    src="shortlist.js"
+></script>
+</div>
+</body>
+</html>

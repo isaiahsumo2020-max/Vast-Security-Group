@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Recruitment Management | VAST</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+
+    <!-- Shared Admin CSS -->
+    <link rel="stylesheet" href="../css/dashboard.css">
+
+</head>
+
+
+<body>
+
+    <div class="admin-layout">
+
+
+        <!-- ==========================
+         SIDEBAR
+    =========================== -->
+
+        <aside class="admin-sidebar">
+
+
+            <div class="admin-brand">
+
+                <img src="../../assests/images/VAST LOGO.png" alt="VAST Logo">
+
+
+                <div>
+
+                    <strong>VAST</strong>
+
+                    <span>ADMIN</span>
+
+                </div>
+
+            </div>
+
+
+            <nav class="admin-nav">
+
+                <a href="../dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="../administrators/administrators.html">
+                    Administrators
+                </a>
+
+                <a href="../posts/posts.html">
+                    Guard Posts
+                </a>
+                <a href="../clients/clients.html">
+                    Clients
+                </a>
+
+                <a href="../officers/officers.html">
+                    Officers
+                </a>
+
+
+                <a href="recruitment.html" class="active">
+                    Recruitment
+                </a>
+
+
+                <a href="../shortlist/shortlist.html">
+                    Shortlist
+                </a>
+
+                <a href="../communication/communication.html">
+                    Communication
+                </a>
+
+                <a href="../messages/messages.html">
+                    Messages
+                </a>
+
+                <a href="../services/services.html">
+                    Services
+                </a>
+
+                <a href="../auditlog/auditlog.html">
+                    Audit Log
+                </a>
+
+                <a href="../settings/settings.html">
+                    Settings
+                </a>
+
+            </nav>
+
+
+            <button id="logoutBtn" class="logout-btn">
+                Logout
+            </button>
+
+
+        </aside>
+
+
+
+        <!-- ==========================
+         MAIN CONTENT
+    =========================== -->
+
+        <!-- =========================================
+     RECRUITMENT MANAGEMENT
+========================================= -->
+
+        <main class="dashboard-main">
+
+            <div class="dashboard-container">
+
+
+                <!-- PAGE HEADER -->
+
+                <div class="dashboard-page-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            Recruitment Management
+                        </span>
+
+                        <h1>
+                            Recruitment Applications
+                        </h1>
+
+                        <p>
+                            Review and manage applications submitted through
+                            the VAST Security Group recruitment portal.
+                        </p>
+
+                    </div>
+
+
+                    <div class="page-header-actions">
+
+                        <button type="button" class="dashboard-refresh-btn" id="refreshApplicationsBtn">
+
+                            Refresh
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- RECRUITMENT STATISTICS -->
+
+                <div class="recruitment-stats-grid">
+
+
+                    <div class="recruitment-stat-card">
+
+                        <span>
+                            Total Applications
+                        </span>
+
+                        <strong id="totalApplications">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="recruitment-stat-card">
+
+                        <span>
+                            Pending
+                        </span>
+
+                        <strong id="pendingApplications">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="recruitment-stat-card">
+
+                        <span>
+                            Shortlisted
+                        </span>
+
+                        <strong id="shortlistedApplications">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="recruitment-stat-card">
+
+                        <span>
+                            Accepted
+                        </span>
+
+                        <strong id="acceptedApplications">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- FILTERS -->
+
+                <div class="dashboard-table-controls">
+
+
+                    <div class="dashboard-search-box">
+
+                        <input type="search" id="applicationSearch" placeholder="Search by applicant name or phone...">
+
+                    </div>
+
+
+                    <div class="dashboard-filter-box">
+
+                        <select id="applicationStatusFilter">
+
+                            <option value="all">
+                                All Statuses
+                            </option>
+
+                            <option value="Pending">
+                                Pending
+                            </option>
+
+                            <option value="Under Review">
+                                Under Review
+                            </option>
+
+                            <option value="Shortlisted">
+                                Shortlisted
+                            </option>
+
+                            <option value="Rejected">
+                                Rejected
+                            </option>
+
+                            <option value="Interview">
+                                Interview
+                            </option>
+
+                            <option value="Training">
+                                Training
+                            </option>
+
+                            <option value="Accepted">
+                                Accepted
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- APPLICATION TABLE -->
+
+                <div class="dashboard-table-wrapper">
+
+                    <table class="dashboard-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Applicant
+                                </th>
+
+                                <th>
+                                    Position
+                                </th>
+
+                                <th>
+                                    Phone
+                                </th>
+
+                                <th>
+                                    Date Applied
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="applicationsTableBody">
+
+                            <tr>
+
+                                <td colspan="6" class="dashboard-empty-state">
+
+                                    Loading applications...
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+            </div>
+
+        </main>
+
+        <!-- =========================================
+     APPLICATION DETAILS MODAL
+========================================= -->
+
+        <div class="application-modal" id="applicationModal">
+
+            <div class="application-modal-backdrop" id="applicationModalBackdrop">
+            </div>
+
+
+            <div class="application-modal-content">
+
+
+                <!-- MODAL HEADER -->
+
+                <div class="application-modal-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            Applicant Details
+                        </span>
+
+                        <h2 id="modalApplicantName">
+                            Applicant Name
+                        </h2>
+
+                    </div>
+
+
+                    <button type="button" class="close-application-modal" id="closeApplicationModal" aria-label="Close">
+
+                        &times;
+
+                    </button>
+
+                </div>
+
+
+
+                <!-- MODAL BODY -->
+
+                <div class="application-modal-body" id="applicationModalBody">
+
+                    Loading application details...
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script type="module" src="../auth/guard.js"></script>
+        <script type="module" src="recruitment.js"></script>
+    </div>
+</body>
+
+</html>

@@ -27,6 +27,18 @@
 
 }
 
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 html {
 
     scroll-behavior: smooth;
@@ -733,12 +745,7 @@ HERO
     min-height: 88vh;
 
     background:
-
-        linear-gradient(rgba(11, 35, 65, .90),
-
-            rgba(11, 35, 65, .88)),
-
-        url("../images/corporate-building.jpg");
+        linear-gradient(rgba(11, 35, 65, .90), rgba(11, 35, 65, .88));
 
     background-size: cover;
 
@@ -1710,12 +1717,7 @@ FOOTER
     height: 340px;
 
     background:
-
-        linear-gradient(rgba(11, 35, 65, .82),
-
-            rgba(11, 35, 65, .82)),
-
-        url("../images/about-banner.jpg");
+        linear-gradient(rgba(11, 35, 65, .82), rgba(11, 35, 65, .82));
 
     background-size: cover;
 
@@ -2465,9 +2467,7 @@ INDUSTRIES WE SERVE
 
         linear-gradient(rgba(11, 35, 65, .82),
 
-            rgba(11, 35, 65, .82)),
-
-        url("../images/services-banner.jpg");
+            rgba(11, 35, 65, .82));
 
     background-size: cover;
 
@@ -3168,9 +3168,7 @@ CONTACT HERO
 
         linear-gradient(rgba(11, 35, 65, .82),
 
-            rgba(11, 35, 65, .82)),
-
-        url("../images/contact-banner.jpg");
+            rgba(11, 35, 65, .82));
 
     background-size: cover;
 

@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Recruitment Management | VAST</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+
+    <!-- Shared Admin CSS -->
+    <link rel="stylesheet" href="../css/dashboard.css">
+
+</head>
+
+
+<body>
+
+    <div class="admin-layout">
+
+
+        <!-- ==========================
+         SIDEBAR
+    =========================== -->
+
+        <aside class="admin-sidebar">
+
+
+            <div class="admin-brand">
+
+                <img src="../../assests/images/VAST LOGO.png" alt="VAST Logo">
+
+
+                <div>
+
+                    <strong>VAST</strong>
+
+                    <span>ADMIN</span>
+
+                </div>
+
+            </div>
+
+
+            <nav class="admin-nav">
+
+                <a href="../dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="../administrators/administrators.html">
+                    Administrators
+                </a>
+
+                <a href="posts.html" class="active">
+                    Guard Posts
+                </a>
+                <a href="../clients/clients.html">
+                    Clients
+                </a>
+
+
+                <a href="../officers/officers.html">
+                    Officers
+                </a>
+
+
+                <a href="../recruitment/recruitment.html">
+                    Recruitment
+                </a>
+
+
+                <a href="../shortlist/shortlist.html">
+                    Shortlist
+                </a>
+
+                <a href="../communication/communication.html">
+                    Communication
+                </a>
+
+                <a href="../messages/messages.html">
+                    Messages
+                </a>
+
+                <a href="../services/services.html">
+                    Services
+                </a>
+
+                <a href="../auditlog/auditlog.html">
+                    Audit Log
+                </a>
+
+                <a href="../settings/settings.html">
+                    Settings
+                </a>
+
+            </nav>
+
+
+            <button id="logoutBtn" class="logout-btn">
+                Logout
+            </button>
+
+        </aside>
+
+
+        <main class="dashboard-main">
+
+            <div class="dashboard-container">
+
+            <div class="dashboard-page-header">
+                <div>
+                    <h1>Guard Posts</h1>
+                    <p>Manage security post locations, deployments and officer requirements.</p>
+                </div>
+                <button type="button" class="primary-btn" id="addSecurityPostBtn"
+                    aria-controls="createSecurityPostSection" aria-expanded="false">
+                    Create Security Post
+                </button>
+            </div>
+
+            <section class="dashboard-stats" aria-label="Security post statistics">
+                <div class="stat-card"><span>Total Posts</span><strong id="totalPostsStat">0</strong></div>
+                <div class="stat-card"><span>Active</span><strong id="activePostsStat">0</strong></div>
+                <div class="stat-card"><span>Inactive</span><strong id="inactivePostsStat">0</strong></div>
+                <div class="stat-card"><span>Suspended</span><strong id="suspendedPostsStat">0</strong></div>
+            </section>
+
+            <!-- ================= SECURITY POST ================= -->
+            <section class="communication-card admin-form-panel" id="createSecurityPostSection" hidden>
+
+                <div class="form-heading">
+                    <h2>Create Security Post</h2>
+                    <p>Set up the location, shifts and officer requirements.</p>
+                </div>
+                <button type="button" class="dashboard-btn admin-form-close" id="closeSecurityPostFormBtn">
+                    Cancel
+                </button>
+
+                <form id="postForm">
+
+                    <div class="communication-form-grid">
+
+                        <div class="form-group">
+                            <label for="postClient">Client *</label>
+
+                            <select id="postClient" required>
+                                <option value="">
+                                    Select Client
+                                </option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="postName">Post Name *</label>
+
+                            <input type="text" id="postName" placeholder="Main Gate Post" required>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="postLocation">Location *</label>
+
+                            <input type="text" id="postLocation" placeholder="Paynesville, Liberia" required>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="postCounty">County</label>
+                            <select id="postCounty">
+                                <option value="">Select county</option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="requiredOfficers">
+                                Required Officers *
+                            </label>
+
+                            <input type="number" id="requiredOfficers" min="1" value="1" required>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="shiftSystem">
+                                Shift System *
+                            </label>
+
+                            <select id="shiftSystem">
+
+                                <option value="2 Shifts">
+                                    2 Shifts
+                                </option>
+
+                                <option value="3 Shifts">
+                                    3 Shifts
+                                </option>
+
+                            </select>
+                        </div>
+
+
+                        <!-- SHIFT ONE -->
+                        <div class="form-group">
+                            <label for="shiftOneStart">
+                                Shift 1 Start
+                            </label>
+
+                            <input type="time" id="shiftOneStart">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="shiftOneEnd">
+                                Shift 1 End
+                            </label>
+
+                            <input type="time" id="shiftOneEnd">
+                        </div>
+
+
+                        <!-- SHIFT TWO -->
+                        <div class="form-group">
+                            <label for="shiftTwoStart">
+                                Shift 2 Start
+                            </label>
+
+                            <input type="time" id="shiftTwoStart">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="shiftTwoEnd">
+                                Shift 2 End
+                            </label>
+
+                            <input type="time" id="shiftTwoEnd">
+                        </div>
+
+
+                        <!-- SHIFT THREE -->
+                        <div class="form-group">
+                            <label for="shiftThreeStart">
+                                Shift 3 Start
+                            </label>
+
+                            <input type="time" id="shiftThreeStart">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="shiftThreeEnd">
+                                Shift 3 End
+                            </label>
+
+                            <input type="time" id="shiftThreeEnd">
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="postSupervisor">
+                                Post Supervisor
+                            </label>
+
+                            <select id="postSupervisor">
+
+                                <option value="">
+                                    Select Supervisor
+                                </option>
+
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="postStatus">
+                                Post Status
+                            </label>
+
+                            <select id="postStatus">
+
+                                <option value="Active">
+                                    Active
+                                </option>
+
+                                <option value="Inactive">
+                                    Inactive
+                                </option>
+
+                                <option value="Suspended">
+                                    Suspended
+                                </option>
+
+                            </select>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="serviceStartDate">
+                                Service Start Date
+                            </label>
+
+                            <input type="date" id="serviceStartDate">
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="serviceEndDate">
+                                Service End Date
+                            </label>
+
+                            <input type="date" id="serviceEndDate">
+                        </div>
+
+
+                        <div class="form-group communication-full-width">
+
+                            <label for="specialInstructions">
+                                Special Instructions
+                            </label>
+
+                            <textarea id="specialInstructions" rows="4"
+                                placeholder="Post-specific instructions..."></textarea>
+
+                        </div>
+
+                    </div>
+
+
+                    <button type="submit" class="primary-btn" id="savePostBtn">
+                        Create Security Post
+                    </button>
+
+                    <p id="postMessageStatus"></p>
+
+                </form>
+
+            </section>
+
+            <button type="button" class="primary-btn deployment-toggle-btn" id="openAssignmentFormBtn"
+                aria-controls="deploymentSection" aria-expanded="false">Assign Officer to a Post</button>
+
+            <!-- ================= OFFICER DEPLOYMENT ================= -->
+
+            <section class="communication-card admin-form-panel" id="deploymentSection" hidden>
+
+                <div class="form-heading">
+
+                    <h2>Officer Deployment</h2>
+
+                    <p>
+                        Assign officers to specific security posts and shifts.
+                    </p>
+
+                </div>
+
+                <button type="button" class="dashboard-btn admin-form-close" id="closeAssignmentFormBtn">Cancel</button>
+
+                <form id="assignmentForm">
+
+                    <div class="communication-form-grid">
+
+
+                        <div class="form-group">
+
+                            <label for="assignmentPost">
+                                Security Post *
+                            </label>
+
+                            <select id="assignmentPost" required>
+
+                                <option value="">
+                                    Select Security Post
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="assignmentOfficer">
+                                Officer *
+                            </label>
+
+                            <select id="assignmentOfficer" required>
+
+                                <option value="">
+                                    Select Officer
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="assignmentShift">
+                                Shift *
+                            </label>
+
+                            <select id="assignmentShift" required>
+
+                                <option value="1">
+                                    Shift 1
+                                </option>
+
+                                <option value="2">
+                                    Shift 2
+                                </option>
+
+                                <option value="3">
+                                    Shift 3
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="assignmentDate">
+                                Assigned Date
+                            </label>
+
+                            <input type="date" id="assignmentDate">
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="assignmentEndDate">
+                                End Date
+                            </label>
+
+                            <input type="date" id="assignmentEndDate">
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="assignmentStatus">
+                                Status
+                            </label>
+
+                            <select id="assignmentStatus">
+
+                                <option value="Active">
+                                    Active
+                                </option>
+
+                                <option value="Inactive">
+                                    Inactive
+                                </option>
+
+                                <option value="Completed">
+                                    Completed
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group communication-full-width">
+
+                            <label for="assignmentNotes">
+                                Deployment Notes
+                            </label>
+
+                            <textarea id="assignmentNotes" rows="3"
+                                placeholder="Enter any deployment instructions or notes..."></textarea>
+
+                        </div>
+
+                    </div>
+
+
+                    <button type="submit" class="primary-btn" id="assignOfficerBtn">
+                        Assign Officer
+                    </button>
+
+
+                    <p id="assignmentMessageStatus"></p>
+
+                </form>
+
+            </section>
+
+
+            <!-- ================= DEPLOYMENT HISTORY ================= -->
+
+            <section class="communication-card">
+
+                <div class="form-heading">
+
+                    <h2>Deployment History</h2>
+
+                    <p>
+                        Select a security post to view its assigned officers.
+                    </p>
+
+                </div>
+
+
+                <div id="assignmentHistory" class="communication-history"></div>
+
+            </section>
+
+
+            <!-- ================= POSTS LIST ================= -->
+            <section class="communication-card">
+
+                <div class="form-heading">
+                    <h2>Security Posts</h2>
+                    <p>Current security posts registered in the system.</p>
+                </div>
+
+                <div class="admin-list-filters">
+                    <label for="postSearch" class="visually-hidden">Search security posts</label>
+                    <input id="postSearch" type="search" placeholder="Search post, client, location...">
+                    <label for="postStatusFilter" class="visually-hidden">Filter by post status</label>
+                    <select id="postStatusFilter">
+                        <option value="">All statuses</option>
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="Suspended">Suspended</option>
+                    </select>
+                    <label for="postClientFilter" class="visually-hidden">Filter by client</label>
+                    <select id="postClientFilter">
+                        <option value="">All clients</option>
+                    </select>
+                </div>
+
+                <div id="postsList" class="communication-history"></div>
+
+            </section>
+
+            </div>
+
+        </main>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="../auth/guard.js"></script>
+    <script type="module" src="./posts.js"></script>
+
+</body>
+
+</html>

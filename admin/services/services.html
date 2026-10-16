@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services | VAST Admin</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <div class="admin-brand">
+                <img src="../../assests/images/VAST LOGO.png" alt="VAST Logo">
+                <div><strong>VAST</strong><span>ADMIN</span></div>
+            </div>
+            <nav class="admin-nav" aria-label="Admin navigation">
+                <a href="../dashboard.html">Dashboard</a>
+                <a href="../administrators/administrators.html">Administrators</a>
+                <a href="../posts/posts.html">Guard Posts</a>
+                <a href="../clients/clients.html">Clients</a>
+                <a href="../officers/officers.html">Officers</a>
+                <a href="../recruitment/recruitment.html">Recruitment</a>
+                <a href="../shortlist/shortlist.html">Shortlist</a>
+                <a href="../communication/communication.html">Communication</a>
+                <a href="../messages/messages.html">Messages</a>
+                <a href="services.html" class="active" aria-current="page">Services</a>
+                <a href="../auditlog/auditlog.html">Audit Log</a>
+                <a href="../settings/settings.html">Settings</a>
+            </nav>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </aside>
+        <main class="admin-main">
+            <header class="admin-header">
+                <div>
+                    <h1>Website Services</h1>
+                    <p>Manage the service cards displayed on the public Services page.</p>
+                </div>
+                <button type="button" class="secondary-btn" id="refreshServicesBtn">Refresh</button>
+            </header>
+            <section class="admin-section">
+                <div class="section-heading">
+                    <div><h2 id="serviceFormHeading">Add Service</h2><p>Only active services appear on the public website.</p></div>
+                </div>
+                <form id="serviceForm">
+                    <input type="hidden" id="serviceId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="serviceTitle">Title *</label>
+                            <input id="serviceTitle" maxlength="120" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="serviceIcon">Font Awesome icon name</label>
+                            <input id="serviceIcon" value="fa-shield-halved" maxlength="80" placeholder="fa-shield-halved">
+                        </div>
+                        <div class="form-group">
+                            <label for="serviceOrder">Display order</label>
+                            <input id="serviceOrder" type="number" min="0" step="1" value="0">
+                        </div>
+                        <div class="form-group service-active-field">
+                            <span class="settings-field-label">Website visibility</span>
+                            <label class="service-checkbox-label" for="serviceActive">
+                                <input id="serviceActive" type="checkbox" checked>
+                                Show on public website
+                            </label>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="serviceDescription">Description *</label>
+                            <textarea id="serviceDescription" maxlength="2000" rows="4" required></textarea>
+                        </div>
+                    </div>
+                    <p id="serviceFormStatus" class="form-message" role="status" aria-live="polite"></p>
+                    <div class="modal-actions">
+                        <button type="button" class="secondary-btn" id="cancelServiceEditBtn" hidden>Cancel Edit</button>
+                        <button type="submit" class="primary-btn" id="saveServiceBtn">Add Service</button>
+                    </div>
+                </form>
+            </section>
+            <section class="admin-section services-list-section">
+                <div class="section-heading">
+                    <div><h2>Current Services</h2><p>Changes are published to the public Services page.</p></div>
+                </div>
+                <p id="servicesStatus" class="form-message" role="status" aria-live="polite"></p>
+                <div class="officer-table-wrapper">
+                    <table class="officer-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Order</th>
+                                <th scope="col">Service</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Visibility</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="servicesTableBody">
+                            <tr><td colspan="5">Loading services…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="../auth/guard.js"></script>
+    <script type="module" src="./services.js"></script>
+</body>
+</html>

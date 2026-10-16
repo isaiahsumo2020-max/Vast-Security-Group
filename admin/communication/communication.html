@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Recruitment Management | VAST</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+
+    <!-- Shared Admin CSS -->
+    <link rel="stylesheet" href="../css/dashboard.css">
+
+</head>
+
+
+<body>
+
+    <div class="admin-layout">
+
+
+        <!-- ==========================
+         SIDEBAR
+    =========================== -->
+
+        <aside class="admin-sidebar">
+
+
+            <div class="admin-brand">
+
+                <img src="../../assests/images/VAST LOGO.png" alt="VAST Logo">
+
+
+                <div>
+
+                    <strong>VAST</strong>
+
+                    <span>ADMIN</span>
+
+                </div>
+
+            </div>
+
+
+            <nav class="admin-nav">
+
+                <a href="../dashboard.html">
+                    Dashboard
+                </a>
+
+                <a href="../administrators/administrators.html">
+                    Administrators
+                </a>
+
+                <a href="../posts/posts.html">
+                    Guard Posts
+                </a>
+                <a href="../clients/clients.html">
+                    Clients
+                </a>
+
+                <a href="../officers/officers.html">
+                    Officers
+                </a>
+
+
+                <a href="../recruitment/recruitment.html">
+                    Recruitment
+                </a>
+
+                <a href="../shortlist/shortlist.html">
+                    Shortlist
+                </a>
+
+                <a href="../communication/communication.html" class="active">
+                    Communication
+                </a>
+
+
+                <a href="../messages/messages.html">
+                    Messages
+                </a>
+
+                <a href="../services/services.html">
+                    Services
+                </a>
+
+                <a href="../auditlog/auditlog.html">
+                    Audit Log
+                </a>
+
+                <a href="../settings/settings.html">Settings</a>
+
+
+            </nav>
+
+
+            <button id="logoutBtn" class="logout-btn">
+                Logout
+            </button>
+
+
+        </aside>
+
+
+        <main class="dashboard-main">
+
+            <div class="dashboard-container">
+
+
+                <!-- PAGE HEADER -->
+
+                <div class="dashboard-page-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            Recruitment Management
+                        </span>
+
+                        <h1>
+                            Recruitment Communication
+                        </h1>
+
+                        <p>
+                            Manage applicant interviews, training schedules
+                            and recruitment communication.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- APPLICANT SELECTION -->
+
+                <div class="communication-card">
+
+
+                    <div class="form-group">
+
+                        <label for="communicationApplicant">
+
+                            Select Applicant
+
+                        </label>
+
+
+                        <select id="communicationApplicant">
+
+                            <option value="">
+
+                                Select an applicant
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- COMMUNICATION FORM -->
+
+                <div class="communication-card">
+
+                    <h2>
+
+                        Create Communication
+
+                    </h2>
+
+
+                    <form id="communicationForm">
+
+
+                        <div class="
+                        communication-form-grid
+                    ">
+
+
+                            <!-- TYPE -->
+
+                            <div class="form-group">
+
+                                <label for="communicationType">
+
+                                    Communication Type
+
+                                </label>
+
+
+                                <select id="communicationType" required>
+
+                                    <option value="">
+
+                                        Select Type
+
+                                    </option>
+
+
+                                    <option value="Interview">
+
+                                        Interview
+
+                                    </option>
+
+
+                                    <option value="Training">
+
+                                        Training
+
+                                    </option>
+
+
+                                    <option value="General">
+
+                                        General Communication
+
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+
+                            <!-- DATE -->
+
+                            <div class="form-group">
+
+                                <label for="scheduledDate">
+
+                                    Scheduled Date & Time
+
+                                </label>
+
+
+                                <input type="datetime-local" id="scheduledDate">
+
+                            </div>
+
+
+
+                            <!-- LOCATION -->
+
+                            <div class="
+                            form-group
+                            communication-full-width
+                        ">
+
+                                <label for="communicationLocation">
+
+                                    Location
+
+                                </label>
+
+
+                                <input type="text" id="communicationLocation" placeholder="
+Office, training ground or other location
+">
+
+                            </div>
+
+
+
+                            <!-- CONTACT METHOD -->
+
+                            <div class="form-group">
+
+                                <label for="contactMethod">
+
+                                    Contact Method
+
+                                </label>
+
+
+                                <select id="contactMethod">
+
+                                    <option value="">
+
+                                        Select Method
+
+                                    </option>
+
+
+                                    <option value="Phone">
+
+                                        Phone Call
+
+                                    </option>
+
+
+                                    <option value="WhatsApp">
+
+                                        WhatsApp
+
+                                    </option>
+
+
+                                    <option value="Email">
+
+                                        Email
+
+                                    </option>
+
+
+                                    <option value="SMS">
+
+                                        SMS
+
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+
+                            <!-- CONTACT STATUS -->
+
+                            <div class="form-group">
+
+                                <label for="contactStatus">
+
+                                    Contact Status
+
+                                </label>
+
+
+                                <select id="contactStatus">
+
+                                    <option value="Not Contacted">
+
+                                        Not Contacted
+
+                                    </option>
+
+
+                                    <option value="Contacted">
+
+                                        Contacted
+
+                                    </option>
+
+
+                                    <option value="Confirmed">
+
+                                        Confirmed
+
+                                    </option>
+
+
+                                    <option value="No Response">
+
+                                        No Response
+
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+
+                            <!-- MESSAGE -->
+
+                            <div class="
+                            form-group
+                            communication-full-width
+                        ">
+
+                                <label for="communicationMessage">
+
+                                    Communication Details
+
+                                </label>
+
+
+                                <textarea id="communicationMessage" rows="5" placeholder="
+Enter interview instructions, training information or other communication...
+"></textarea>
+
+                            </div>
+
+
+
+                            <!-- ADMIN NOTES -->
+
+                            <div class="
+                            form-group
+                            communication-full-width
+                        ">
+
+                                <label for="communicationAdminNotes">
+
+                                    Internal Notes
+
+                                </label>
+
+
+                                <textarea id="communicationAdminNotes" rows="4" placeholder="
+Private notes for VAST management...
+"></textarea>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <button type="submit" class="save-application-btn" id="saveCommunicationBtn">
+
+                            Save Communication
+
+                        </button>
+
+
+                        <p id="communicationMessageStatus" class="application-save-message"></p>
+
+
+                    </form>
+
+                </div>
+
+
+
+                <!-- COMMUNICATION HISTORY -->
+
+                <div class="communication-card">
+
+                    <h2>
+
+                        Communication History
+
+                    </h2>
+
+
+                    <div id="communicationHistory" class="communication-history">
+
+                        Select an applicant to view
+                        communication history.
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </main>
+
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <script type="module" src="../auth/guard.js"></script>
+        <script type="module" src="communication.js"></script>
+    </div>
+</body>
+
+</html>

@@ -1,398 +1,468 @@
-// Officials
+// import { getOfficers } from "../../backend/officers/getOfficers.js";
+// import {
+//     saveOfficers,
+//     getCachedOfficers
+// } from "../../backend/services/cache.js";
 
-const officers = [
+// let officers = [];
 
-{
-id:"VSG-2026-001",
+// async function loadOfficers() {
 
-name:"Moses Sumo",
+//     try {
 
-position:"Chief Executive Officer",
+//         const data = await getOfficers();
 
-department:"Executive",
+//         if (data.length > 0) {
 
-employment:"Full-Time",
+//             officers = data.map(officer => ({
 
-status:"Verified Active",
+//                 id: officer.officer_id,
 
-issueDate:"15 July 2026",
+//                 name: officer.name,
 
-expiryDate:"31 July 2028",
+//                 position: officer.position,
 
-photo:"/assests/images/officers/CEO.png"
-},
+//                 department: officer.department,
 
-{
-id:"VSG-2026-002",
+//                 employment: officer.employment,
 
-name:"Levi B. Sendolo",
+//                 status: officer.status,
 
-position:"Co. CEO",
+//                 issueDate: officer.issueDate,
 
-department:"Executive",
+//                 expiryDate: officer.expiryDate,
 
-employment:"Full-Time",
+//                 photo: officer.photo
 
-status:"Verified Active",
+//             }));
 
-issueDate:"20 July 2026",
+//             saveOfficers(officers);
 
-expiryDate:"20 July 2028",
+//             console.log("✔ Officers loaded from Supabase");
 
-photo:"/assests/images/officers/Co-CEO.png"
-},
+//         } else {
 
-{
-id:"VSG-2026-003",
+//             throw new Error("No officers found.");
 
-name:"Isaiah N. B. Sumo",
+//         }
 
-position:"Administrictor",
+//     } catch (error) {
 
-department:"Operations",
+//         console.warn("⚠ Supabase unavailable. Using Offline Cache.");
 
-employment:"Full-Time",
+//         officers = getCachedOfficers();
 
-status:"Verified Active",
+//     }
 
-issueDate:"20 July 2026",
+// }
 
-expiryDate:"20 July 2028",
+// window.addEventListener("DOMContentLoaded", async () => {
 
-photo:"/assests/images/officers/Isaiah N Sumo.jpg"
-},
+//     await loadOfficers();
 
+//     console.log("Verification System Ready");
 
+// });
 
-// Officers
-{
-id:"VSG-2026-0010",
 
-name:"Elijah Paye",
 
-position:"Officer",
+// // Verification
 
-department:"Operations",
+// const searchBtn=document.getElementById("verifyBtn");
 
-employment:"Full-Time",
+// const officerInput=document.getElementById("officerID");
 
-status:"Verified Active",
+// const resultBox=document.getElementById("resultBox");
 
-issueDate:"20 July 2026",
+// const notFoundBox=document.getElementById("notFoundBox");
 
-expiryDate:"20 July 2028",
 
-photo:"/assests/images/officers/Officer Elijah.png"
-},
 
-{
-id:"VSG-2026-0011",
+// // Event Listener
+// searchBtn.addEventListener("click",verifyOfficer);
 
-name:"Bequizzy N. Sumo",
 
-position:"Officer",
+// // verification function
+// function verifyOfficer(){
 
-department:"Operations",
+// const id=officerInput.value.trim().toUpperCase();
 
-employment:"Full-Time",
+// const officer=officers.find(
 
-status:"Verified Active",
+// o=>o.id.toUpperCase()===id
 
-issueDate:"20 July 2026",
+// );
 
-expiryDate:"20 July 2028",
+// if(officer){
 
-photo:"/assests/images/officers/officer2.jpg"
-},
-{
-id:"VSG-2026-0012",
+// showOfficer(officer);
 
-name:"Bequizzy N. Sumo",
+// }else{
 
-position:"Officer",
+// showNotFound();
 
-department:"Operations",
+// }
 
-employment:"Full-Time",
+// }
 
-status:"Verified Active",
 
-issueDate:"20 July 2026",
+// // Display result
 
-expiryDate:"20 July 2028",
+// function showOfficer(officer){
 
-photo:"/assests/images/officers/officer2.jpg"
-},
-{
-id:"VSG-2026-0013",
+// setSectionVisibility(resultBox, true);
+// setSectionVisibility(notFoundBox, false);
 
-name:"Bequizzy N. Sumo",
+// resultBox.classList.add("show");
+// notFoundBox.classList.remove("show");
 
-position:"Officer",
+// document.getElementById("officerPhoto").src=officer.photo;
 
-department:"Operations",
+// document.getElementById("officerName").textContent=officer.name;
 
-employment:"Full-Time",
+// document.getElementById("officerId").textContent=officer.id;
 
-status:"Verified Active",
+// document.getElementById("officerPosition").textContent=officer.position;
 
-issueDate:"20 July 2026",
+// document.getElementById("officerDepartment").textContent=officer.department;
 
-expiryDate:"20 July 2028",
+// document.getElementById("officerEmployment").textContent =officer.employment;
 
-photo:"/assests/images/officers/officer2.jpg"
-},
-{
-id:"VSG-2026-0014",
+// document.getElementById("officerIssue").textContent=officer.issueDate;
 
-name:"Bequizzy N. Sumo",
+// document.getElementById("officerExpiry").textContent=officer.expiryDate;
 
-position:"Officer",
 
-department:"Operations",
+// const badge = document.getElementById("officerStatus");
 
-employment:"Full-Time",
+// badge.textContent = officer.status;
 
-status:"Verified Active",
+// badge.className = "status-badge";
 
-issueDate:"20 July 2026",
+// switch(officer.status){
 
-expiryDate:"20 July 2028",
+//     case "Verified Active":
 
-photo:"/assests/images/officers/officer2.jpg"
-},
-{
-id:"VSG-2026-0015",
+//         badge.style.background = "#198754";
 
-name:"Bequizzy N. Sumo",
+//         break;
 
-position:"Officer",
+//     case "Suspended":
 
-department:"Operations",
+//         badge.style.background = "#FFC107";
 
-employment:"Full-Time",
+//         badge.style.color = "#000";
 
-status:"Verified Active",
+//         break;
 
-issueDate:"20 July 2026",
+//     case "Expired":
 
-expiryDate:"20 July 2028",
+//         badge.style.background = "#DC3545";
 
-photo:"/assests/images/officers/officer2.jpg"
-},
-{
-id:"VSG-2026-0016",
+//         break;
 
-name:"Bequizzy N. Sumo",
+//     default:
 
-position:"Officer",
+//         badge.style.background = "#6C757D";
 
-department:"Operations",
+// }
 
-employment:"Full-Time",
 
-status:"Verified Active",
+// const now = new Date();
+// document.getElementById("verifyTime").textContent =now.toLocaleString();
 
-issueDate:"20 July 2026",
+// document.getElementById("referenceNo").textContent =
+// "VSG-" + Date.now();
 
-expiryDate:"20 July 2028",
+// resultBox.scrollIntoView({
 
-photo:"/assests/images/officers/officer2.jpg"
-},
-{
-id:"VSG-2026-0017",
+// behavior:"smooth"
 
-name:"Bequizzy N. Sumo",
+// });
 
-position:"Officer",
+// }
 
-department:"Operations",
 
-employment:"Full-Time",
+// // Officer not found
+// function showNotFound(){
 
-status:"Verified Active",
+// setSectionVisibility(notFoundBox, true);
+// setSectionVisibility(resultBox, false);
 
-issueDate:"20 July 2026",
+// notFoundBox.classList.add("show");
+// resultBox.classList.remove("show");
 
-expiryDate:"20 July 2028",
+// notFoundBox.scrollIntoView({
 
-photo:"/assests/images/officers/officer2.jpg"
-},
-{
-id:"VSG-2026-0018",
+// behavior:"smooth"
 
-name:"Bequizzy N. Sumo",
+// });
 
-position:"Officer",
+// }
 
-department:"Operations",
+// function setSectionVisibility(section, isVisible){
 
-employment:"Full-Time",
+// section.style.display = isVisible ? "block" : "none";
 
-status:"Verified Active",
+// section.classList.toggle("show", isVisible);
 
-issueDate:"20 July 2026",
+// }
 
-expiryDate:"20 July 2028",
 
-photo:"/assests/images/officers/officer2.jpg"
-}
+// // Enter key suport
+// officerInput.addEventListener("keypress",function(e){
 
-];
+// if(e.key==="Enter"){
 
+// verifyOfficer();
 
+// }
 
+// });
 
-// Verification 
 
-const searchBtn=document.getElementById("verifyBtn");
 
-const officerInput=document.getElementById("officerID");
 
-const resultBox=document.getElementById("resultBox");
 
-const notFoundBox=document.getElementById("notFoundBox");
 
-// Event Listener
+// // Officials
 
-searchBtn.addEventListener("click",verifyOfficer);
+// // const officers = [
 
+// // {
+// // id:"VSG-2026-001",
 
-// verification function 
-function verifyOfficer(){
+// // name:"Moses Sumo",
 
-const id=officerInput.value.trim().toUpperCase();
+// // position:"Chief Executive Officer",
 
-const officer=officers.find(
+// // department:"Executive",
 
-o=>o.id.toUpperCase()===id
+// // employment:"Full-Time",
 
-);
+// // status:"Verified Active",
 
-if(officer){
+// // issueDate:"15 July 2026",
 
-showOfficer(officer);
+// // expiryDate:"31 July 2028",
 
-}else{
+// // photo:"/assests/images/officers/CEO.png"
+// // },
 
-showNotFound();
+// // {
+// // id:"VSG-2026-002",
 
-}
+// // name:"Levi B. Sendolo",
 
-}
+// // position:"Co. CEO",
 
+// // department:"Executive",
 
+// // employment:"Full-Time",
 
-// Display result 
+// // status:"Verified Active",
 
-function showOfficer(officer){
+// // issueDate:"20 July 2026",
 
-setSectionVisibility(resultBox, true);
-setSectionVisibility(notFoundBox, false);
+// // expiryDate:"20 July 2028",
 
-resultBox.classList.add("show");
-notFoundBox.classList.remove("show");
+// // photo:"/assests/images/officers/Co-CEO.png"
+// // },
 
-document.getElementById("officerPhoto").src=officer.photo;
+// // {
+// // id:"VSG-2026-003",
 
-document.getElementById("officerName").textContent=officer.name;
+// // name:"Isaiah N. B. Sumo",
 
-document.getElementById("officerId").textContent=officer.id;
+// // position:"Administrictor",
 
-document.getElementById("officerPosition").textContent=officer.position;
+// // department:"Operations",
 
-document.getElementById("officerDepartment").textContent=officer.department;
+// // employment:"Full-Time",
 
-document.getElementById("officerEmployment").textContent =officer.employment;
+// // status:"Verified Active",
 
-document.getElementById("officerIssue").textContent=officer.issueDate;
+// // issueDate:"20 July 2026",
 
-document.getElementById("officerExpiry").textContent=officer.expiryDate;
+// // expiryDate:"20 July 2028",
 
+// // photo:"/assests/images/officers/Isaiah N Sumo.jpg"
+// // },
 
-const badge = document.getElementById("officerStatus");
 
-badge.textContent = officer.status;
 
-badge.className = "status-badge";
+// // // Officers
+// // {
+// // id:"VSG-2026-0010",
 
-switch(officer.status){
+// // name:"Elijah Paye",
 
-    case "Verified Active":
+// // position:"Officer",
 
-        badge.style.background = "#198754";
+// // department:"Operations",
 
-        break;
+// // employment:"Full-Time",
 
-    case "Suspended":
+// // status:"Verified Active",
 
-        badge.style.background = "#FFC107";
+// // issueDate:"20 July 2026",
 
-        badge.style.color = "#000";
+// // expiryDate:"20 July 2028",
 
-        break;
+// // photo:"/assests/images/officers/Officer Elijah.png"
+// // },
 
-    case "Expired":
+// // {
+// // id:"VSG-2026-0011",
 
-        badge.style.background = "#DC3545";
+// // name:"Bequizzy N. Sumo",
 
-        break;
+// // position:"Officer",
 
-    default:
+// // department:"Operations",
 
-        badge.style.background = "#6C757D";
+// // employment:"Full-Time",
 
-}
+// // status:"Verified Active",
 
+// // issueDate:"20 July 2026",
 
-const now = new Date();
-document.getElementById("verifyTime").textContent =now.toLocaleString();
+// // expiryDate:"20 July 2028",
 
-document.getElementById("referenceNo").textContent =
-"VSG-" + Date.now();
+// // photo:"/assests/images/officers/officer2.jpg"
+// // },
+// // {
+// // id:"VSG-2026-0012",
 
-resultBox.scrollIntoView({
+// // name:"Bequizzy N. Sumo",
 
-behavior:"smooth"
+// // position:"Officer",
 
-});
+// // department:"Operations",
 
-}
+// // employment:"Full-Time",
 
+// // status:"Verified Active",
 
-// Officer not found 
-function showNotFound(){
+// // issueDate:"20 July 2026",
 
-setSectionVisibility(notFoundBox, true);
-setSectionVisibility(resultBox, false);
+// // expiryDate:"20 July 2028",
 
-notFoundBox.classList.add("show");
-resultBox.classList.remove("show");
+// // photo:"/assests/images/officers/officer2.jpg"
+// // },
+// // {
+// // id:"VSG-2026-0013",
 
-notFoundBox.scrollIntoView({
+// // name:"Bequizzy N. Sumo",
 
-behavior:"smooth"
+// // position:"Officer",
 
-});
+// // department:"Operations",
 
-}
+// // employment:"Full-Time",
 
-function setSectionVisibility(section, isVisible){
+// // status:"Verified Active",
 
-section.style.display = isVisible ? "block" : "none";
+// // issueDate:"20 July 2026",
 
-section.classList.toggle("show", isVisible);
+// // expiryDate:"20 July 2028",
 
-}
+// // photo:"/assests/images/officers/officer2.jpg"
+// // },
+// // {
+// // id:"VSG-2026-0014",
 
+// // name:"Bequizzy N. Sumo",
 
-// Enter key suport
-officerInput.addEventListener("keypress",function(e){
+// // position:"Officer",
 
-if(e.key==="Enter"){
+// // department:"Operations",
 
-verifyOfficer();
+// // employment:"Full-Time",
 
-}
+// // status:"Verified Active",
 
-});
+// // issueDate:"20 July 2026",
+
+// // expiryDate:"20 July 2028",
+
+// // photo:"/assests/images/officers/officer2.jpg"
+// // },
+// // {
+// // id:"VSG-2026-0015",
+
+// // name:"Bequizzy N. Sumo",
+
+// // position:"Officer",
+
+// // department:"Operations",
+
+// // employment:"Full-Time",
+
+// // status:"Verified Active",
+
+// // issueDate:"20 July 2026",
+
+// // expiryDate:"20 July 2028",
+
+// // photo:"/assests/images/officers/officer2.jpg"
+// // },
+// // {
+// // id:"VSG-2026-0016",
+
+// // name:"Bequizzy N. Sumo",
+
+// // position:"Officer",
+
+// // department:"Operations",
+
+// // employment:"Full-Time",
+
+// // status:"Verified Active",
+
+// // issueDate:"20 July 2026",
+
+// // expiryDate:"20 July 2028",
+
+// // photo:"/assests/images/officers/officer2.jpg"
+// // },
+// // {
+// // id:"VSG-2026-0017",
+
+// // name:"Bequizzy N. Sumo",
+
+// // position:"Officer",
+
+// // department:"Operations",
+
+// // employment:"Full-Time",
+
+// // status:"Verified Active",
+
+// // issueDate:"20 July 2026",
+
+// // expiryDate:"20 July 2028",
+
+// // photo:"/assests/images/officers/officer2.jpg"
+// // },
+// // {
+// // id:"VSG-2026-0018",
+
+// // name:"Bequizzy N. Sumo",
+
+// // position:"Officer",
+
+// // department:"Operations",
+
+// // employment:"Full-Time",
+
+// // status:"Verified Active",
+
+// // issueDate:"20 July 2026",
+
+// // expiryDate:"20 July 2028",
+
+// // photo:"/assests/images/officers/officer2.jpg"
+// // }
+
+// // ];

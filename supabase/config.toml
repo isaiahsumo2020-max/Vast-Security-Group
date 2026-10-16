@@ -1,0 +1,4 @@
+project_id = "vast-security-group"
+
+[functions.admin-api]
+verify_jwt = false

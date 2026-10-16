@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VAST Admin Dashboard</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+
+    <link rel="stylesheet" href="css/dashboard.css">
+
+</head>
+
+<body>
+
+    <div class="admin-layout">
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="admin-sidebar">
+
+            <div class="admin-brand">
+
+                <img src="../assests/images/VAST LOGO.png" alt="VAST Logo">
+
+                <div>
+
+                    <strong>VAST</strong>
+
+                    <span>ADMIN</span>
+
+                </div>
+
+            </div>
+
+
+            <nav class="admin-nav">
+
+                <a href="dashboard.html" class="active">
+                    Dashboard
+                </a>
+
+                <a href="administrators/administrators.html">
+                    Administrators
+                </a>
+
+                <a href="posts/posts.html">
+                    Guard Posts
+                </a>
+                <a href="clients/clients.html">
+                    Clients
+                </a>
+
+                <a href="officers/officers.html">
+                    Officers
+                </a>
+
+                <a href="recruitment/recruitment.html">
+                    Recruitment
+                </a>
+
+                <a href="shortlist/shortlist.html">
+                    Shortlist
+                </a>
+
+                <a href="communication/communication.html">
+                    Communication
+                </a>
+
+                <a href="messages/messages.html">
+                    Messages
+                </a>
+
+                <a href="services/services.html">
+                    Services
+                </a>
+
+                <a href="auditlog/auditlog.html">
+                    Audit Log
+                </a>
+
+                <a href="settings/settings.html">
+                    Settings
+                </a>
+
+            </nav>
+
+
+            <button id="logoutBtn" class="logout-btn">
+                Logout
+            </button>
+
+        </aside>
+
+
+        <!-- MAIN CONTENT -->
+
+        <main class="admin-main">
+
+
+            <header class="admin-header">
+
+                <div>
+
+                    <h1>Dashboard</h1>
+
+                    <p>
+                        VAST Security Group Administration
+                    </p>
+
+                </div>
+
+            </header>
+
+
+            <!-- STATISTICS -->
+
+            <section class="dashboard-stats">
+
+                <div class="stat-card">
+
+                    <span>Total Officers</span>
+
+                    <strong id="totalOfficers">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>Active Officers</span>
+
+                    <strong id="activeOfficers">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>Pending Applications</span>
+
+                    <strong id="pendingApplications">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>Messages</span>
+
+                    <strong id="totalMessages">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>Total Security Posts</span>
+
+                    <strong id="totalSecurityPosts">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>Active Security Posts</span>
+
+                    <strong id="activeSecurityPosts">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>Required Officers</span>
+
+                    <strong id="requiredPostOfficers">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>Deployed Officers</span>
+
+                    <strong id="deployedPostOfficers">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>Vacant Positions</span>
+
+                    <strong id="vacantPostPositions">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <span>Deployment Coverage</span>
+
+                    <strong id="deploymentCoverage">
+                        0%
+                    </strong>
+
+                </div>
+
+            </section>
+
+
+            <!-- OFFICERS -->
+
+            <section id="officers" class="admin-section">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <h2>Officer Management</h2>
+
+                        <p>
+                            Manage VAST security personnel.
+                        </p>
+
+                    </div>
+
+
+                    <button id="addOfficerBtn" class="primary-btn">
+                        + Add Officer
+                    </button>
+
+                </div>
+
+
+
+                <!-- ==========================
+     OFFICER CONTROLS
+=========================== -->
+
+                <div class="officer-controls">
+
+                    <div class="officer-search">
+
+                        <input type="search" id="officerSearch" placeholder="Search by name, officer ID or position...">
+
+                    </div>
+
+
+                    <select id="statusFilter">
+
+                        <option value="">
+                            All Statuses
+                        </option>
+
+                        <option value="Verified Active">
+                            Verified Active
+                        </option>
+
+                        <option value="Suspended">
+                            Suspended
+                        </option>
+
+                        <option value="Expired">
+                            Expired
+                        </option>
+
+                        <option value="Inactive">
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="officer-table-wrapper">
+
+                    <table class="officer-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Officer ID</th>
+
+                                <th>Officer</th>
+
+                                <th>Position</th>
+
+                                <th>Department</th>
+
+                                <th>Status</th>
+
+                                <th>Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="officerTableBody">
+
+                            <!-- Officers loaded here -->
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==========================
+     ADD OFFICER MODAL
+=========================== -->
+
+            <div class="admin-modal" id="officerModal">
+
+                <div class="modal-content">
+
+                    <div class="modal-header">
+
+                        <div>
+                            <h2>Add New Officer</h2>
+                            <p>Create a new VAST officer record.</p>
+                        </div>
+
+                        <button type="button" class="modal-close" id="closeOfficerModal">
+                            &times;
+                        </button>
+
+                    </div>
+
+
+                    <form id="officerForm">
+
+                        <div class="form-grid">
+
+                            <div class="form-group full-width">
+
+                                <label for="officerName">
+                                    Full Name *
+                                </label>
+
+                                <input type="text" id="officerName" required>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="officerPhone">
+                                    Phone Number
+                                </label>
+
+                                <input type="tel" id="officerPhone">
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="officerEmail">
+                                    Email Address
+                                </label>
+
+                                <input type="email" id="officerEmail">
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="officerGender">
+                                    Gender
+                                </label>
+
+                                <select id="officerGender">
+
+                                    <option value="">
+                                        Select Gender
+                                    </option>
+
+                                    <option value="Male">
+                                        Male
+                                    </option>
+
+                                    <option value="Female">
+                                        Female
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="officerPosition">
+                                    Position *
+                                </label>
+
+                                <input type="text" id="officerPosition" placeholder="Security Officer" required>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="officerDepartment">
+                                    Department
+                                </label>
+
+                                <input type="text" id="officerDepartment" placeholder="Operations">
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="officerEmployment">
+                                    Employment Type
+                                </label>
+
+                                <select id="officerEmployment">
+
+                                    <option value="">
+                                        Select Type
+                                    </option>
+
+                                    <option value="Full-Time">
+                                        Full-Time
+                                    </option>
+
+                                    <option value="Part-Time">
+                                        Part-Time
+                                    </option>
+
+                                    <option value="Contract">
+                                        Contract
+                                    </option>
+                                    <option value="probation">
+                                        Probation
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="officerStatus">
+                                    Status
+                                </label>
+
+                                <select id="officerStatus">
+
+                                    <option value="Verified Active">
+                                        Verified Active
+                                    </option>
+
+                                    <option value="Suspended">
+                                        Suspended
+                                    </option>
+
+                                    <option value="Expired">
+                                        Expired
+                                    </option>
+
+                                    <option value="Inactive">
+                                        Inactive
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="officerIssueDate">
+                                    Issue Date
+                                </label>
+
+                                <input type="date" id="officerIssueDate">
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="officerExpiryDate">
+                                    Expiry Date
+                                </label>
+
+                                <input type="date" id="officerExpiryDate">
+
+                            </div>
+
+
+                            <div class="form-group full-width">
+
+                                <label for="officerPhoto">
+                                    Officer Photo
+                                </label>
+
+                                <input type="file" id="officerPhoto" accept="image/*">
+                                <img
+                                    id="officerPhotoPreview"
+                                    class="officer-photo-preview"
+                                    alt="Officer photo preview"
+                                    hidden
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="modal-actions">
+
+                            <button type="button" class="secondary-btn" id="cancelOfficerBtn">
+                                Cancel
+                            </button>
+
+                            <button type="submit" class="primary-btn" id="saveOfficerBtn">
+                                Save Officer
+                            </button>
+
+                        </div>
+
+
+                        <p id="officerFormMessage" class="form-message"></p>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+
+        </main>
+
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="auth/guard.js"></script>
+    <script type="module" src="js/dashboard.js"></script>
+
+</body>
+
+</html>

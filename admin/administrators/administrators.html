@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Administrators | VAST Security Group</title>
+
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="admin-sidebar">
+
+        <div class="admin-brand">
+
+            <img src="../../assests/images/VAST LOGO.png" alt="VAST Logo">
+
+            <div>
+
+                <strong>VAST</strong>
+
+                <span>ADMIN</span>
+
+            </div>
+
+        </div>
+
+
+        <nav class="admin-nav">
+
+            <a href="../dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="administrators.html" class="active">
+                Administrators
+            </a>
+            <a href="../posts/posts.html">
+                Guard Posts
+            </a>
+            <a href="../clients/clients.html">
+                Clients
+            </a>
+
+            <a href="../officers/officers.html">
+                Officers
+            </a>
+
+            <a href="../recruitment/recruitment.html">
+                Recruitment
+            </a>
+
+            <a href="../shortlist/shortlist.html">
+                Shortlist
+            </a>
+
+            <a href="../communication/communication.html">
+                Communication
+            </a>
+
+            <a href="../messages/messages.html">
+                Messages
+            </a>
+
+            <a href="../services/services.html">
+                Services
+            </a>
+
+            <a href="../auditlog/auditlog.html">
+                Audit Log
+            </a>
+
+            <a href="../settings/settings.html">
+                Settings
+            </a>
+
+        </nav>
+
+
+        <button id="logoutBtn" class="logout-btn">
+            Logout
+        </button>
+
+    </aside>
+
+
+
+
+    <main class="dashboard-main">
+
+        <div class="dashboard-header">
+            <div>
+                <h1>Administrators</h1>
+                <p>Manage VAST Security Group administrators and access permissions.</p>
+            </div>
+            <button type="button" class="primary-btn" id="addAdministratorBtn"
+                aria-controls="createAdministratorSection" aria-expanded="false">
+                Add Administrator
+            </button>
+        </div>
+
+        <section class="dashboard-stats" aria-label="Administrator account statistics">
+            <div class="stat-card"><span>Total Administrators</span><strong id="totalAdministratorsStat">0</strong></div>
+            <div class="stat-card"><span>Active</span><strong id="activeAdministratorsStat">0</strong></div>
+            <div class="stat-card"><span>Inactive</span><strong id="inactiveAdministratorsStat">0</strong></div>
+            <div class="stat-card"><span>Super Admins</span><strong id="superAdministratorsStat">0</strong></div>
+        </section>
+
+        <!-- CREATE ADMINISTRATOR -->
+
+        <section class="communication-card admin-form-panel" id="createAdministratorSection" hidden>
+
+            <div class="form-heading">
+                <h2>Create Administrator</h2>
+                <p>Add a new administrator account and assign their access level.</p>
+            </div>
+            <button type="button" class="dashboard-btn admin-form-close" id="closeAdministratorFormBtn">
+                Cancel
+            </button>
+
+
+            <form id="administratorForm">
+
+                <div class="communication-form-grid">
+
+                    <div class="form-group">
+                        <label for="adminFullName">
+                            Full Name
+                        </label>
+
+                        <input type="text" id="adminFullName" required>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="adminEmail">
+                            Email Address
+                        </label>
+
+                        <input type="email" id="adminEmail" required>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="adminPassword">
+                            Temporary Password
+                        </label>
+
+                        <input type="password" id="adminPassword" minlength="8" required>
+                        <button
+                        type="button"
+                        id="togglePassword"
+                        class="password-toggle"
+                        aria-controls="adminPassword"
+                        aria-pressed="false"
+                    >
+                        Show
+                    </button>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="adminPhone">
+                            Phone
+                        </label>
+
+                        <input type="text" id="adminPhone">
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="adminDepartment">
+                            Department
+                        </label>
+
+                        <input type="text" id="adminDepartment" placeholder="e.g. Human Resources">
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="adminRole">
+                            Administrator Role
+                        </label>
+
+                        <select id="adminRole" required>
+
+                            <option value="">
+                                Select Role
+                            </option>
+
+                            <option value="HR Admin">
+                                HR Admin
+                            </option>
+
+                            <option value="Recruitment Admin">
+                                Recruitment Admin
+                            </option>
+
+                            <option value="Operations Admin">
+                                Operations Admin
+                            </option>
+
+                            <option value="Security/Post Admin">
+                                Security/Post Admin
+                            </option>
+
+                            <option value="Finance Admin">
+                                Finance Admin
+                            </option>
+
+                            <option value="Custom Admin">
+                                Custom Admin
+                            </option>
+
+                        </select>
+                    </div>
+
+
+                    <div class="form-group communication-full-width" id="customPermissionsSection"
+                        style="display: none;">
+
+                        <label>
+                            Custom Permissions
+                        </label>
+
+                        <div class="communication-form-grid">
+
+                            <label>
+                                <input type="checkbox" value="officers_view" class="permission-checkbox">
+                                View Officers
+                            </label>
+
+                            <label>
+                                <input type="checkbox" value="officers_create" class="permission-checkbox">
+                                Create Officers
+                            </label>
+
+                            <label>
+                                <input type="checkbox" value="officers_edit" class="permission-checkbox">
+                                Edit Officers
+                            </label>
+
+                            <label>
+                                <input type="checkbox" value="officers_delete" class="permission-checkbox">
+                                Delete Officers
+                            </label>
+
+                            <label>
+                                <input type="checkbox" value="recruitment_view" class="permission-checkbox">
+                                View Recruitment
+                            </label>
+
+                            <label>
+                                <input type="checkbox" value="recruitment_manage" class="permission-checkbox">
+                                Manage Recruitment
+                            </label>
+
+                            <label>
+                                <input type="checkbox" value="messages_view" class="permission-checkbox">
+                                View Contact Messages
+                            </label>
+
+                            <label>
+                                <input type="checkbox" value="posts_view" class="permission-checkbox">
+                                View Security Posts
+                            </label>
+
+                            <label>
+                                <input type="checkbox" value="posts_manage" class="permission-checkbox">
+                                Manage Security Posts
+                            </label>
+
+                            <label>
+                                <input type="checkbox" value="finance_view" class="permission-checkbox">
+                                View Finance
+                            </label>
+
+                            <label>
+                                <input type="checkbox" value="finance_manage" class="permission-checkbox">
+                                Manage Finance
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="communication-full-width">
+
+                        <button type="submit" class="dashboard-btn" id="createAdministratorBtn">
+                            Create Administrator
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+
+            <div id="administratorMessageStatus" class="message-status"></div>
+
+        </section>
+
+
+        <section class="dashboard-section" id="editAdministratorSection" style="display: none;">
+
+            <div class="section-header">
+                <div>
+                    <h2>Edit Administrator</h2>
+                    <p>Update administrator information, role, status, and permissions.</p>
+                </div>
+            </div>
+
+            <form id="editAdministratorForm">
+
+                <input type="hidden" id="editAdminUserId">
+
+                <div class="communication-form-grid">
+
+                    <div class="form-group">
+                        <label for="editAdminFullName">Full Name</label>
+                        <input type="text" id="editAdminFullName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editAdminPhone">Phone</label>
+                        <input type="tel" id="editAdminPhone">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editAdminDepartment">Department</label>
+                        <input type="text" id="editAdminDepartment">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editAdminRole">Role</label>
+
+                        <select id="editAdminRole" required>
+                            <option value="">Select Role</option>
+                            <option value="Super Admin">Super Admin</option>
+                            <option value="HR Admin">HR Admin</option>
+                            <option value="Recruitment Admin">Recruitment Admin</option>
+                            <option value="Operations Admin">Operations Admin</option>
+                            <option value="Security/Post Admin">Security/Post Admin</option>
+                            <option value="Finance Admin">Finance Admin</option>
+                            <option value="Custom Admin">Custom Admin</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editAdminStatus">Status</label>
+
+                        <select id="editAdminStatus" required>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="custom-permissions-section" id="editCustomPermissionsSection" style="display: none;">
+
+                    <h3>Custom Permissions</h3>
+
+                    <div class="permissions-grid">
+
+                        <label>
+                            <input type="checkbox" class="edit-permission-checkbox" value="officers_view">
+                            View Officers
+                        </label>
+
+                        <label>
+                            <input type="checkbox" class="edit-permission-checkbox" value="officers_create">
+                            Create Officers
+                        </label>
+
+                        <label>
+                            <input type="checkbox" class="edit-permission-checkbox" value="officers_edit">
+                            Edit Officers
+                        </label>
+
+                        <label>
+                            <input type="checkbox" class="edit-permission-checkbox" value="officers_delete">
+                            Delete Officers
+                        </label>
+
+                        <label>
+                            <input type="checkbox" class="edit-permission-checkbox" value="recruitment_view">
+                            View Recruitment
+                        </label>
+
+                        <label>
+                            <input type="checkbox" class="edit-permission-checkbox" value="recruitment_manage">
+                            Manage Recruitment
+                        </label>
+
+                        <label>
+                            <input type="checkbox" class="edit-permission-checkbox" value="messages_view">
+                            View Contact Messages
+                        </label>
+
+                        <label>
+                            <input type="checkbox" class="edit-permission-checkbox" value="posts_view">
+                            View Security Posts
+                        </label>
+
+                        <label>
+                            <input type="checkbox" class="edit-permission-checkbox" value="posts_manage">
+                            Manage Security Posts
+                        </label>
+
+                        <label>
+                            <input type="checkbox" class="edit-permission-checkbox" value="finance_view">
+                            View Finance
+                        </label>
+
+                        <label>
+                            <input type="checkbox" class="edit-permission-checkbox" value="finance_manage">
+                            Manage Finance
+                        </label>
+
+                        <label>
+                            <input type="checkbox" class="edit-permission-checkbox" value="administrators_manage">
+                            Manage Administrators
+                        </label>
+
+                        <label>
+                            <input type="checkbox" class="edit-permission-checkbox" value="settings_manage">
+                            Manage Settings
+                        </label>
+
+                    </div>
+
+                </div>
+
+                <div class="deployment-actions">
+
+                    <button type="submit" class="dashboard-btn" id="saveAdministratorChangesBtn">
+                        Save Changes
+                    </button>
+
+                    <button type="button" class="dashboard-btn" id="cancelAdministratorEditBtn">
+                        Cancel
+                    </button>
+
+                </div>
+
+                <div id="editAdministratorMessageStatus" class="message-status"></div>
+
+            </form>
+
+        </section>
+
+
+
+        <!-- ADMINISTRATORS LIST -->
+
+        <section class="communication-card">
+
+            <div class="form-heading">
+                <h2>Administrator Accounts</h2>
+                <p>
+                    Current administrators registered in the system.
+                </p>
+            </div>
+
+            <div class="admin-list-filters">
+                <label for="administratorSearch" class="visually-hidden">Search administrators</label>
+                <input id="administratorSearch" type="search" placeholder="Search name, role, department, phone...">
+                <label for="administratorStatusFilter" class="visually-hidden">Filter by status</label>
+                <select id="administratorStatusFilter">
+                    <option value="">All statuses</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+                <label for="administratorRoleFilter" class="visually-hidden">Filter by role</label>
+                <select id="administratorRoleFilter">
+                    <option value="">All roles</option>
+                    <option value="Super Admin">Super Admin</option>
+                    <option value="HR Admin">HR Admin</option>
+                    <option value="Recruitment Admin">Recruitment Admin</option>
+                    <option value="Operations Admin">Operations Admin</option>
+                    <option value="Security/Post Admin">Security/Post Admin</option>
+                    <option value="Finance Admin">Finance Admin</option>
+                    <option value="Custom Admin">Custom Admin</option>
+                </select>
+            </div>
+
+            <div id="administratorsList" class="communication-history">
+
+                <p>
+                    Loading administrators...
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="../auth/guard.js"></script>
+    <script type="module" src="./administrators.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | VAST Admin</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <div class="admin-brand">
+                <img src="../../assests/images/VAST LOGO.png" alt="VAST Logo">
+                <div><strong>VAST</strong><span>ADMIN</span></div>
+            </div>
+            <nav class="admin-nav" aria-label="Admin navigation">
+                <a href="../dashboard.html">Dashboard</a>
+                <a href="../administrators/administrators.html">Administrators</a>
+                <a href="../posts/posts.html">Guard Posts</a>
+                <a href="../clients/clients.html">Clients</a>
+                <a href="../officers/officers.html">Officers</a>
+                <a href="../recruitment/recruitment.html">Recruitment</a>
+                <a href="../shortlist/shortlist.html">Shortlist</a>
+                <a href="../communication/communication.html">Communication</a>
+                <a href="../messages/messages.html">Messages</a>
+                <a href="../services/services.html">Services</a>
+                <a href="../auditlog/auditlog.html">Audit Log</a>
+                <a href="settings.html" class="active" aria-current="page">Settings</a>
+            </nav>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </aside>
+        <main class="admin-main">
+            <header class="admin-header">
+                <div>
+                    <h1>Account Settings</h1>
+                    <p>Update your profile details and administrator password.</p>
+                </div>
+            </header>
+            <section class="admin-section settings-card">
+                <div class="section-heading">
+                    <div><h2>Administrator Profile</h2><p>These details are visible to other administrators.</p></div>
+                </div>
+                <form id="profileForm">
+                    <div class="website-image-field">
+                        <label for="profileAvatarFile">Profile picture</label>
+                        <img id="profileAvatarPreview" class="admin-profile-avatar-preview" alt="Current administrator profile picture" hidden>
+                        <input id="profileAvatarFile" type="file" accept="image/jpeg,image/png,image/webp">
+                        <button type="button" class="secondary-btn" id="uploadProfileAvatarBtn">Upload profile picture</button>
+                        <small>JPEG, PNG, or WebP; 3 MB maximum.</small>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="profileFullName">Full name</label>
+                            <input id="profileFullName" maxlength="160" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="profileEmail">Sign-in email</label>
+                            <input id="profileEmail" type="email" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="profilePhone">Phone</label>
+                            <input id="profilePhone" type="tel" maxlength="60">
+                        </div>
+                        <div class="form-group">
+                            <label for="profileDepartment">Department</label>
+                            <input id="profileDepartment" maxlength="120">
+                        </div>
+                        <div class="form-group">
+                            <label for="profileRole">Role</label>
+                            <input id="profileRole" readonly>
+                        </div>
+                    </div>
+                    <p id="profileStatus" class="form-message" role="status" aria-live="polite"></p>
+                    <button class="primary-btn" type="submit" id="saveProfileBtn">Save Profile</button>
+                </form>
+            </section>
+            <section class="admin-section settings-card">
+                <div class="section-heading">
+                    <div><h2>Change Password</h2><p>Choose a password with at least 8 characters.</p></div>
+                </div>
+                <form id="passwordForm">
+                    <div class="form-group">
+                        <label for="newPassword">New password</label>
+                        <input id="newPassword" type="password" minlength="8" autocomplete="new-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm new password</label>
+                        <input id="confirmPassword" type="password" minlength="8" autocomplete="new-password" required>
+                    </div>
+                    <p id="passwordStatus" class="form-message" role="status" aria-live="polite"></p>
+                    <button class="primary-btn" type="submit" id="changePasswordBtn">Change Password</button>
+                </form>
+            </section>
+            <section class="admin-section settings-card website-content-settings">
+                <div class="section-heading">
+                    <div>
+                        <h2>Public Website Content</h2>
+                        <p>Update public branding, page banners, and leadership messages. Only administrators with website settings permission can save changes.</p>
+                    </div>
+                </div>
+                <form id="websiteContentForm">
+                    <h3>Platform Name</h3>
+                    <div class="form-group">
+                        <label for="siteName">Public platform name</label>
+                        <input id="siteName" maxlength="160" required data-site-content-key="site_name">
+                        <small>This name is shown in the public website header, footer, and browser title.</small>
+                    </div>
+
+                    <h3>Logo and Page Banners</h3>
+                    <div class="website-image-grid">
+                        <div class="website-image-field">
+                            <label for="siteLogoFile">Website logo</label>
+                            <img data-image-preview="site_logo_url" alt="Current website logo preview" hidden>
+                            <input id="siteLogoUrl" type="hidden" data-site-content-key="site_logo_url">
+                            <input id="siteLogoFile" type="file" accept="image/jpeg,image/png,image/webp" data-image-upload="site_logo_url">
+                            <button type="button" class="dashboard-btn website-image-upload-btn" data-image-upload-button="site_logo_url">Upload logo</button>
+                        </div>
+                        <div class="website-image-field">
+                            <label for="homeBannerFile">Home page banner</label>
+                            <img data-image-preview="home_banner_url" alt="Current home page banner preview" hidden>
+                            <input id="homeBannerUrl" type="hidden" data-site-content-key="home_banner_url">
+                            <input id="homeBannerFile" type="file" accept="image/jpeg,image/png,image/webp" data-image-upload="home_banner_url">
+                            <button type="button" class="dashboard-btn website-image-upload-btn" data-image-upload-button="home_banner_url">Upload banner</button>
+                        </div>
+                        <div class="website-image-field">
+                            <label for="aboutBannerFile">About page banner</label>
+                            <img data-image-preview="about_banner_url" alt="Current About page banner preview" hidden>
+                            <input id="aboutBannerUrl" type="hidden" data-site-content-key="about_banner_url">
+                            <input id="aboutBannerFile" type="file" accept="image/jpeg,image/png,image/webp" data-image-upload="about_banner_url">
+                            <button type="button" class="dashboard-btn website-image-upload-btn" data-image-upload-button="about_banner_url">Upload banner</button>
+                        </div>
+                        <div class="website-image-field">
+                            <label for="aboutStoryImageFile">About page “Who We Are” image</label>
+                            <img data-image-preview="about_story_image_url" alt="Current About page story image preview" hidden>
+                            <input id="aboutStoryImageUrl" type="hidden" data-site-content-key="about_story_image_url">
+                            <input id="aboutStoryImageFile" type="file" accept="image/jpeg,image/png,image/webp" data-image-upload="about_story_image_url">
+                            <button type="button" class="dashboard-btn website-image-upload-btn" data-image-upload-button="about_story_image_url">Upload About image</button>
+                        </div>
+                        <div class="website-image-field">
+                            <label for="servicesBannerFile">Services page banner</label>
+                            <img data-image-preview="services_banner_url" alt="Current Services page banner preview" hidden>
+                            <input id="servicesBannerUrl" type="hidden" data-site-content-key="services_banner_url">
+                            <input id="servicesBannerFile" type="file" accept="image/jpeg,image/png,image/webp" data-image-upload="services_banner_url">
+                            <button type="button" class="dashboard-btn website-image-upload-btn" data-image-upload-button="services_banner_url">Upload banner</button>
+                        </div>
+                        <div class="website-image-field">
+                            <label for="recruitmentBannerFile">Recruitment page banner</label>
+                            <img data-image-preview="recruitment_banner_url" alt="Current Recruitment page banner preview" hidden>
+                            <input id="recruitmentBannerUrl" type="hidden" data-site-content-key="recruitment_banner_url">
+                            <input id="recruitmentBannerFile" type="file" accept="image/jpeg,image/png,image/webp" data-image-upload="recruitment_banner_url">
+                            <button type="button" class="dashboard-btn website-image-upload-btn" data-image-upload-button="recruitment_banner_url">Upload banner</button>
+                        </div>
+                        <div class="website-image-field">
+                            <label for="contactBannerFile">Contact page banner</label>
+                            <img data-image-preview="contact_banner_url" alt="Current Contact page banner preview" hidden>
+                            <input id="contactBannerUrl" type="hidden" data-site-content-key="contact_banner_url">
+                            <input id="contactBannerFile" type="file" accept="image/jpeg,image/png,image/webp" data-image-upload="contact_banner_url">
+                            <button type="button" class="dashboard-btn website-image-upload-btn" data-image-upload-button="contact_banner_url">Upload banner</button>
+                        </div>
+                        <div class="website-image-field">
+                            <label for="verificationBannerFile">Verification page banner</label>
+                            <img data-image-preview="verification_banner_url" alt="Current Verification page banner preview" hidden>
+                            <input id="verificationBannerUrl" type="hidden" data-site-content-key="verification_banner_url">
+                            <input id="verificationBannerFile" type="file" accept="image/jpeg,image/png,image/webp" data-image-upload="verification_banner_url">
+                            <button type="button" class="dashboard-btn website-image-upload-btn" data-image-upload-button="verification_banner_url">Upload banner</button>
+                        </div>
+                    </div>
+
+                    <h3>CEO Message</h3>
+                    <div class="website-image-field">
+                        <label for="ceoPhotoFile">CEO photo</label>
+                        <img data-image-preview="ceo_photo_url" alt="Current CEO photo preview" hidden>
+                        <input id="ceoPhotoUrl" type="hidden" data-site-content-key="ceo_photo_url">
+                        <input id="ceoPhotoFile" type="file" accept="image/jpeg,image/png,image/webp" data-image-upload="ceo_photo_url">
+                        <button type="button" class="dashboard-btn website-image-upload-btn" data-image-upload-button="ceo_photo_url">Upload CEO photo</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="ceoHeading">Heading</label>
+                        <input id="ceoHeading" maxlength="200" data-site-content-key="ceo_heading">
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="ceoName">Name</label>
+                            <input id="ceoName" maxlength="160" data-site-content-key="ceo_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="ceoTitle">Title</label>
+                            <input id="ceoTitle" maxlength="160" data-site-content-key="ceo_title">
+                        </div>
+                        <div class="form-group website-content-full-width">
+                            <label for="ceoMessage">Message</label>
+                            <textarea id="ceoMessage" rows="7" maxlength="8000" data-site-content-key="ceo_message"></textarea>
+                        </div>
+                    </div>
+
+                    <h3>Co-CEO Message</h3>
+                    <div class="website-image-field">
+                        <label for="coCeoPhotoFile">Co-CEO photo</label>
+                        <img data-image-preview="co_ceo_photo_url" alt="Current Co-CEO photo preview" hidden>
+                        <input id="coCeoPhotoUrl" type="hidden" data-site-content-key="co_ceo_photo_url">
+                        <input id="coCeoPhotoFile" type="file" accept="image/jpeg,image/png,image/webp" data-image-upload="co_ceo_photo_url">
+                        <button type="button" class="dashboard-btn website-image-upload-btn" data-image-upload-button="co_ceo_photo_url">Upload Co-CEO photo</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="coCeoHeading">Heading</label>
+                        <input id="coCeoHeading" maxlength="200" data-site-content-key="co_ceo_heading">
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="coCeoName">Name</label>
+                            <input id="coCeoName" maxlength="160" data-site-content-key="co_ceo_name">
+                        </div>
+                        <div class="form-group">
+                            <label for="coCeoTitle">Title</label>
+                            <input id="coCeoTitle" maxlength="160" data-site-content-key="co_ceo_title">
+                        </div>
+                        <div class="form-group website-content-full-width">
+                            <label for="coCeoMessage">Message</label>
+                            <textarea id="coCeoMessage" rows="7" maxlength="8000" data-site-content-key="co_ceo_message"></textarea>
+                        </div>
+                    </div>
+                    <p id="websiteContentStatus" class="form-message" role="status" aria-live="polite"></p>
+                    <button class="primary-btn" type="submit" id="saveWebsiteContentBtn">Save Public Website Content</button>
+                </form>
+            </section>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="../auth/guard.js"></script>
+    <script type="module" src="./settings.js"></script>
+</body>
+</html>

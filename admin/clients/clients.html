@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clients | VAST Security Group</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <div class="admin-brand">
+                <img src="../../assests/images/VAST LOGO.png" alt="VAST Logo">
+                <div><strong>VAST</strong><span>ADMIN</span></div>
+            </div>
+            <nav class="admin-nav" aria-label="Admin navigation">
+                <a href="../dashboard.html">Dashboard</a>
+                <a href="../administrators/administrators.html">Administrators</a>
+                <a href="../posts/posts.html">Guard Posts</a>
+                <a href="clients.html" class="active" aria-current="page">Clients</a>
+                <a href="../officers/officers.html">Officers</a>
+                <a href="../recruitment/recruitment.html">Recruitment</a>
+                <a href="../shortlist/shortlist.html">Shortlist</a>
+                <a href="../communication/communication.html">Communication</a>
+                <a href="../messages/messages.html">Messages</a>
+                <a href="../services/services.html">Services</a>
+                <a href="../auditlog/auditlog.html">Audit Log</a>
+                <a href="../settings/settings.html">Settings</a>
+            </nav>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="dashboard-container">
+                <header class="dashboard-page-header">
+                    <div>
+                        <h1>Clients</h1>
+                        <p>Manage client organizations and their contact information.</p>
+                    </div>
+                    <button type="button" class="primary-btn" id="addClientBtn"
+                        aria-controls="createClientSection" aria-expanded="false">Add Client</button>
+                </header>
+
+                <section class="dashboard-stats" aria-label="Client statistics">
+                    <div class="stat-card"><span>Total Clients</span><strong id="totalClientsStat">0</strong></div>
+                    <div class="stat-card"><span>Active</span><strong id="activeClientsStat">0</strong></div>
+                    <div class="stat-card"><span>Inactive</span><strong id="inactiveClientsStat">0</strong></div>
+                    <div class="stat-card"><span>With Active Posts</span><strong id="clientsWithPostsStat">0</strong></div>
+                </section>
+
+                <section class="communication-card admin-form-panel" id="createClientSection" hidden>
+                    <div class="form-heading">
+                        <h2>Add Client</h2>
+                        <p>Enter the client organization and primary contact details.</p>
+                    </div>
+                    <button type="button" class="dashboard-btn admin-form-close" id="closeClientFormBtn">Cancel</button>
+                    <form id="clientForm">
+                        <div class="communication-form-grid">
+                            <div class="form-group">
+                                <label for="clientName">Client Name *</label>
+                                <input type="text" id="clientName" maxlength="200" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="clientContactPerson">Contact Person</label>
+                                <input type="text" id="clientContactPerson">
+                            </div>
+                            <div class="form-group">
+                                <label for="clientPhone">Phone</label>
+                                <input type="tel" id="clientPhone">
+                            </div>
+                            <div class="form-group">
+                                <label for="clientEmail">Email</label>
+                                <input type="email" id="clientEmail">
+                            </div>
+                            <div class="form-group">
+                                <label for="clientAddress">Address</label>
+                                <input type="text" id="clientAddress">
+                            </div>
+                            <div class="form-group">
+                                <label for="clientCounty">County</label>
+                                <select id="clientCounty">
+                                    <option value="">Select county</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="clientBusinessType">Business Type</label>
+                                <input type="text" id="clientBusinessType" placeholder="Company, School, Hotel...">
+                            </div>
+                            <div class="form-group">
+                                <label for="clientStatus">Status</label>
+                                <select id="clientStatus">
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
+                            <div class="form-group communication-full-width">
+                                <label for="clientNotes">Notes</label>
+                                <textarea id="clientNotes" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="primary-btn" id="saveClientBtn">Save Client</button>
+                        <p id="clientMessageStatus" class="form-message" role="status" aria-live="polite"></p>
+                    </form>
+                </section>
+
+                <section class="communication-card">
+                    <div class="form-heading">
+                        <h2>Client Accounts</h2>
+                        <p>Search and filter registered clients.</p>
+                    </div>
+                    <div class="admin-list-filters">
+                        <label for="clientSearch" class="visually-hidden">Search clients</label>
+                        <input id="clientSearch" type="search" placeholder="Search client, contact, email, county...">
+                        <label for="clientStatusFilter" class="visually-hidden">Filter clients by status</label>
+                        <select id="clientStatusFilter">
+                            <option value="">All statuses</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div id="clientsList" class="communication-history" aria-live="polite">Loading clients...</div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="../auth/guard.js"></script>
+    <script type="module" src="./clients.js"></script>
+</body>
+</html>

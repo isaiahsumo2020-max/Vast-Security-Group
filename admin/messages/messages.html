@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages | VAST Admin</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <div class="admin-brand">
+                <img src="../../assests/images/VAST LOGO.png" alt="VAST Logo">
+                <div><strong>VAST</strong><span>ADMIN</span></div>
+            </div>
+            <nav class="admin-nav" aria-label="Admin navigation">
+                <a href="../dashboard.html">Dashboard</a>
+                <a href="../administrators/administrators.html">Administrators</a>
+                <a href="../posts/posts.html">Guard Posts</a>
+                <a href="../clients/clients.html">Clients</a>
+                <a href="../officers/officers.html">Officers</a>
+                <a href="../recruitment/recruitment.html">Recruitment</a>
+                <a href="../shortlist/shortlist.html">Shortlist</a>
+                <a href="../communication/communication.html">Communication</a>
+                <a href="messages.html" class="active" aria-current="page">Messages</a>
+                <a href="../services/services.html">Services</a>
+                <a href="../auditlog/auditlog.html">Audit Log</a>
+                <a href="../settings/settings.html">Settings</a>
+            </nav>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </aside>
+        <main class="admin-main">
+            <header class="admin-header">
+                <div>
+                    <h1>Contact Messages</h1>
+                    <p>Review inquiries submitted through the public contact form.</p>
+                </div>
+                <button type="button" class="secondary-btn" id="refreshMessagesBtn">Refresh</button>
+            </header>
+            <section class="admin-section">
+                <div class="officer-controls">
+                    <label class="officer-search" for="messageSearch">
+                        <span class="visually-hidden">Search messages</span>
+                        <input type="search" id="messageSearch" placeholder="Search sender, email, or subject">
+                    </label>
+                    <label for="messageStatusFilter">
+                        <span class="visually-hidden">Filter by status</span>
+                        <select id="messageStatusFilter">
+                            <option value="">All statuses</option>
+                            <option>New</option>
+                            <option>In Progress</option>
+                            <option>Resolved</option>
+                        </select>
+                    </label>
+                </div>
+                <p id="messagesStatus" class="form-message" role="status" aria-live="polite"></p>
+                <div class="officer-table-wrapper">
+                    <table class="officer-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Received</th>
+                                <th scope="col">Sender</th>
+                                <th scope="col">Subject</th>
+                                <th scope="col">Message</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Update</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messagesTableBody">
+                            <tr><td colspan="6">Loading messages…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="../auth/guard.js"></script>
+    <script type="module" src="./messages.js"></script>
+</body>
+</html>

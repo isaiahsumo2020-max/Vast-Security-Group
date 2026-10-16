@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officers | VAST Admin</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <div class="admin-brand">
+                <img src="../../assests/images/VAST LOGO.png" alt="VAST Logo">
+                <div><strong>VAST</strong><span>ADMIN</span></div>
+            </div>
+            <nav class="admin-nav" aria-label="Admin navigation">
+                <a href="../dashboard.html">Dashboard</a>
+                <a href="../administrators/administrators.html">Administrators</a>
+                <a href="../posts/posts.html">Guard Posts</a>
+                <a href="../clients/clients.html">Clients</a>
+                <a href="officers.html" class="active" aria-current="page">Officers</a>
+                <a href="../recruitment/recruitment.html">Recruitment</a>
+                <a href="../shortlist/shortlist.html">Shortlist</a>
+                <a href="../communication/communication.html">Communication</a>
+                <a href="../messages/messages.html">Messages</a>
+                <a href="../services/services.html">Services</a>
+                <a href="../auditlog/auditlog.html">Audit Log</a>
+                <a href="../settings/settings.html">Settings</a>
+            </nav>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <div>
+                    <h1>Officer Management</h1>
+                    <p>Manage officer records, status, and identification photos.</p>
+                </div>
+                <button type="button" class="primary-btn" id="addOfficerBtn">Add Officer</button>
+            </header>
+
+            <section class="admin-section">
+                <div class="officer-controls">
+                    <label class="officer-search" for="officerSearch">
+                        <span class="visually-hidden">Search officers</span>
+                        <input type="search" id="officerSearch" placeholder="Search name, officer ID, email, or position">
+                    </label>
+                    <label for="statusFilter">
+                        <span class="visually-hidden">Filter by status</span>
+                        <select id="statusFilter">
+                            <option value="">All statuses</option>
+                            <option>Verified Active</option>
+                            <option>Suspended</option>
+                            <option>Expired</option>
+                            <option>Inactive</option>
+                        </select>
+                    </label>
+                </div>
+
+                <p id="officerStatus" class="form-message" role="status" aria-live="polite"></p>
+                <div class="officer-table-wrapper">
+                    <table class="officer-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Officer ID</th>
+                                <th scope="col">Officer</th>
+                                <th scope="col">Position</th>
+                                <th scope="col">Department</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="officerTableBody">
+                            <tr><td colspan="6">Loading officers…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="officerDetailSection" class="admin-section officer-detail" hidden
+                aria-labelledby="officerDetailTitle">
+                <div class="officer-detail-header">
+                    <div>
+                        <h2 id="officerDetailTitle">Officer details</h2>
+                        <p id="officerDetailStatus" class="form-message" role="status" aria-live="polite"></p>
+                    </div>
+                    <button type="button" class="secondary-btn" id="closeOfficerDetailsBtn">Close details</button>
+                </div>
+                <div id="officerDetailContent"></div>
+            </section>
+
+            <section id="officerEditor" class="admin-section officer-editor" hidden>
+                <div class="section-heading">
+                    <div>
+                        <h2 id="officerEditorTitle">Add Officer</h2>
+                        <p>Create or update an officer record.</p>
+                    </div>
+                </div>
+                <form id="officerForm">
+                    <input type="hidden" id="officerId">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="officerName">Full name *</label>
+                            <input id="officerName" required maxlength="160">
+                        </div>
+                        <div class="form-group">
+                            <label for="officerPosition">Position *</label>
+                            <input id="officerPosition" required maxlength="120">
+                        </div>
+                        <div class="form-group">
+                            <label for="officerPhone">Phone</label>
+                            <input id="officerPhone" type="tel" maxlength="60">
+                        </div>
+                        <div class="form-group">
+                            <label for="officerEmail">Email</label>
+                            <input id="officerEmail" type="email" maxlength="254">
+                        </div>
+                        <div class="form-group">
+                            <label for="officerGender">Gender</label>
+                            <select id="officerGender">
+                                <option value="">Not specified</option>
+                                <option>Male</option>
+                                <option>Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="officerDepartment">Department</label>
+                            <input id="officerDepartment" maxlength="120">
+                        </div>
+                        <div class="form-group">
+                            <label for="officerEmployment">Employment type</label>
+                            <select id="officerEmployment">
+                                <option value="">Not specified</option>
+                                <option>Full-Time</option>
+                                <option>Part-Time</option>
+                                <option>Contract</option>
+                                <option>Probation</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="officerStatusInput">Status</label>
+                            <select id="officerStatusInput">
+                                <option>Verified Active</option>
+                                <option>Suspended</option>
+                                <option>Expired</option>
+                                <option>Inactive</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="officerIssueDate">Issue date</label>
+                            <input id="officerIssueDate" type="date">
+                        </div>
+                        <div class="form-group">
+                            <label for="officerExpiryDate">Expiry date</label>
+                            <input id="officerExpiryDate" type="date">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="officerPhoto">Photo (JPEG, PNG, or WebP; max 5 MB)</label>
+                            <input id="officerPhoto" type="file" accept="image/jpeg,image/png,image/webp">
+                            <img id="officerPhotoPreview" class="officer-photo-preview" alt="Selected officer photo preview" hidden>
+                        </div>
+                    </div>
+                    <p id="officerFormMessage" class="form-message" role="status" aria-live="polite"></p>
+                    <div class="modal-actions">
+                        <button type="button" class="secondary-btn" id="cancelOfficerBtn">Cancel</button>
+                        <button type="submit" class="primary-btn" id="saveOfficerBtn">Save Officer</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="../auth/guard.js"></script>
+    <script type="module" src="./officers.js"></script>
+</body>
+</html>
