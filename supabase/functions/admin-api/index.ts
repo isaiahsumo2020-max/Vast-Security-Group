@@ -1349,11 +1349,17 @@ async function handleRequest(
             if (!officer) {
                 throw new HttpError(404, "Officer not found.");
             }
+            if (!officer.id) {
+                throw new HttpError(
+                    500,
+                    "Officer record is missing its database identifier."
+                );
+            }
 
             const { data: assignments, error: assignmentsError } = await client
                 .from("security_post_assignments")
                 .select("*")
-                .eq("officer_id", officerId)
+                .eq("officer_id", officer.id)
                 .order("assigned_date", { ascending: false });
             throwIfError(assignmentsError);
 
