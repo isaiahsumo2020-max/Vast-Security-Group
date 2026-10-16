@@ -51,6 +51,9 @@ After submission, applicants receive a unique six-digit tracking code. The
 Recruitment page includes a status lookup that accepts this code and returns
 only the application's current status through a restricted Supabase function.
 Apply the migrations with `npx supabase db push` before using this feature.
+Recruitment file uploads and document records are restricted to a pending
+application and its tracking code; the public application cannot update
+application records directly.
 
 The Edge Function uses the Supabase-provided `SUPABASE_URL` and
 `SUPABASE_SERVICE_ROLE_KEY` secrets. Never put the service-role key in browser

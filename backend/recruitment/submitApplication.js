@@ -74,6 +74,45 @@ function generateTrackingCode() {
     return String(value % 1000000).padStart(6, "0");
 }
 
+async function registerDocument(
+    applicationID,
+    trackingCode,
+    document
+) {
+    const { error } = await supabase.rpc(
+        "register_recruitment_document",
+        {
+            application_id_input: applicationID,
+            tracking_code_input: trackingCode,
+            document_type_input: document.documentType,
+            file_name_input: document.fileName,
+            file_url_input: document.fileUrl,
+            file_size_input: document.fileSize,
+            mime_type_input: document.mimeType,
+            is_required_input: document.isRequired
+        }
+    );
+
+    if (error) {
+        throw error;
+    }
+}
+
+async function saveApplicationPhoto(applicationID, trackingCode, photoUrl) {
+    const { error } = await supabase.rpc(
+        "set_recruitment_application_photo",
+        {
+            application_id_input: applicationID,
+            tracking_code_input: trackingCode,
+            photo_url_input: photoUrl
+        }
+    );
+
+    if (error) {
+        throw error;
+    }
+}
+
 
 /* =========================================================
    SUBMIT APPLICATION
@@ -164,7 +203,7 @@ export async function submitApplication(
 
         const photoPath =
 
-            `${applicationID}/passport-photo.${photoExtension}`;
+            `${applicationID}/${trackingCode}/passport-photo.${photoExtension}`;
 
 
         const uploadedPhoto =
@@ -180,34 +219,11 @@ export async function submitApplication(
             );
 
 
-        const {
-
-            error: photoUpdateError
-
-        } = await supabase
-
-            .from(
-                "recruitment_applications"
-            )
-
-            .update({
-
-                photo_url:
-                    uploadedPhoto.fileUrl
-
-            })
-
-            .eq(
-                "id",
-                applicationID
-            );
-
-
-        if(photoUpdateError){
-
-            throw photoUpdateError;
-
-        }
+        await saveApplicationPhoto(
+            applicationID,
+            trackingCode,
+            uploadedPhoto.fileUrl
+        );
 
     }
 
@@ -221,7 +237,7 @@ export async function submitApplication(
 
         const cvPath =
 
-            `${applicationID}/cv/${Date.now()}-${cv.name}`;
+            `${applicationID}/${trackingCode}/cv/${Date.now()}-${cv.name}`;
 
 
         const uploadedCV =
@@ -237,47 +253,11 @@ export async function submitApplication(
             );
 
 
-        const {
-
-            error: cvDocumentError
-
-        } = await supabase
-
-            .from(
-                "recruitment_documents"
-            )
-
-            .insert({
-
-                application_id:
-                    applicationID,
-
-                document_type:
-                    "cv",
-
-                file_name:
-                    uploadedCV.fileName,
-
-                file_url:
-                    uploadedCV.fileUrl,
-
-                file_size:
-                    uploadedCV.fileSize,
-
-                mime_type:
-                    uploadedCV.mimeType,
-
-                is_required:
-                    true
-
-            });
-
-
-        if(cvDocumentError){
-
-            throw cvDocumentError;
-
-        }
+        await registerDocument(applicationID, trackingCode, {
+            documentType: "cv",
+            ...uploadedCV,
+            isRequired: true
+        });
 
     }
 
@@ -300,7 +280,7 @@ export async function submitApplication(
 
         const letterPath =
 
-            `${applicationID}/application-letter/${Date.now()}-${applicationLetterFile.name}`;
+            `${applicationID}/${trackingCode}/application-letter/${Date.now()}-${applicationLetterFile.name}`;
 
 
         const uploadedLetter =
@@ -316,47 +296,11 @@ export async function submitApplication(
             );
 
 
-        const {
-
-            error: letterDocumentError
-
-        } = await supabase
-
-            .from(
-                "recruitment_documents"
-            )
-
-            .insert({
-
-                application_id:
-                    applicationID,
-
-                document_type:
-                    "application_letter",
-
-                file_name:
-                    uploadedLetter.fileName,
-
-                file_url:
-                    uploadedLetter.fileUrl,
-
-                file_size:
-                    uploadedLetter.fileSize,
-
-                mime_type:
-                    uploadedLetter.mimeType,
-
-                is_required:
-                    true
-
-            });
-
-
-        if(letterDocumentError){
-
-            throw letterDocumentError;
-
-        }
+        await registerDocument(applicationID, trackingCode, {
+            documentType: "application_letter",
+            ...uploadedLetter,
+            isRequired: true
+        });
 
     }
 
@@ -386,7 +330,7 @@ export async function submitApplication(
 
             const filePath =
 
-                `${applicationID}/supporting/${Date.now()}-${file.name}`;
+                `${applicationID}/${trackingCode}/supporting/${Date.now()}-${file.name}`;
 
 
             const uploadedFile =
@@ -402,47 +346,11 @@ export async function submitApplication(
                 );
 
 
-            const {
-
-                error: documentError
-
-            } = await supabase
-
-                .from(
-                    "recruitment_documents"
-                )
-
-                .insert({
-
-                    application_id:
-                        applicationID,
-
-                    document_type:
-                        "other",
-
-                    file_name:
-                        uploadedFile.fileName,
-
-                    file_url:
-                        uploadedFile.fileUrl,
-
-                    file_size:
-                        uploadedFile.fileSize,
-
-                    mime_type:
-                        uploadedFile.mimeType,
-
-                    is_required:
-                        false
-
-                });
-
-
-            if(documentError){
-
-                throw documentError;
-
-            }
+            await registerDocument(applicationID, trackingCode, {
+                documentType: "other",
+                ...uploadedFile,
+                isRequired: false
+            });
 
         }
 
