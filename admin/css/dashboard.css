@@ -691,9 +691,15 @@ body {
 .admin-notification-button {
     position: relative;
     font-size: 18px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
 }
 
-.admin-notification-button:hover,
+.admin-notification-button:hover {
+    color: var(--gold);
+}
+
 .admin-profile-link:hover {
     border-color: var(--gold);
 }

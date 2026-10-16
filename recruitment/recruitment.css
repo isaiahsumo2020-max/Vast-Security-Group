@@ -333,6 +333,54 @@
 
 }
 
+.application-tracking-code {
+    display: inline-block;
+    margin: 0 4px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: #eef2f7;
+    color: var(--primary);
+    font-size: 1.1em;
+    letter-spacing: .12em;
+}
+
+.application-tracking {
+    margin-top: 28px;
+}
+
+.application-tracking-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.application-tracking-form .form-group {
+    flex: 1 1 220px;
+    margin-bottom: 0;
+}
+
+.application-tracking-form input {
+    max-width: 240px;
+    letter-spacing: .12em;
+}
+
+.tracking-message {
+    flex-basis: 100%;
+    min-height: 1.5em;
+    margin: 0;
+    color: var(--primary);
+}
+
+.tracking-message.is-error {
+    color: #dc3545;
+}
+
+.application-tracking-form button:disabled {
+    cursor: wait;
+    opacity: .7;
+}
+
 
 /* =========================================================
    MOBILE
@@ -374,6 +422,15 @@
 
         gap: 12px;
 
+    }
+
+    .application-tracking-form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .application-tracking-form input {
+        max-width: none;
     }
 
 }

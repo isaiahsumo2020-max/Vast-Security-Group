@@ -60,6 +60,20 @@ async function uploadFile(
 
 }
 
+function generateTrackingCode() {
+    const randomValues = new Uint32Array(1);
+    const range = 0x100000000;
+    const limit = Math.floor(range / 1000000) * 1000000;
+    let value;
+
+    do {
+        crypto.getRandomValues(randomValues);
+        value = randomValues[0];
+    } while (value >= limit);
+
+    return String(value % 1000000).padStart(6, "0");
+}
+
 
 /* =========================================================
    SUBMIT APPLICATION
@@ -93,86 +107,46 @@ export async function submitApplication(
 
     } = applicationData;
 
+    let applicationID;
+    let trackingCode;
+
 
 
     /* =====================================================
        CREATE APPLICATION FIRST
     ===================================================== */
 
-    const {
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+        applicationID = crypto.randomUUID();
+        trackingCode = generateTrackingCode();
 
-        data: application,
+        const { error: applicationError } = await supabase
+            .from("recruitment_applications")
+            .insert({
+                id: applicationID,
+                tracking_code: trackingCode,
+                full_name: fullName,
+                phone,
+                email: email || null,
+                gender: gender || null,
+                address: address || null,
+                county: county || null,
+                position_id: positionID || null,
+                position_name: positionName,
+                application_letter_type: letterMethod,
+                application_letter_text:
+                    letterMethod === "text" ? letterText : null,
+                status: "Pending"
+            });
 
-        error: applicationError
+        if (!applicationError) {
+            break;
+        }
 
-    } = await supabase
-
-        .from(
-            "recruitment_applications"
-        )
-
-        .insert({
-
-            full_name:
-                fullName,
-
-            phone,
-
-            email:
-                email || null,
-
-            gender:
-                gender || null,
-
-            address:
-                address || null,
-
-            county:
-                county || null,
-
-
-            position_id:
-                positionID || null,
-
-
-            position_name:
-                positionName,
-
-
-            application_letter_type:
-                letterMethod,
-
-
-            application_letter_text:
-
-                letterMethod === "text"
-
-                    ? letterText
-
-                    : null,
-
-
-            status:
-                "Pending"
-
-        })
-
-        .select()
-
-        .single();
-
-
-
-    if(applicationError){
-
-        throw applicationError;
-
+        if (applicationError.code !== "23505" || attempt === 4) {
+            throw applicationError;
+        }
     }
-
-
-
-    const applicationID =
-        application.id;
 
 
 
@@ -476,6 +450,6 @@ export async function submitApplication(
 
 
 
-    return application;
+    return { id: applicationID, trackingCode };
 
 }

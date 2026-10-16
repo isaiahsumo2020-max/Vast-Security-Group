@@ -47,6 +47,10 @@ documents continue to be stored in the recruitment document tables/storage.
 The public form reads active job openings through
 `GET /public/recruitment-positions`; the General Security Officer opening is
 seeded as active so the required position field can be completed.
+After submission, applicants receive a unique six-digit tracking code. The
+Recruitment page includes a status lookup that accepts this code and returns
+only the application's current status through a restricted Supabase function.
+Apply the migrations with `npx supabase db push` before using this feature.
 
 The Edge Function uses the Supabase-provided `SUPABASE_URL` and
 `SUPABASE_SERVICE_ROLE_KEY` secrets. Never put the service-role key in browser

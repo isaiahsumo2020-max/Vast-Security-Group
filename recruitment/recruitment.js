@@ -2,6 +2,7 @@ import {
     getActivePositions
 } from "../backend/recruitment/getPositions.js";
 import { submitApplication } from "../backend/recruitment/submitApplication.js";
+import { getApplicationStatus } from "../backend/recruitment/getApplicationStatus.js";
 import { populateLiberiaCountySelect } from "../assests/js/liberiaCounties.js";
 
 populateLiberiaCountySelect(document.getElementById("county"));
@@ -22,6 +23,11 @@ const submitApplicationBtn =
     document.getElementById(
         "submitApplicationBtn"
     );
+
+const trackingForm = document.getElementById("trackingForm");
+const trackingCodeInput = document.getElementById("trackingCode");
+const trackingMessage = document.getElementById("trackingMessage");
+const checkTrackingCodeBtn = document.getElementById("checkTrackingCodeBtn");
 
 
 /* =========================================================
@@ -403,7 +409,7 @@ recruitmentForm.addEventListener(
         try{
 
 
-            await submitApplication({
+            const application = await submitApplication({
 
                 fullName,
 
@@ -437,11 +443,20 @@ recruitmentForm.addEventListener(
 
 
 
-            applicationMessage.textContent =
-
-                "Your application has been submitted successfully. Thank you for applying to VAST Security Group.";
-
-
+            applicationMessage.replaceChildren(
+                document.createTextNode(
+                    "Your application has been submitted successfully. Thank you for applying to VAST Security Group. Your six-digit tracking code is "
+                )
+            );
+            const trackingCode = document.createElement("strong");
+            trackingCode.textContent = application.trackingCode;
+            trackingCode.className = "application-tracking-code";
+            applicationMessage.append(
+                trackingCode,
+                document.createTextNode(
+                    ". Save this code to check your application status."
+                )
+            );
             applicationMessage.style.color =
                 "#198754";
 
@@ -481,6 +496,30 @@ recruitmentForm.addEventListener(
 
     }
 );
+
+trackingForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    checkTrackingCodeBtn.disabled = true;
+    trackingMessage.textContent = "Checking your application status...";
+    trackingMessage.classList.remove("is-error");
+
+    try {
+        const application = await getApplicationStatus(
+            trackingCodeInput.value.trim()
+        );
+
+        trackingMessage.textContent = application
+            ? `Your application status: ${application.application_status}.`
+            : "No application was found for that tracking code. Check the code and try again.";
+    } catch (error) {
+        console.error("Unable to check application status:", error);
+        trackingMessage.textContent =
+            "Unable to check your application status right now. Please try again later.";
+        trackingMessage.classList.add("is-error");
+    } finally {
+        checkTrackingCodeBtn.disabled = false;
+    }
+});
 
 
 
