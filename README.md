@@ -54,6 +54,8 @@ Apply the migrations with `npx supabase db push` before using this feature.
 Recruitment file uploads and document records are restricted to a pending
 application and its tracking code; the public application cannot update
 application records directly.
+Active Super Admins and administrators with recruitment view/manage permissions
+can view applications and their documents from the Admin Recruitment page.
 
 The Edge Function uses the Supabase-provided `SUPABASE_URL` and
 `SUPABASE_SERVICE_ROLE_KEY` secrets. Never put the service-role key in browser

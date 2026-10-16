@@ -28,6 +28,9 @@ const trackingForm = document.getElementById("trackingForm");
 const trackingCodeInput = document.getElementById("trackingCode");
 const trackingMessage = document.getElementById("trackingMessage");
 const checkTrackingCodeBtn = document.getElementById("checkTrackingCodeBtn");
+const recruitmentIntro = document.getElementById("recruitmentIntro");
+const applicationSuccessScreen = document.getElementById("applicationSuccessScreen");
+const submittedTrackingCode = document.getElementById("submittedTrackingCode");
 
 
 /* =========================================================
@@ -443,25 +446,11 @@ recruitmentForm.addEventListener(
 
 
 
-            applicationMessage.replaceChildren(
-                document.createTextNode(
-                    "Your application has been submitted successfully. Thank you for applying to VAST Security Group. Your six-digit tracking code is "
-                )
-            );
-            const trackingCode = document.createElement("strong");
-            trackingCode.textContent = application.trackingCode;
-            trackingCode.className = "application-tracking-code";
-            applicationMessage.append(
-                trackingCode,
-                document.createTextNode(
-                    ". Save this code to check your application status."
-                )
-            );
-            applicationMessage.style.color =
-                "#198754";
-
-
-            recruitmentForm.reset();
+            submittedTrackingCode.textContent = application.trackingCode;
+            recruitmentForm.hidden = true;
+            recruitmentIntro.hidden = true;
+            applicationSuccessScreen.hidden = false;
+            document.getElementById("applicationSuccessHeading").focus();
 
 
 

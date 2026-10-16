@@ -224,7 +224,7 @@
 
         <!-- Small Introduction -->
 
-        <div class="recruitment-intro">
+        <div class="recruitment-intro" id="recruitmentIntro">
 
             <h1>Join VAST Security Group</h1>
 
@@ -617,6 +617,23 @@
 
 
         </form>
+
+        <section
+            id="applicationSuccessScreen"
+            class="recruitment-form application-success-screen"
+            aria-labelledby="applicationSuccessHeading"
+            aria-live="polite"
+            hidden
+        >
+            <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+            <h2 id="applicationSuccessHeading" tabindex="-1">Application submitted successfully</h2>
+            <p>
+                Thank you for applying to VAST Security Group. Keep this
+                six-digit code to check your application status.
+            </p>
+            <strong id="submittedTrackingCode" class="application-tracking-code"></strong>
+            <a class="recruitment-submit-btn" href="#trackingHeading">Track your application</a>
+        </section>
 
         <section class="recruitment-form application-tracking" aria-labelledby="trackingHeading">
             <div class="form-heading">

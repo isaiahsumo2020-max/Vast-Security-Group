@@ -344,6 +344,43 @@
     letter-spacing: .12em;
 }
 
+.application-success-screen[hidden] {
+    display: none;
+}
+
+.application-success-screen {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.application-success-screen > .fa-circle-check {
+    color: #198754;
+    font-size: 46px;
+}
+
+.application-success-screen h2 {
+    margin: 18px 0 10px;
+    color: var(--primary);
+}
+
+.application-success-screen > p {
+    color: #6b7280;
+    line-height: 1.7;
+}
+
+.application-success-screen .application-tracking-code {
+    display: block;
+    width: fit-content;
+    margin: 20px auto;
+    padding: 12px 20px;
+    font-size: 28px;
+}
+
+.application-success-screen .recruitment-submit-btn {
+    display: inline-block;
+    text-decoration: none;
+}
+
 .application-tracking {
     margin-top: 28px;
 }
