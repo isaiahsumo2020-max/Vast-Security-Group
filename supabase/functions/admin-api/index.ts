@@ -309,11 +309,105 @@ function recruitmentStoragePath(
     return objectPath;
 }
 
+function galleryStoragePath(fileUrl: string | null | undefined): string | null {
+    if (!fileUrl) {
+        return null;
+    }
+
+    let url: URL;
+    try {
+        url = new URL(fileUrl);
+    } catch {
+        throw new HttpError(400, "Gallery media URL is invalid.");
+    }
+
+    const storageUrl = Deno.env.get("SUPABASE_URL");
+    if (!storageUrl || url.origin !== new URL(storageUrl).origin) {
+        throw new HttpError(400, "Gallery media must be stored in the VAST gallery bucket.");
+    }
+
+    const prefix = "/storage/v1/object/public/vsg-gallery-assets/";
+    if (!url.pathname.startsWith(prefix)) {
+        throw new HttpError(400, "Gallery media must be stored in the VAST gallery bucket.");
+    }
+
+    let objectPath: string;
+    try {
+        objectPath = decodeURIComponent(url.pathname.slice(prefix.length));
+    } catch {
+        throw new HttpError(400, "Gallery media URL is invalid.");
+    }
+
+    if (!objectPath || objectPath.includes("..")) {
+        throw new HttpError(400, "Gallery media storage path is invalid.");
+    }
+
+    return objectPath;
+}
+
+function isValidGalleryDate(value: string): boolean {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        return false;
+    }
+
+    const date = new Date(`${value}T00:00:00Z`);
+    return !Number.isNaN(date.getTime()) &&
+        date.toISOString().slice(0, 10) === value;
+}
+
+function galleryText(value: unknown, field: string): string {
+    if (typeof value !== "string") {
+        throw new HttpError(400, `${field} must be text.`);
+    }
+
+    return value.trim();
+}
+
+async function removeGalleryAssets(
+    client: ReturnType<typeof createClient>,
+    urls: Array<string | null | undefined>
+) {
+    const paths = [...new Set(urls
+        .map(url => galleryStoragePath(url))
+        .filter((path): path is string => Boolean(path)))];
+    if (!paths.length) {
+        return;
+    }
+
+    const { error } = await client.storage
+        .from("vsg-gallery-assets")
+        .remove(paths);
+    if (error) {
+        console.error("Unable to remove replaced gallery media:", error);
+    }
+}
+
 async function handlePublicRequest(
     request: Request,
     client: ReturnType<typeof createClient>,
     segments: string[]
 ): Promise<Response | null> {
+    if (
+        request.method === "GET" &&
+        segments.length === 2 &&
+        segments[0] === "public" &&
+        segments[1] === "gallery"
+    ) {
+        const { data, error } = await client
+            .from("vsg_gallery_items")
+            .select("id, title, event_date, preview, caption, event_details, message, media_type, media_url, cover_image_url")
+            .eq("is_published", true)
+            .order("event_date", { ascending: false })
+            .order("created_at", { ascending: false });
+
+        if (error) {
+            console.error("Unable to load public gallery:", error);
+            throw new HttpError(500, "Unable to load the VAST gallery.");
+        }
+
+        return respond({ success: true, items: data || [] });
+    }
+
     if (
         request.method === "GET" &&
         segments.length === 2 &&
@@ -365,7 +459,7 @@ async function handlePublicRequest(
         segments[1] === "officers"
     ) {
         const officerId = segments[2].toUpperCase();
-        if (!/^VSG-\d{4}-\d{3,}$/.test(officerId)) {
+        if (!/^[A-Z0-9]{2,12}-\d{4}-\d{3,}$/.test(officerId)) {
             throw new HttpError(400, "Enter a valid VAST Officer ID.");
         }
 
@@ -1144,6 +1238,353 @@ async function handleRequest(
         }
     }
 
+    if (segments[0] === "gallery") {
+        requirePermission(admin, "settings_manage");
+
+        if (method === "GET" && segments.length === 1) {
+            const { data, error } = await client
+                .from("vsg_gallery_items")
+                .select("*")
+                .order("event_date", { ascending: false })
+                .order("created_at", { ascending: false });
+            throwIfError(error);
+            return respond({ success: true, items: data || [] });
+        }
+
+        if (method === "POST" && segments.length === 2 && segments[1] === "assets") {
+            let form: FormData;
+            try {
+                form = await request.formData();
+            } catch {
+                throw new HttpError(400, "Upload form data is invalid.");
+            }
+
+            const kind = form.get("kind");
+            const file = form.get("file");
+            if (
+                (kind !== "media" && kind !== "cover") ||
+                !(file instanceof File) ||
+                file.size === 0
+            ) {
+                throw new HttpError(400, "Choose a valid gallery media or cover image.");
+            }
+
+            const extensionByType: Record<string, string> = {
+                "image/jpeg": "jpg",
+                "image/png": "png",
+                "image/webp": "webp",
+                "video/mp4": "mp4",
+                "video/webm": "webm",
+                "video/quicktime": "mov"
+            };
+            const extension = extensionByType[file.type];
+            if (!extension || (kind === "cover" && !file.type.startsWith("image/"))) {
+                throw new HttpError(
+                    400,
+                    kind === "cover"
+                        ? "Use a JPEG, PNG, or WebP cover image."
+                        : "Use a JPEG, PNG, WebP, MP4, WebM, or MOV media file."
+                );
+            }
+
+            const maxSize = kind === "cover"
+                ? 10 * 1024 * 1024
+                : file.type.startsWith("video/")
+                    ? 100 * 1024 * 1024
+                    : 10 * 1024 * 1024;
+            if (file.size > maxSize) {
+                throw new HttpError(
+                    400,
+                    kind === "cover"
+                        ? "Cover images must be no larger than 10 MB."
+                        : file.type.startsWith("video/")
+                            ? "Videos must be no larger than 100 MB."
+                            : "Images must be no larger than 10 MB."
+                );
+            }
+
+            const objectPath = `${kind}/${crypto.randomUUID()}.${extension}`;
+            const { error } = await client.storage
+                .from("vsg-gallery-assets")
+                .upload(objectPath, file, {
+                    contentType: file.type,
+                    cacheControl: "3600",
+                    upsert: false
+                });
+            if (error) {
+                console.error("Gallery media upload failed:", error);
+                throw new HttpError(500, "Unable to upload gallery media.");
+            }
+
+            const { data: publicUrl } = client.storage
+                .from("vsg-gallery-assets")
+                .getPublicUrl(objectPath);
+            await recordAudit(
+                client,
+                admin,
+                "gallery.asset_uploaded",
+                "gallery_item",
+                null,
+                { kind, path: objectPath, size: file.size, content_type: file.type }
+            );
+
+            return respond({
+                success: true,
+                assetUrl: publicUrl.publicUrl,
+                mediaType: file.type.startsWith("video/") ? "video" : "image"
+            }, 201);
+        }
+
+        if (method === "POST" && segments.length === 1) {
+            const body = await readJson(request);
+            const title = galleryText(body.title ?? "", "Title");
+            const eventDate = typeof body.event_date === "string"
+                ? body.event_date
+                : "";
+            const mediaType = body.media_type;
+            const preview = galleryText(body.preview ?? "", "Preview");
+            const caption = galleryText(body.caption ?? "", "Caption");
+            const eventDetails = galleryText(body.event_details ?? "", "Event details");
+            const message = galleryText(body.message ?? "", "Message");
+            const mediaUrl = typeof body.media_url === "string" ? body.media_url : "";
+            const coverImageUrl = typeof body.cover_image_url === "string"
+                ? body.cover_image_url
+                : "";
+
+            if (
+                !title || title.length > 180 ||
+                !isValidGalleryDate(eventDate) ||
+                (mediaType !== "image" && mediaType !== "video") ||
+                !preview || preview.length > 500 ||
+                caption.length > 5000 ||
+                eventDetails.length > 10000 ||
+                message.length > 20000 ||
+                (body.is_published !== undefined &&
+                    typeof body.is_published !== "boolean")
+            ) {
+                throw new HttpError(400, "Enter valid gallery details and required media.");
+            }
+
+            const mediaPath = galleryStoragePath(mediaUrl);
+            const coverPath = coverImageUrl
+                ? galleryStoragePath(coverImageUrl)
+                : null;
+            if (
+                !mediaPath?.startsWith("media/") ||
+                (coverPath && !coverPath.startsWith("cover/")) ||
+                (mediaType === "video" && !coverPath)
+            ) {
+                throw new HttpError(
+                    400,
+                    "Upload the gallery media and provide a cover image for video items."
+                );
+            }
+
+            const { data, error } = await client
+                .from("vsg_gallery_items")
+                .insert({
+                    title,
+                    event_date: eventDate,
+                    preview,
+                    caption,
+                    event_details: eventDetails,
+                    message,
+                    media_type: mediaType,
+                    media_url: mediaUrl,
+                    cover_image_url: coverImageUrl || null,
+                    is_published: body.is_published !== false,
+                    created_by: admin.user.id
+                })
+                .select()
+                .single();
+            throwIfError(error);
+
+            await recordAudit(
+                client,
+                admin,
+                "gallery_item.created",
+                "gallery_item",
+                data.id,
+                { title: data.title, is_published: data.is_published }
+            );
+            return respond({ success: true, item: data }, 201);
+        }
+
+        if (method === "PATCH" && segments.length === 2) {
+            const itemId = segments[1];
+            const body = await readJson(request);
+            const { data: existing, error: existingError } = await client
+                .from("vsg_gallery_items")
+                .select("*")
+                .eq("id", itemId)
+                .maybeSingle();
+            throwIfError(existingError);
+            if (!existing) {
+                throw new HttpError(404, "Gallery item not found.");
+            }
+
+            const field = (key: string) =>
+                body[key] === undefined ? existing[key] : body[key];
+            const title = galleryText(field("title"), "Title");
+            const eventDate = field("event_date");
+            const mediaType = field("media_type");
+            const preview = galleryText(field("preview"), "Preview");
+            const caption = galleryText(field("caption"), "Caption");
+            const eventDetails = galleryText(field("event_details"), "Event details");
+            const message = galleryText(field("message"), "Message");
+            const mediaUrl = field("media_url");
+            const coverImageUrl = field("cover_image_url");
+            const isPublished = field("is_published");
+
+            if (
+                !title || title.length > 180 ||
+                typeof eventDate !== "string" ||
+                !isValidGalleryDate(eventDate) ||
+                (mediaType !== "image" && mediaType !== "video") ||
+                !preview || preview.length > 500 ||
+                caption.length > 5000 ||
+                eventDetails.length > 10000 ||
+                message.length > 20000 ||
+                typeof mediaUrl !== "string" ||
+                (coverImageUrl !== null && typeof coverImageUrl !== "string") ||
+                typeof isPublished !== "boolean"
+            ) {
+                throw new HttpError(400, "Enter valid gallery details and required media.");
+            }
+
+            const mediaPath = galleryStoragePath(mediaUrl);
+            const coverPath = coverImageUrl
+                ? galleryStoragePath(coverImageUrl)
+                : null;
+            if (
+                !mediaPath?.startsWith("media/") ||
+                (coverPath && !coverPath.startsWith("cover/")) ||
+                (mediaType === "video" && !coverPath)
+            ) {
+                throw new HttpError(400, "Gallery media or its video cover is invalid.");
+            }
+
+            const { data, error } = await client
+                .from("vsg_gallery_items")
+                .update({
+                    title,
+                    event_date: eventDate,
+                    preview,
+                    caption,
+                    event_details: eventDetails,
+                    message,
+                    media_type: mediaType,
+                    media_url: mediaUrl,
+                    cover_image_url: coverImageUrl || null,
+                    is_published: isPublished,
+                    updated_at: new Date().toISOString()
+                })
+                .eq("id", itemId)
+                .select()
+                .single();
+            throwIfError(error);
+
+            if (
+                existing.media_url !== data.media_url ||
+                existing.cover_image_url !== data.cover_image_url
+            ) {
+                await removeGalleryAssets(client, [
+                    existing.media_url !== data.media_url ? existing.media_url : null,
+                    existing.cover_image_url !== data.cover_image_url
+                        ? existing.cover_image_url
+                        : null
+                ]);
+            }
+
+            await recordAudit(
+                client,
+                admin,
+                "gallery_item.updated",
+                "gallery_item",
+                itemId,
+                { title: data.title, is_published: data.is_published }
+            );
+            return respond({ success: true, item: data });
+        }
+
+        if (method === "DELETE" && segments.length === 2) {
+            const itemId = segments[1];
+            const { data, error } = await client
+                .from("vsg_gallery_items")
+                .delete()
+                .eq("id", itemId)
+                .select("id, title, media_url, cover_image_url")
+                .single();
+            throwIfError(error);
+            await removeGalleryAssets(client, [data.media_url, data.cover_image_url]);
+            await recordAudit(
+                client,
+                admin,
+                "gallery_item.deleted",
+                "gallery_item",
+                itemId,
+                { title: data.title }
+            );
+            return respond({ success: true, message: "Gallery item deleted." });
+        }
+    }
+
+    if (segments[0] === "officer-id-settings") {
+        requirePermission(admin, "settings_manage");
+
+        if (method === "GET" && segments.length === 1) {
+            const { data, error } = await client
+                .from("vsg_website_content")
+                .select("content_value")
+                .eq("content_key", "officer_id_prefix")
+                .maybeSingle();
+            throwIfError(error);
+
+            return respond({
+                success: true,
+                prefix: data?.content_value || "VSG"
+            });
+        }
+
+        if (method === "PATCH" && segments.length === 1) {
+            const body = await readJson(request);
+            if (
+                typeof body.prefix !== "string" ||
+                !/^[A-Za-z0-9]{2,12}$/.test(body.prefix.trim())
+            ) {
+                throw new HttpError(
+                    400,
+                    "Officer ID prefixes must contain 2 to 12 letters or numbers."
+                );
+            }
+
+            const prefix = body.prefix.trim().toUpperCase();
+            const { error } = await client
+                .from("vsg_website_content")
+                .upsert({
+                    content_key: "officer_id_prefix",
+                    content_value: prefix,
+                    updated_at: new Date().toISOString()
+                }, { onConflict: "content_key" });
+            throwIfError(error);
+
+            await recordAudit(
+                client,
+                admin,
+                "officer_id.prefix_updated",
+                "officer_id_settings",
+                null,
+                { prefix }
+            );
+
+            return respond({
+                success: true,
+                message: "Officer ID prefix updated.",
+                prefix
+            });
+        }
+    }
+
     if (segments[0] === "administrators") {
         requireSuperAdmin(admin);
 
@@ -1414,6 +1855,44 @@ async function handleRequest(
                 client: data
             }, 201);
         }
+
+        if (method === "PATCH" && segments.length === 2) {
+            requirePermission(admin, "posts_manage");
+            const body = await readJson(request);
+            const { data, error } = await client
+                .from("clients")
+                .update({
+                    client_name: body.client_name,
+                    contact_person: body.contact_person || null,
+                    phone: body.phone || null,
+                    email: body.email || null,
+                    address: body.address || null,
+                    county: body.county || null,
+                    business_type: body.business_type || null,
+                    notes: body.notes || null,
+                    status: body.status || "Active",
+                    updated_at: new Date().toISOString()
+                })
+                .eq("id", segments[1])
+                .select()
+                .single();
+            throwIfError(error);
+
+            await recordAudit(
+                client,
+                admin,
+                "client.updated",
+                "client",
+                data.id,
+                { client_name: data.client_name }
+            );
+
+            return respond({
+                success: true,
+                message: "Client updated successfully.",
+                client: data
+            });
+        }
     }
 
     if (
@@ -1575,10 +2054,19 @@ async function handleRequest(
                 throw new HttpError(400, "Officer details are required.");
             }
 
+            const { data: prefixSetting, error: prefixError } = await client
+                .from("vsg_website_content")
+                .select("content_value")
+                .eq("content_key", "officer_id_prefix")
+                .maybeSingle();
+            throwIfError(prefixError);
+            const prefix = prefixSetting?.content_value || "VSG";
+            const year = new Date().getFullYear();
+
             const { data: latest, error: latestError } = await client
                 .from("officers")
                 .select("officer_id")
-                .like("officer_id", `VSG-${new Date().getFullYear()}-%`)
+                .like("officer_id", `${prefix}-${year}-%`)
                 .order("officer_id", { ascending: false })
                 .limit(1);
             throwIfError(latestError);
@@ -1589,7 +2077,7 @@ async function handleRequest(
                 nextNumber = Number.parseInt(match[1], 10) + 1;
             }
 
-            const officerId = `VSG-${new Date().getFullYear()}-${String(nextNumber).padStart(3, "0")}`;
+            const officerId = `${prefix}-${year}-${String(nextNumber).padStart(3, "0")}`;
             const { data, error } = await client
                 .from("officers")
                 .insert({
@@ -1767,26 +2255,40 @@ async function handleRequest(
         if (method === "PATCH" && segments.length === 2) {
             requirePermission(admin, "posts_manage");
             const body = await readJson(request);
+            const { data: existingPost, error: existingPostError } = await client
+                .from("security_posts")
+                .select("*")
+                .eq("id", postId)
+                .maybeSingle();
+            throwIfError(existingPostError);
+            if (!existingPost) {
+                throw new HttpError(404, "Security post not found.");
+            }
+
+            const valueOrExisting = (key: string) =>
+                body[key] === undefined ? existingPost[key] : body[key] || null;
             const { data, error } = await client
                 .from("security_posts")
                 .update({
-                    client_id: body.client_id || null,
-                    post_name: body.post_name,
-                    location: body.location,
-                    county: body.county || null,
-                    required_officers: body.required_officers || 1,
-                    shift_system: body.shift_system || "2 Shifts",
-                    shift_one_start: body.shift_one_start || null,
-                    shift_one_end: body.shift_one_end || null,
-                    shift_two_start: body.shift_two_start || null,
-                    shift_two_end: body.shift_two_end || null,
-                    shift_three_start: body.shift_three_start || null,
-                    shift_three_end: body.shift_three_end || null,
-                    post_supervisor_id: body.post_supervisor_id || null,
-                    service_start_date: body.service_start_date || null,
-                    service_end_date: body.service_end_date || null,
-                    status: body.status || "Active",
-                    special_instructions: body.special_instructions || null,
+                    client_id: valueOrExisting("client_id"),
+                    post_name: valueOrExisting("post_name"),
+                    location: valueOrExisting("location"),
+                    county: valueOrExisting("county"),
+                    required_officers: body.required_officers === undefined
+                        ? existingPost.required_officers
+                        : Number(body.required_officers) || 1,
+                    shift_system: valueOrExisting("shift_system"),
+                    shift_one_start: valueOrExisting("shift_one_start"),
+                    shift_one_end: valueOrExisting("shift_one_end"),
+                    shift_two_start: valueOrExisting("shift_two_start"),
+                    shift_two_end: valueOrExisting("shift_two_end"),
+                    shift_three_start: valueOrExisting("shift_three_start"),
+                    shift_three_end: valueOrExisting("shift_three_end"),
+                    post_supervisor_id: valueOrExisting("post_supervisor_id"),
+                    service_start_date: valueOrExisting("service_start_date"),
+                    service_end_date: valueOrExisting("service_end_date"),
+                    status: valueOrExisting("status"),
+                    special_instructions: valueOrExisting("special_instructions"),
                     updated_at: new Date().toISOString()
                 })
                 .eq("id", postId)

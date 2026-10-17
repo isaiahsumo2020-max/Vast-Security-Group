@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery Management | VAST Admin</title>
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="admin-sidebar">
+            <div class="admin-brand">
+                <img src="../../assests/images/VAST LOGO.png" alt="VAST Logo">
+                <div><strong>VAST</strong><span>ADMIN</span></div>
+            </div>
+            <nav class="admin-nav" aria-label="Admin navigation">
+                <a href="../dashboard.html">Dashboard</a>
+                <a href="../administrators/administrators.html">Administrators</a>
+                <a href="../posts/posts.html">Guard Posts</a>
+                <a href="../clients/clients.html">Clients</a>
+                <a href="../officers/officers.html">Officers</a>
+                <a href="../recruitment/recruitment.html">Recruitment</a>
+                <a href="../shortlist/shortlist.html">Shortlist</a>
+                <a href="../communication/communication.html">Communication</a>
+                <a href="../messages/messages.html">Messages</a>
+                <a href="../notifications/notifications.html">Notifications</a>
+                <a href="../services/services.html">Services</a>
+                <a href="gallery.html" class="active" aria-current="page">Gallery</a>
+                <a href="../auditlog/auditlog.html">Audit Log</a>
+                <a href="../settings/settings.html">Settings</a>
+            </nav>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </aside>
+
+        <main class="admin-main">
+            <header class="admin-header">
+                <div>
+                    <h1>Company Gallery</h1>
+                    <p>Share VAST activities, training, ceremonies, and other events.</p>
+                </div>
+                <a class="secondary-btn" href="../../gallery.html" target="_blank" rel="noreferrer">View public gallery</a>
+            </header>
+
+            <section class="admin-section">
+                <div class="section-heading">
+                    <div>
+                        <h2 id="galleryFormHeading">Add Gallery Item</h2>
+                        <p>Upload a photo or video, then add its event story, caption, or speech.</p>
+                    </div>
+                </div>
+                <form id="galleryForm">
+                    <input id="galleryItemId" type="hidden">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="galleryTitle">Title *</label>
+                            <input id="galleryTitle" maxlength="180" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="galleryDate">Event date *</label>
+                            <input id="galleryDate" type="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="galleryMediaType">Media type *</label>
+                            <select id="galleryMediaType" required>
+                                <option value="image">Photo</option>
+                                <option value="video">Video</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="galleryMediaFile">Photo or video *</label>
+                            <input id="galleryMediaFile" type="file"
+                                accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime">
+                            <small>Images up to 10 MB; videos up to 100 MB (MP4, WebM, or MOV).</small>
+                            <img id="galleryMediaPreview" class="gallery-admin-preview" alt="Selected gallery media preview" hidden>
+                        </div>
+                        <div class="form-group">
+                            <label for="galleryCoverFile">Cover image / video thumbnail</label>
+                            <input id="galleryCoverFile" type="file" accept="image/jpeg,image/png,image/webp">
+                            <small>Required for videos; optional for photos. JPEG, PNG, or WebP up to 10 MB.</small>
+                            <img id="galleryCoverPreview" class="gallery-admin-preview" alt="Selected cover image preview" hidden>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="galleryPreview">Short preview *</label>
+                            <textarea id="galleryPreview" maxlength="500" rows="2" required
+                                placeholder="A brief introduction shown on the gallery card."></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="galleryCaption">Caption</label>
+                            <textarea id="galleryCaption" maxlength="5000" rows="3"
+                                placeholder="Add a photo/video caption or context."></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="galleryEventDetails">Event details</label>
+                            <textarea id="galleryEventDetails" maxlength="10000" rows="4"
+                                placeholder="Describe the activity, venue, participants, or occasion."></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="galleryMessage">Speech or message</label>
+                            <textarea id="galleryMessage" maxlength="20000" rows="5"
+                                placeholder="Optionally include a speech or message delivered during the occasion."></textarea>
+                        </div>
+                        <div class="form-group gallery-publish-field">
+                            <span class="settings-field-label">Website visibility</span>
+                            <label class="service-checkbox-label" for="galleryPublished">
+                                <input id="galleryPublished" type="checkbox" checked>
+                                Publish on the public gallery
+                            </label>
+                        </div>
+                    </div>
+                    <p id="galleryFormStatus" class="form-message" role="status" aria-live="polite"></p>
+                    <div class="modal-actions">
+                        <button type="button" class="secondary-btn" id="cancelGalleryEditBtn" hidden>Cancel Edit</button>
+                        <button type="submit" class="primary-btn" id="saveGalleryItemBtn">Add Gallery Item</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="admin-section">
+                <div class="section-heading">
+                    <div>
+                        <h2>Gallery Items</h2>
+                        <p>Manage published and unpublished company stories.</p>
+                    </div>
+                    <button type="button" class="secondary-btn" id="refreshGalleryBtn">Refresh</button>
+                </div>
+                <p id="galleryListStatus" class="form-message" role="status" aria-live="polite"></p>
+                <div id="galleryAdminItems" class="gallery-admin-items" aria-live="polite">
+                    <p>Loading gallery items…</p>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="../auth/guard.js"></script>
+    <script type="module" src="./gallery.js"></script>
+</body>
+</html>

@@ -27,6 +27,14 @@ Settings. Image uploads accept JPEG, PNG, or WebP files up to 5 MB. Public
 pages read published content from the `admin-api` function; edits are audit
 logged.
 
+The gallery migration creates the `vsg_gallery_items` table and the public
+`vsg-gallery-assets` storage bucket. Administrators with `settings_manage` can
+upload photos, videos (up to 100 MB), and video cover images in Admin > Gallery,
+then edit or unpublish gallery stories. Published items are served by
+`GET /public/gallery`; visitors can open each card to view the full media,
+caption, event details, and an optional speech or message. Apply the migration
+and redeploy `admin-api` before using the gallery.
+
 The public officer verification page performs a live lookup by Officer ID
 through `GET /public/officers/{officerId}`. It no longer relies on the
 admin-only officers endpoint or a potentially stale browser cache. The public

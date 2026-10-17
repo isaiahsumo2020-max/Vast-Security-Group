@@ -12,7 +12,7 @@ async function verifyOfficer() {
     setSectionVisibility(resultBox, false);
     setSectionVisibility(notFoundBox, false);
 
-    if (!/^VSG-\d{4}-\d{3,}$/.test(officerId)) {
+    if (!/^[A-Z0-9]{2,12}-\d{4}-\d{3,}$/.test(officerId)) {
         message.textContent = "Enter a valid Officer ID, for example VSG-2026-001.";
         message.className = "verification-message error";
         officerInput.focus();

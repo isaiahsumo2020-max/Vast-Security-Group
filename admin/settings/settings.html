@@ -92,6 +92,24 @@
                     <button class="primary-btn" type="submit" id="changePasswordBtn">Change Password</button>
                 </form>
             </section>
+            <section class="admin-section settings-card" id="officerIdSettingsSection" hidden>
+                <div class="section-heading">
+                    <div>
+                        <h2>Officer ID Settings</h2>
+                        <p>New officer IDs use this prefix. Existing officer IDs are not changed.</p>
+                    </div>
+                </div>
+                <form id="officerIdSettingsForm">
+                    <div class="form-group">
+                        <label for="officerIdPrefix">Officer ID prefix</label>
+                        <input id="officerIdPrefix" maxlength="12" minlength="2"
+                            pattern="[A-Za-z0-9]{2,12}" value="VSG" required>
+                        <small>For example, VSG-2026-001 or VAST-2026-001. Use 2 to 12 letters or numbers.</small>
+                    </div>
+                    <p id="officerIdSettingsStatus" class="form-message" role="status" aria-live="polite"></p>
+                    <button class="primary-btn" type="submit" id="saveOfficerIdSettingsBtn">Save Officer ID Prefix</button>
+                </form>
+            </section>
             <section class="admin-section settings-card website-content-settings">
                 <div class="section-heading">
                     <div>

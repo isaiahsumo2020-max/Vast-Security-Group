@@ -14,6 +14,11 @@ const saveWebsiteContentButton = document.getElementById("saveWebsiteContentBtn"
 const profileAvatarFile = document.getElementById("profileAvatarFile");
 const profileAvatarPreview = document.getElementById("profileAvatarPreview");
 const uploadProfileAvatarButton = document.getElementById("uploadProfileAvatarBtn");
+const officerIdSettingsSection = document.getElementById("officerIdSettingsSection");
+const officerIdSettingsForm = document.getElementById("officerIdSettingsForm");
+const officerIdPrefix = document.getElementById("officerIdPrefix");
+const officerIdSettingsStatus = document.getElementById("officerIdSettingsStatus");
+const saveOfficerIdSettingsButton = document.getElementById("saveOfficerIdSettingsBtn");
 
 function setStatus(element, message, isError = false) {
     element.textContent = message;
@@ -48,7 +53,9 @@ try {
         const websiteContentSection =
             document.querySelector(".website-content-settings");
         websiteContentSection.hidden = !canManageWebsiteContent;
+        officerIdSettingsSection.hidden = !canManageWebsiteContent;
         if (canManageWebsiteContent) {
+            await loadOfficerIdSettings();
             await loadWebsiteContent();
         }
     }
@@ -124,6 +131,49 @@ async function loadWebsiteContent() {
             });
     }
 }
+
+async function loadOfficerIdSettings() {
+    try {
+        const result = await apiRequest("/officer-id-settings");
+        officerIdPrefix.value = result.prefix || "VSG";
+    } catch (error) {
+        console.error("Unable to load Officer ID settings:", error);
+        setStatus(
+            officerIdSettingsStatus,
+            error.message || "Unable to load Officer ID settings.",
+            true
+        );
+        officerIdPrefix.disabled = true;
+        saveOfficerIdSettingsButton.disabled = true;
+    }
+}
+
+officerIdSettingsForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    saveOfficerIdSettingsButton.disabled = true;
+    setStatus(officerIdSettingsStatus, "Saving Officer ID prefix...");
+
+    try {
+        const result = await apiRequest("/officer-id-settings", {
+            method: "PATCH",
+            body: JSON.stringify({ prefix: officerIdPrefix.value.trim().toUpperCase() })
+        });
+        officerIdPrefix.value = result.prefix;
+        setStatus(
+            officerIdSettingsStatus,
+            "Officer ID prefix saved. Existing IDs remain unchanged."
+        );
+    } catch (error) {
+        console.error("Unable to save Officer ID settings:", error);
+        setStatus(
+            officerIdSettingsStatus,
+            error.message || "Unable to save Officer ID settings.",
+            true
+        );
+    } finally {
+        saveOfficerIdSettingsButton.disabled = false;
+    }
+});
 
 for (const button of websiteContentForm.querySelectorAll("[data-image-upload-button]")) {
     button.addEventListener("click", async () => {

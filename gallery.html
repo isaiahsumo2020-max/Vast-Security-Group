@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-site-content-title>Gallery | VAST Security Group</title>
+    <meta name="description" content="Explore VAST Security Group activities, training, ceremonies, and community events.">
+    <link rel="icon" data-site-content-image="site_logo_url">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="/assests/css/style.css">
+</head>
+<body>
+    <div class="top-bar">
+        <div class="container top-container">
+            <div class="top-contact">
+                <span><i class="fa-solid fa-phone"></i> +231 775 857 702 | +231 776 553 409</span>
+                <span class="social"><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a></span>
+            </div>
+            <div class="top-social"><a href="mailto:vastsecuritygroup20@gmail.com">
+                <i class="fa-solid fa-envelope"></i> vastsecuritygroup20@gmail.com</a></div>
+        </div>
+    </div>
+
+    <header>
+        <nav class="navbar">
+            <div class="container nav-container">
+                <a href="/index.html" class="logo">
+                    <img alt="VAST Logo" data-site-content-image="site_logo_url" hidden>
+                    <div class="logo-text">
+                        <h2 data-site-content-text="site_name">VAST SECURITY GROUP</h2>
+                        <p>Vigilance Asset Security Team</p>
+                    </div>
+                </a>
+                <ul class="desktop-nav-links" id="desktop-nav-links">
+                    <li><a href="/index.html">Home</a></li>
+                    <li><a href="/about.html">About</a></li>
+                    <li><a href="/services.html">Services</a></li>
+                    <li><a class="active" href="/gallery.html" aria-current="page">Gallery</a></li>
+                    <li><a href="/recruitment.html">Recruitment</a></li>
+                    <li><a href="/contact.html">Contact</a></li>
+                    <li><a href="/legal.html">Legal</a></li>
+                </ul>
+                <div class="nav-buttons">
+                    <a href="/verification.html" class="verify-btn">Verify Officer</a>
+                    <button class="menu-btn" id="menuBtn" aria-label="Open navigation menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <div class="mobile-close" id="closeMenu"><i class="fa-solid fa-xmark"></i></div>
+                <li><a href="/index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="/about.html"><i class="fa-solid fa-circle-info"></i> About</a></li>
+                <li><a href="/services.html"><i class="fa-solid fa-shield-halved"></i> Services</a></li>
+                <li><a href="/gallery.html" aria-current="page"><i class="fa-solid fa-images"></i> Gallery</a></li>
+                <li><a href="/recruitment.html"><i class="fa-solid fa-users"></i> Recruitment</a></li>
+                <li><a href="/contact.html"><i class="fa-solid fa-phone"></i> Contact</a></li>
+                <li><a href="/legal.html"><i class="fa-solid fa-scale-balanced"></i> Legal</a></li>
+                <li class="verify-mobile"><a href="/verification.html"><i class="fa-solid fa-id-badge"></i> Verify Officer</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="public-gallery-page">
+        <section class="gallery-hero">
+            <div class="container">
+                <p class="gallery-eyebrow">Life at VAST</p>
+                <h1>Our Gallery</h1>
+                <p>Moments of service, learning, leadership, and community across VAST Security Group.</p>
+            </div>
+        </section>
+        <section class="gallery-content">
+            <div class="container">
+                <div class="gallery-section-heading">
+                    <div>
+                        <span class="gallery-eyebrow">Stories in focus</span>
+                        <h2>Company Activities &amp; Events</h2>
+                        <p>Explore the people and moments behind our commitment to professional security.</p>
+                    </div>
+                </div>
+                <p id="publicGalleryStatus" class="gallery-status" role="status" aria-live="polite">Loading company stories…</p>
+                <div id="publicGalleryItems" class="public-gallery-grid" aria-live="polite"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="gallery-footer">
+        <div class="container">
+            <div class="gallery-footer-brand">
+                <strong data-site-content-text="site_name">VAST SECURITY GROUP</strong>
+                <span>Vigilance Asset Security Team</span>
+            </div>
+            <p>Professional security. People-first service. Proudly serving Liberia.</p>
+            <div class="gallery-footer-links">
+                <a href="/index.html">Home</a>
+                <a href="/about.html">About</a>
+                <a href="/services.html">Services</a>
+                <a href="/gallery.html" aria-current="page">Gallery</a>
+                <a href="/contact.html">Contact</a>
+                <a href="/legal.html">Legal</a>
+            </div>
+            <small>© 2026 VAST Security Group. All Rights Reserved.</small>
+        </div>
+    </footer>
+
+    <dialog id="galleryDialog" class="gallery-dialog" aria-labelledby="galleryDialogTitle">
+        <div class="gallery-dialog-card">
+            <button type="button" class="gallery-dialog-close" id="closeGalleryDialog"
+                aria-label="Close gallery detail"><i class="fa-solid fa-xmark"></i></button>
+            <div id="galleryDialogMedia" class="gallery-dialog-media"></div>
+            <div class="gallery-dialog-content">
+                <p id="galleryDialogDate" class="gallery-dialog-date"></p>
+                <h2 id="galleryDialogTitle"></h2>
+                <p id="galleryDialogCaption" class="gallery-dialog-caption"></p>
+                <section id="galleryDialogDetailsSection">
+                    <h3>Event Details</h3>
+                    <p id="galleryDialogDetails"></p>
+                </section>
+                <section id="galleryDialogMessageSection" class="gallery-dialog-message-section">
+                    <h3>Message from the Occasion</h3>
+                    <p id="galleryDialogMessage"></p>
+                </section>
+            </div>
+        </div>
+    </dialog>
+
+    <button id="topBtn" aria-label="Back to top"><i class="fa-solid fa-arrow-up"></i></button>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="/assests/js/publicSiteContent.js"></script>
+    <script src="/assests/js/script.js"></script>
+    <script type="module" src="/assests/js/gallery.js"></script>
+</body>
+</html>

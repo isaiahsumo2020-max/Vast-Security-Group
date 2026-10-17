@@ -241,6 +241,19 @@ function populateEditPostForm(post) {
     ).value =
         post.shift_system || "2 Shifts";
 
+    document.getElementById("editShiftOneStart").value =
+        post.shift_one_start || "";
+    document.getElementById("editShiftOneEnd").value =
+        post.shift_one_end || "";
+    document.getElementById("editShiftTwoStart").value =
+        post.shift_two_start || "";
+    document.getElementById("editShiftTwoEnd").value =
+        post.shift_two_end || "";
+    document.getElementById("editShiftThreeStart").value =
+        post.shift_three_start || "";
+    document.getElementById("editShiftThreeEnd").value =
+        post.shift_three_end || "";
+
     document.getElementById(
         "editPostSupervisor"
     ).value =
@@ -336,6 +349,24 @@ document
                                 document.getElementById(
                                     "editShiftSystem"
                                 ).value,
+
+                            shift_one_start:
+                                document.getElementById("editShiftOneStart").value || null,
+
+                            shift_one_end:
+                                document.getElementById("editShiftOneEnd").value || null,
+
+                            shift_two_start:
+                                document.getElementById("editShiftTwoStart").value || null,
+
+                            shift_two_end:
+                                document.getElementById("editShiftTwoEnd").value || null,
+
+                            shift_three_start:
+                                document.getElementById("editShiftThreeStart").value || null,
+
+                            shift_three_end:
+                                document.getElementById("editShiftThreeEnd").value || null,
 
                             post_supervisor_id:
                                 document.getElementById(
