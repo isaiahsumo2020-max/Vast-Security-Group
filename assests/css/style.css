@@ -1873,24 +1873,21 @@ CALL TO ACTION
 .global-cta-image {
     position: absolute;
     z-index: 0;
-    top: 50%;
-    right: clamp(16px, calc((100vw - 1100px) / 2), 90px);
-    width: min(22vw, 250px);
-    height: calc(100% - 40px);
-    max-height: 280px;
-    transform: translateY(-50%);
-    object-fit: contain;
-    opacity: .18;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    object-fit: cover;
     pointer-events: none;
 }
 
-@media(max-width:768px) {
-    .global-cta-image {
-        right: 12px;
-        width: min(32vw, 150px);
-        height: calc(100% - 28px);
-        opacity: .12;
-    }
+.has-global-cta-image::after {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    background: linear-gradient(rgba(11, 35, 65, .76), rgba(11, 35, 65, .76));
+    pointer-events: none;
 }
 
 /* Small Screen */
@@ -4688,4 +4685,30 @@ LEGAL PAGE
 
     }
 
+}
+
+@media(max-width:768px) {
+    .has-global-cta-image {
+        padding: 44px 0;
+    }
+
+    .has-global-cta-image h2 {
+        font-size: clamp(28px, 8vw, 34px);
+        line-height: 1.12;
+        margin-bottom: 14px;
+    }
+
+    .has-global-cta-image p {
+        font-size: 15px;
+        line-height: 1.6;
+        margin-bottom: 22px;
+    }
+
+    .has-global-cta-image .cta-buttons {
+        gap: 10px;
+    }
+
+    .has-global-cta-image a[class*="btn"] {
+        padding: 12px 18px;
+    }
 }
