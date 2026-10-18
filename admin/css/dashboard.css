@@ -441,12 +441,132 @@ body {
     color: var(--muted);
 }
 
+.message-unread-row {
+    background: #fffdf5;
+}
+
+.message-unread-row > td:first-child {
+    border-left: 3px solid var(--gold);
+}
+
+.message-row-preview {
+    display: -webkit-box;
+    max-width: 300px;
+    margin: 0;
+    overflow: hidden;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+.message-updated-date {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.message-actions-cell {
+    min-width: 210px;
+}
+
+.message-actions-cell .action-btn {
+    margin: 2px;
+}
+
 .message-status-select {
     min-width: 120px;
     padding: 7px;
     border: 1px solid var(--border);
     border-radius: 5px;
     background: var(--white);
+}
+
+.message-details-dialog {
+    width: min(800px, calc(100% - 32px));
+    max-height: min(88vh, 900px);
+    padding: 0;
+    overflow: auto;
+    border: 0;
+    border-radius: 12px;
+    color: var(--text);
+    box-shadow: 0 24px 70px rgb(0 0 0 / 30%);
+}
+
+.message-details-dialog::backdrop {
+    background: rgb(7 24 45 / 65%);
+}
+
+.message-details-card {
+    padding: clamp(20px, 4vw, 34px);
+}
+
+.message-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.message-details-header h2 {
+    margin: 6px 0 0;
+    color: var(--primary);
+    overflow-wrap: anywhere;
+}
+
+.message-details-sender {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 24px;
+    margin: 22px 0;
+}
+
+.message-details-sender div {
+    min-width: 0;
+}
+
+.message-details-sender dt {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.message-details-sender dd {
+    margin: 4px 0 0;
+    overflow-wrap: anywhere;
+}
+
+.message-details-body {
+    padding: 18px;
+    border-radius: 8px;
+    background: #f7f8fa;
+}
+
+.message-details-body h3 {
+    margin: 0 0 10px;
+    color: var(--primary);
+}
+
+.message-details-body p {
+    margin: 0;
+    max-height: 42vh;
+    overflow: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.7;
+}
+
+@media(max-width:600px) {
+    .message-details-header {
+        flex-direction: column-reverse;
+    }
+
+    .message-details-sender {
+        grid-template-columns: 1fr;
+    }
 }
 
 .officer-table details summary {
@@ -559,8 +679,73 @@ body {
     line-height: 1.6;
 }
 
+.cta-image-layout {
+    display: grid;
+    grid-template-columns: minmax(220px, .8fr) minmax(280px, 1.2fr);
+    gap: 28px;
+    align-items: start;
+}
+
+.cta-image-options h3 {
+    margin: 0 0 8px;
+    color: var(--primary);
+}
+
+.cta-image-help {
+    margin: 0 0 14px;
+    color: var(--muted);
+}
+
+.cta-image-global-toggle,
+.cta-image-page-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cta-image-global-toggle {
+    margin-bottom: 24px;
+    font-weight: 600;
+}
+
+.cta-image-global-toggle input,
+.cta-image-page-option input {
+    width: auto;
+    flex: 0 0 auto;
+}
+
+.cta-image-page-list {
+    display: grid;
+    gap: 8px;
+}
+
+.cta-image-page-option {
+    min-height: 44px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+}
+
+.cta-image-visibility {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: .875rem;
+}
+
+.cta-image-visibility.is-visible {
+    color: #16794b;
+    font-weight: 600;
+}
+
 .managed-leadership-message {
     white-space: pre-line;
+}
+
+@media(max-width:700px) {
+    .cta-image-layout {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
 }
 
 .admin-form-panel {

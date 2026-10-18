@@ -80,6 +80,38 @@ async function loadPublicSiteContent() {
             banner.style.backgroundSize = "cover";
             banner.style.backgroundPosition = "center";
         }
+
+        if (content.cta_image_enabled === "true" &&
+            typeof content.cta_image_url === "string" &&
+            isApprovedImageUrl(content.cta_image_url)) {
+            let visiblePages = {};
+            try {
+                const parsedPages = JSON.parse(content.cta_image_pages || "{}");
+                if (parsedPages && typeof parsedPages === "object" && !Array.isArray(parsedPages)) {
+                    visiblePages = parsedPages;
+                }
+            } catch (error) {
+                console.error("Unable to read CTA image page visibility settings:", error);
+            }
+
+            for (const section of document.querySelectorAll("[data-global-cta-page]")) {
+                if (visiblePages[section.dataset.globalCtaPage] !== true) {
+                    continue;
+                }
+
+                const image = document.createElement("img");
+                image.className = "global-cta-image";
+                image.alt = "";
+                image.setAttribute("aria-hidden", "true");
+                image.addEventListener("error", () => {
+                    image.remove();
+                    section.classList.remove("has-global-cta-image");
+                }, { once: true });
+                image.src = content.cta_image_url;
+                section.classList.add("has-global-cta-image");
+                section.prepend(image);
+            }
+        }
     } catch (error) {
         console.error(
             "Unable to load managed public website content; using page defaults:",

@@ -27,6 +27,7 @@ let items = [];
 let currentMediaUrl = "";
 let currentMediaType = "";
 let currentCoverUrl = "";
+let isSaving = false;
 const previewObjectUrls = new Map();
 
 function setStatus(element, message, isError = false) {
@@ -191,16 +192,25 @@ async function loadItems() {
     setStatus(listStatus, "");
     try {
         const result = await apiRequest("/gallery");
-        items = result.items || [];
+        if (!result.success || !Array.isArray(result.items)) {
+            throw new Error("The server returned an invalid gallery item list.");
+        }
+        items = result.items;
         renderItems();
         setStatus(listStatus, `${items.length} gallery item${items.length === 1 ? "" : "s"} loaded.`);
     } catch (error) {
         console.error("Unable to load gallery items:", error);
-        setStatus(listStatus, error.message || "Unable to load gallery items.", true);
+        setStatus(
+            listStatus,
+            "Unable to load gallery items. Check your connection and administrator access, then try again.",
+            true
+        );
         itemList.textContent = "Gallery items could not be loaded.";
+        return false;
     } finally {
         refreshButton.disabled = false;
     }
+    return true;
 }
 
 async function uploadAsset(file, kind) {
@@ -211,6 +221,9 @@ async function uploadAsset(file, kind) {
         method: "POST",
         body: formData
     });
+    if (!result.success || typeof result.assetUrl !== "string" || !result.assetUrl) {
+        throw new Error("The server did not confirm the media upload.");
+    }
     return result;
 }
 
@@ -231,6 +244,10 @@ function getFormData(mediaUrl, mediaType, coverImageUrl) {
 
 galleryForm.addEventListener("submit", async event => {
     event.preventDefault();
+    if (isSaving) {
+        return;
+    }
+
     const itemId = itemIdInput.value;
     const existingItem = items.find(item => item.id === itemId);
     const selectedMedia = mediaFileInput.files[0];
@@ -256,6 +273,7 @@ galleryForm.addEventListener("submit", async event => {
         return;
     }
 
+    isSaving = true;
     saveButton.disabled = true;
     try {
         const bodyPreview = getFormData(
@@ -299,16 +317,32 @@ galleryForm.addEventListener("submit", async event => {
             }
         );
         const savedItem = result.item;
+        if (!result.success || !savedItem?.id || typeof savedItem.title !== "string") {
+            throw new Error("The server did not confirm that the gallery item was saved.");
+        }
         resetForm();
-        await loadItems();
-        setStatus(
-            listStatus,
-            `"${savedItem.title}" ${existingItem ? "updated" : "added"}.`
-        );
+        const itemsRefreshed = await loadItems();
+        if (itemsRefreshed) {
+            setStatus(
+                listStatus,
+                `"${savedItem.title}" ${existingItem ? "updated" : "added"}.`
+            );
+        } else {
+            setStatus(
+                formStatus,
+                `"${savedItem.title}" was saved, but the gallery list could not be refreshed. Use Refresh to reload it.`,
+                true
+            );
+        }
     } catch (error) {
         console.error("Unable to save gallery item:", error);
-        setStatus(formStatus, error.message || "Unable to save gallery item.", true);
+        setStatus(
+            formStatus,
+            error.message || "Unable to save gallery item. Please try again.",
+            true
+        );
     } finally {
+        isSaving = false;
         saveButton.disabled = false;
     }
 });

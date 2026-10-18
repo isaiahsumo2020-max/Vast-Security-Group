@@ -113,29 +113,59 @@ function showDetails(item) {
 async function loadGallery() {
     status.textContent = "Loading company stories…";
     status.classList.remove("error");
+    status.classList.remove("gallery-empty-state");
+    status.hidden = false;
     try {
         const endpoint = new URL(getApiBaseUrl());
         endpoint.searchParams.set("path", "/public/gallery");
         const response = await fetch(endpoint, {
             headers: { apikey: SUPABASE_ANON_KEY }
         });
-        const result = await response.json();
+        let result;
+        try {
+            result = await response.json();
+        } catch (error) {
+            throw new Error(
+                `Gallery API returned an invalid response (HTTP ${response.status}).`,
+                { cause: error }
+            );
+        }
         if (!response.ok) {
-            throw new Error(result.message || "Unable to load the company gallery.");
+            throw new Error(
+                `Gallery API returned HTTP ${response.status}: ${
+                    typeof result.message === "string"
+                        ? result.message
+                        : "No error details were provided."
+                }`
+            );
+        }
+        if (!Array.isArray(result.items)) {
+            throw new Error("Gallery API response did not contain an items list.");
         }
 
         itemGrid.replaceChildren();
-        const items = result.items || [];
+        const items = result.items;
         if (!items.length) {
-            status.textContent = "Our gallery is being prepared. Please check back soon.";
+            const heading = document.createElement("strong");
+            heading.className = "gallery-empty-title";
+            heading.textContent = "No Recent Stories";
+            status.replaceChildren(
+                heading,
+                document.createTextNode(
+                    "Our latest activities and events will appear here. Please check back soon for updates from VAST Security Group."
+                )
+            );
+            status.classList.add("gallery-empty-state");
             return;
         }
 
         items.forEach(item => itemGrid.appendChild(createCard(item)));
-        status.textContent = "";
+        status.hidden = true;
     } catch (error) {
         console.error("Unable to load public gallery:", error);
-        status.textContent = error.message || "Unable to load the company gallery.";
+        itemGrid.replaceChildren();
+        status.textContent =
+            "We’re unable to load our gallery at the moment. Please try again shortly.";
         status.classList.add("error");
     }
 }

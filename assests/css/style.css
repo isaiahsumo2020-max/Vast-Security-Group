@@ -1461,6 +1461,20 @@ STATISTICS
     text-align: center;
 }
 
+.gallery-status.gallery-empty-state {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    max-width: 620px;
+    margin: 36px auto;
+    line-height: 1.7;
+}
+
+.gallery-empty-title {
+    color: #0b2341;
+    font-size: 1.25rem;
+}
+
 .gallery-status.error {
     color: #b42318;
 }
@@ -1843,6 +1857,40 @@ CALL TO ACTION
 
     flex-wrap: wrap;
 
+}
+
+.has-global-cta-image {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.has-global-cta-image > .container {
+    position: relative;
+    z-index: 1;
+}
+
+.global-cta-image {
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    right: clamp(16px, calc((100vw - 1100px) / 2), 90px);
+    width: min(22vw, 250px);
+    height: calc(100% - 40px);
+    max-height: 280px;
+    transform: translateY(-50%);
+    object-fit: contain;
+    opacity: .18;
+    pointer-events: none;
+}
+
+@media(max-width:768px) {
+    .global-cta-image {
+        right: 12px;
+        width: min(32vw, 150px);
+        height: calc(100% - 28px);
+        opacity: .12;
+    }
 }
 
 /* Small Screen */

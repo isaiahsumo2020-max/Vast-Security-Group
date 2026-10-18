@@ -27,7 +27,18 @@ const websiteImageKeys = new Set([
     "verification_banner_url",
     "about_story_image_url",
     "ceo_photo_url",
-    "co_ceo_photo_url"
+    "co_ceo_photo_url",
+    "cta_image_url"
+]);
+
+const ctaImagePageKeys = new Set([
+    "home",
+    "about",
+    "services",
+    "recruitment",
+    "contact",
+    "legal",
+    "verification"
 ]);
 
 const websiteTextLimits: Record<string, number> = {
@@ -44,12 +55,16 @@ const websiteTextLimits: Record<string, number> = {
 
 const websiteContentKeys = new Set([
     ...websiteImageKeys,
+    "cta_image_enabled",
+    "cta_image_pages",
     ...Object.keys(websiteTextLimits)
 ]);
 
 const defaultPermissions: Record<string, Record<string, boolean>> = {
     "Super Admin": { all: true },
     "HR Admin": {
+        messages_view: false,
+        messages_manage: false,
         officers_view: true,
         officers_create: true,
         officers_edit: true,
@@ -64,6 +79,8 @@ const defaultPermissions: Record<string, Record<string, boolean>> = {
         settings_manage: false
     },
     "Recruitment Admin": {
+        messages_view: false,
+        messages_manage: false,
         officers_view: true,
         officers_create: false,
         officers_edit: false,
@@ -78,6 +95,8 @@ const defaultPermissions: Record<string, Record<string, boolean>> = {
         settings_manage: false
     },
     "Operations Admin": {
+        messages_view: false,
+        messages_manage: false,
         officers_view: true,
         officers_create: false,
         officers_edit: true,
@@ -92,6 +111,8 @@ const defaultPermissions: Record<string, Record<string, boolean>> = {
         settings_manage: false
     },
     "Security/Post Admin": {
+        messages_view: false,
+        messages_manage: false,
         officers_view: true,
         officers_create: false,
         officers_edit: false,
@@ -106,6 +127,8 @@ const defaultPermissions: Record<string, Record<string, boolean>> = {
         settings_manage: false
     },
     "Finance Admin": {
+        messages_view: false,
+        messages_manage: false,
         officers_view: false,
         officers_create: false,
         officers_edit: false,
@@ -231,6 +254,23 @@ function requirePermission(
     if (permissions?.[permission] !== true) {
         throw new HttpError(403, `Permission denied: ${permission}`);
     }
+}
+
+function requireAnyPermission(
+    admin: AuthenticatedAdmin,
+    permissions: string[]
+) {
+    const granted = admin.profile.permissions as
+        | Record<string, unknown>
+        | null;
+    if (
+        admin.profile.role === "Super Admin" ||
+        granted?.all === true ||
+        permissions.some(permission => granted?.[permission] === true)
+    ) {
+        return;
+    }
+    throw new HttpError(403, `Permission denied: ${permissions.join(" or ")}`);
 }
 
 function requireSuperAdmin(admin: AuthenticatedAdmin) {
@@ -891,46 +931,101 @@ async function handleRequest(
     }
 
     if (segments[0] === "contact-messages") {
-        requirePermission(admin, "messages_view");
-
         if (method === "GET" && segments.length === 1) {
+            requireAnyPermission(admin, ["messages_view", "messages_manage"]);
             const { data, error } = await client
                 .from("vsg_contact_messages")
-                .select("*")
+                .select("id, name, email, phone, subject, message, status, is_read, created_at, updated_at")
                 .order("created_at", { ascending: false })
                 .limit(500);
-            throwIfError(error);
+            if (error) {
+                console.error("Unable to retrieve contact messages:", error);
+                throw new HttpError(500, "Unable to load contact messages.");
+            }
             return respond({ success: true, messages: data });
         }
 
         if (method === "PATCH" && segments.length === 2) {
             const body = await readJson(request);
-            if (!["New", "In Progress", "Resolved"].includes(body.status as string)) {
+            const hasStatus = body.status !== undefined;
+            const hasReadStatus = body.is_read !== undefined;
+            if (!hasStatus && !hasReadStatus) {
+                throw new HttpError(400, "Provide a workflow status or read status to update.");
+            }
+            if (hasStatus && !["New", "In Progress", "Resolved"].includes(body.status as string)) {
                 throw new HttpError(400, "Invalid message status.");
+            }
+            if (hasReadStatus && typeof body.is_read !== "boolean") {
+                throw new HttpError(400, "Read status must be true or false.");
+            }
+            if (hasReadStatus) {
+                requirePermission(admin, "messages_manage");
+            } else {
+                requireAnyPermission(admin, ["messages_view", "messages_manage"]);
+            }
+
+            const updates: JsonRecord = {
+                updated_at: new Date().toISOString()
+            };
+            if (hasStatus) {
+                updates.status = body.status;
+            }
+            if (hasReadStatus) {
+                updates.is_read = body.is_read;
             }
 
             const { data, error } = await client
                 .from("vsg_contact_messages")
-                .update({
-                    status: body.status,
-                    updated_at: new Date().toISOString()
-                })
+                .update(updates)
                 .eq("id", segments[1])
-                .select("id, status")
+                .select("id, status, is_read, updated_at")
                 .single();
-            throwIfError(error);
+            if (error) {
+                console.error("Unable to update contact message:", error);
+                throwIfError(error);
+            }
             await recordAudit(
                 client,
                 admin,
-                "message.status_updated",
+                "message.updated",
                 "contact_message",
                 segments[1],
-                { status: body.status }
+                {
+                    fields: Object.keys(updates).filter(key => key !== "updated_at"),
+                    status: data.status,
+                    is_read: data.is_read
+                }
             );
             return respond({
                 success: true,
-                message: "Message status updated.",
+                message: "Contact message updated.",
                 contactMessage: data
+            });
+        }
+
+        if (method === "DELETE" && segments.length === 2) {
+            requirePermission(admin, "messages_manage");
+            const { data, error } = await client
+                .from("vsg_contact_messages")
+                .delete()
+                .eq("id", segments[1])
+                .select("id")
+                .single();
+            if (error) {
+                console.error("Unable to delete contact message:", error);
+                throwIfError(error);
+            }
+            await recordAudit(
+                client,
+                admin,
+                "message.deleted",
+                "contact_message",
+                data.id,
+                {}
+            );
+            return respond({
+                success: true,
+                message: "Contact message deleted."
             });
         }
     }
@@ -1195,9 +1290,64 @@ async function handleRequest(
                     ) {
                         throw new HttpError(400, "Website images must be uploaded through this dashboard.");
                     }
+                    if (
+                        key === "cta_image_url" &&
+                        value &&
+                        !value.startsWith(`${imageUrlPrefix}cta_image_url/`)
+                    ) {
+                        throw new HttpError(400, "CTA images must be uploaded through the CTA image manager.");
+                    }
                     return {
                         content_key: key,
                         content_value: value,
+                        updated_at: new Date().toISOString()
+                    };
+                }
+
+                if (key === "cta_image_enabled") {
+                    if (value !== "true" && value !== "false") {
+                        throw new HttpError(400, "CTA image enabled must be true or false.");
+                    }
+                    return {
+                        content_key: key,
+                        content_value: value,
+                        updated_at: new Date().toISOString()
+                    };
+                }
+
+                if (key === "cta_image_pages") {
+                    let requestedPages: unknown;
+                    try {
+                        requestedPages = JSON.parse(value);
+                    } catch {
+                        throw new HttpError(400, "CTA image page settings must be valid JSON.");
+                    }
+                    if (
+                        !requestedPages ||
+                        typeof requestedPages !== "object" ||
+                        Array.isArray(requestedPages)
+                    ) {
+                        throw new HttpError(400, "CTA image page settings must be an object.");
+                    }
+
+                    const pageSettingsInput =
+                        requestedPages as Record<string, unknown>;
+                    const requestedEntries = Object.entries(pageSettingsInput);
+                    if (requestedEntries.some(([page, visible]) =>
+                        !ctaImagePageKeys.has(page) || typeof visible !== "boolean"
+                    )) {
+                        throw new HttpError(400, "CTA image page settings contain an invalid page or visibility value.");
+                    }
+
+                    const pageSettings = Object.fromEntries(
+                        [...ctaImagePageKeys].map(page => [
+                            page,
+                            pageSettingsInput[page] === true
+                        ])
+                    );
+                    return {
+                        content_key: key,
+                        content_value: JSON.stringify(pageSettings),
                         updated_at: new Date().toISOString()
                     };
                 }

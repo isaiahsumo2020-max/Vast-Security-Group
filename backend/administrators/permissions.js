@@ -14,6 +14,8 @@ export const DEFAULT_PERMISSIONS = {
     },
 
     "HR Admin": {
+        messages_view: false,
+        messages_manage: false,
         officers_view: true,
         officers_create: true,
         officers_edit: true,
@@ -33,6 +35,8 @@ export const DEFAULT_PERMISSIONS = {
     },
 
     "Recruitment Admin": {
+        messages_view: false,
+        messages_manage: false,
         officers_view: true,
         officers_create: false,
         officers_edit: false,
@@ -52,6 +56,8 @@ export const DEFAULT_PERMISSIONS = {
     },
 
     "Operations Admin": {
+        messages_view: false,
+        messages_manage: false,
         officers_view: true,
         officers_create: false,
         officers_edit: true,
@@ -71,6 +77,8 @@ export const DEFAULT_PERMISSIONS = {
     },
 
     "Security/Post Admin": {
+        messages_view: false,
+        messages_manage: false,
         officers_view: true,
         officers_create: false,
         officers_edit: false,
@@ -90,6 +98,8 @@ export const DEFAULT_PERMISSIONS = {
     },
 
     "Finance Admin": {
+        messages_view: false,
+        messages_manage: false,
         officers_view: false,
         officers_create: false,
         officers_edit: false,

@@ -66,16 +66,42 @@
                                 <th scope="col">Message</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Update</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="messagesTableBody">
-                            <tr><td colspan="6">Loading messages…</td></tr>
+                            <tr><td colspan="7">Loading messages…</td></tr>
                         </tbody>
                     </table>
                 </div>
             </section>
         </main>
     </div>
+    <dialog id="messageDetailsDialog" class="message-details-dialog"
+        aria-labelledby="messageDetailsTitle">
+        <div class="message-details-card">
+            <header class="message-details-header">
+                <div>
+                    <p id="messageDetailsReceived" class="message-date-cell"></p>
+                    <h2 id="messageDetailsTitle">Contact message</h2>
+                </div>
+                <button type="button" class="secondary-btn" id="closeMessageDetailsBtn"
+                    aria-label="Close message details">Close</button>
+            </header>
+            <dl class="message-details-sender">
+                <div><dt>Sender</dt><dd id="messageDetailsSender"></dd></div>
+                <div><dt>Email</dt><dd id="messageDetailsEmail"></dd></div>
+                <div><dt>Phone</dt><dd id="messageDetailsPhone"></dd></div>
+                <div><dt>Status</dt><dd id="messageDetailsStatus"></dd></div>
+                <div><dt>Read status</dt><dd id="messageDetailsReadStatus"></dd></div>
+                <div><dt>Last updated</dt><dd id="messageDetailsUpdated"></dd></div>
+            </dl>
+            <section class="message-details-body">
+                <h3>Message</h3>
+                <p id="messageDetailsBody"></p>
+            </section>
+        </div>
+    </dialog>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script type="module" src="../auth/guard.js"></script>
     <script type="module" src="./messages.js"></script>

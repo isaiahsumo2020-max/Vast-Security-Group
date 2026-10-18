@@ -242,6 +242,70 @@
                     <button class="primary-btn" type="submit" id="saveWebsiteContentBtn">Save Public Website Content</button>
                 </form>
             </section>
+            <section class="admin-section settings-card cta-image-settings" id="ctaImageSettingsSection" hidden>
+                <div class="section-heading">
+                    <div>
+                        <h2>CTA Image Management</h2>
+                        <p>Upload one shared image and choose which existing public call-to-action sections display it.</p>
+                    </div>
+                </div>
+                <div class="cta-image-layout">
+                    <div class="website-image-field">
+                        <label for="ctaImageFile">Shared CTA image</label>
+                        <img id="ctaImagePreview" alt="Current shared CTA image preview" hidden>
+                        <input id="ctaImageFile" type="file" accept="image/jpeg,image/png,image/webp">
+                        <button type="button" class="dashboard-btn website-image-upload-btn" id="uploadCtaImageBtn">Upload or replace image</button>
+                        <small>JPEG, PNG, or WebP; 5 MB maximum. Upload once, then save to publish.</small>
+                    </div>
+                    <div class="cta-image-options">
+                        <label class="cta-image-global-toggle" for="ctaImageEnabled">
+                            <input id="ctaImageEnabled" type="checkbox">
+                            <span>Enable CTA image globally</span>
+                        </label>
+                        <h3>Public page visibility</h3>
+                        <p class="cta-image-help">Select the existing CTA sections where this image should appear.</p>
+                        <div class="cta-image-page-list">
+                            <label class="cta-image-page-option">
+                                <input type="checkbox" data-cta-image-page="home">
+                                <span>Home page</span>
+                                <span class="cta-image-visibility" data-cta-visibility-for="home">Hidden</span>
+                            </label>
+                            <label class="cta-image-page-option">
+                                <input type="checkbox" data-cta-image-page="about">
+                                <span>About</span>
+                                <span class="cta-image-visibility" data-cta-visibility-for="about">Hidden</span>
+                            </label>
+                            <label class="cta-image-page-option">
+                                <input type="checkbox" data-cta-image-page="services">
+                                <span>Services</span>
+                                <span class="cta-image-visibility" data-cta-visibility-for="services">Hidden</span>
+                            </label>
+                            <label class="cta-image-page-option">
+                                <input type="checkbox" data-cta-image-page="recruitment">
+                                <span>Recruitment</span>
+                                <span class="cta-image-visibility" data-cta-visibility-for="recruitment">Hidden</span>
+                            </label>
+                            <label class="cta-image-page-option">
+                                <input type="checkbox" data-cta-image-page="contact">
+                                <span>Contact</span>
+                                <span class="cta-image-visibility" data-cta-visibility-for="contact">Hidden</span>
+                            </label>
+                            <label class="cta-image-page-option">
+                                <input type="checkbox" data-cta-image-page="legal">
+                                <span>Legal</span>
+                                <span class="cta-image-visibility" data-cta-visibility-for="legal">Hidden</span>
+                            </label>
+                            <label class="cta-image-page-option">
+                                <input type="checkbox" data-cta-image-page="verification">
+                                <span>Officer verification</span>
+                                <span class="cta-image-visibility" data-cta-visibility-for="verification">Hidden</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <p id="ctaImageStatus" class="form-message" role="status" aria-live="polite"></p>
+                <button class="primary-btn" type="button" id="saveCtaImageBtn">Save CTA Image Settings</button>
+            </section>
         </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

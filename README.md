@@ -27,6 +27,15 @@ Settings. Image uploads accept JPEG, PNG, or WebP files up to 5 MB. Public
 pages read published content from the `admin-api` function; edits are audit
 logged.
 
+The Global CTA Image Manager is available in Admin > Settings to administrators
+with `settings_manage`. Upload one shared image, then enable it globally and
+select which existing CTA sections display it on Home, About, Services,
+Recruitment, Contact, Legal, or Officer Verification. The image is stored once
+in `vsg-website-assets`; page visibility and the image URL are saved centrally
+in `vsg_website_content`. Apply the CTA image migration and redeploy `admin-api`
+before using the manager. When disabled, unselected, or unavailable, the
+existing CTA content and layout remain in place.
+
 The gallery migration creates the `vsg_gallery_items` table and the public
 `vsg-gallery-assets` storage bucket. Administrators with `settings_manage` can
 upload photos, videos (up to 100 MB), and video cover images in Admin > Gallery,

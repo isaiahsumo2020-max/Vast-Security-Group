@@ -19,6 +19,14 @@ const officerIdSettingsForm = document.getElementById("officerIdSettingsForm");
 const officerIdPrefix = document.getElementById("officerIdPrefix");
 const officerIdSettingsStatus = document.getElementById("officerIdSettingsStatus");
 const saveOfficerIdSettingsButton = document.getElementById("saveOfficerIdSettingsBtn");
+const ctaImageSection = document.getElementById("ctaImageSettingsSection");
+const ctaImageFile = document.getElementById("ctaImageFile");
+const ctaImagePreview = document.getElementById("ctaImagePreview");
+const ctaImageEnabled = document.getElementById("ctaImageEnabled");
+const ctaImageStatus = document.getElementById("ctaImageStatus");
+const uploadCtaImageButton = document.getElementById("uploadCtaImageBtn");
+const saveCtaImageButton = document.getElementById("saveCtaImageBtn");
+let ctaImageUrl = "";
 
 function setStatus(element, message, isError = false) {
     element.textContent = message;
@@ -54,6 +62,7 @@ try {
             document.querySelector(".website-content-settings");
         websiteContentSection.hidden = !canManageWebsiteContent;
         officerIdSettingsSection.hidden = !canManageWebsiteContent;
+        ctaImageSection.hidden = !canManageWebsiteContent;
         if (canManageWebsiteContent) {
             await loadOfficerIdSettings();
             await loadWebsiteContent();
@@ -116,6 +125,7 @@ async function loadWebsiteContent() {
                 preview.hidden = false;
             }
         }
+        loadCtaImageSettings(result.content || {});
     } catch (error) {
         console.error("Unable to load public website content:", error);
         setStatus(
@@ -129,8 +139,123 @@ async function loadWebsiteContent() {
             .forEach(control => {
                 control.disabled = true;
             });
+        uploadCtaImageButton.disabled = true;
+        saveCtaImageButton.disabled = true;
     }
 }
+
+function loadCtaImageSettings(content) {
+    ctaImageUrl = content.cta_image_url || "";
+    ctaImageEnabled.checked = content.cta_image_enabled === "true";
+    if (ctaImageUrl) {
+        ctaImagePreview.src = ctaImageUrl;
+        ctaImagePreview.hidden = false;
+    }
+
+    let visiblePages = {};
+    try {
+        const parsedPages = JSON.parse(content.cta_image_pages || "{}");
+        if (parsedPages && typeof parsedPages === "object" && !Array.isArray(parsedPages)) {
+            visiblePages = parsedPages;
+        }
+    } catch (error) {
+        console.error("Unable to read CTA image page settings:", error);
+        setStatus(ctaImageStatus, "Page visibility settings could not be read.", true);
+    }
+
+    for (const input of ctaImageSection.querySelectorAll("[data-cta-image-page]")) {
+        const page = input.dataset.ctaImagePage;
+        input.checked = visiblePages[page] === true;
+        updateCtaPageVisibility(page, input.checked);
+        input.addEventListener("change", () => {
+            updateCtaPageVisibility(page, input.checked);
+        });
+    }
+}
+
+function updateCtaPageVisibility(page, isVisible) {
+    const indicator = ctaImageSection.querySelector(
+        `[data-cta-visibility-for="${page}"]`
+    );
+    indicator.textContent = isVisible ? "Visible" : "Hidden";
+    indicator.classList.toggle("is-visible", isVisible);
+}
+
+uploadCtaImageButton.addEventListener("click", async () => {
+    const file = ctaImageFile.files?.[0];
+    if (!file) {
+        setStatus(ctaImageStatus, "Choose an image file before uploading.", true);
+        ctaImageFile.focus();
+        return;
+    }
+
+    uploadCtaImageButton.disabled = true;
+    setStatus(ctaImageStatus, `Uploading ${file.name}...`);
+    const formData = new FormData();
+    formData.set("slot", "cta_image_url");
+    formData.set("file", file);
+
+    try {
+        const result = await apiRequest("/site-content/assets", {
+            method: "POST",
+            body: formData
+        });
+        ctaImageUrl = result.imageUrl;
+        ctaImagePreview.src = ctaImageUrl;
+        ctaImagePreview.hidden = false;
+        ctaImageFile.value = "";
+        setStatus(ctaImageStatus, "Image uploaded. Save CTA Image Settings to publish it.");
+    } catch (error) {
+        console.error("Unable to upload CTA image:", error);
+        setStatus(
+            ctaImageStatus,
+            error.message || "Unable to upload the CTA image.",
+            true
+        );
+    } finally {
+        uploadCtaImageButton.disabled = false;
+    }
+});
+
+saveCtaImageButton.addEventListener("click", async () => {
+    if (!await confirmAction({
+        title: "Save CTA image settings?",
+        message: "Publish this shared image and the selected page visibility settings?",
+        confirmLabel: "Save settings"
+    })) {
+        return;
+    }
+
+    const pages = Object.fromEntries(
+        [...ctaImageSection.querySelectorAll("[data-cta-image-page]")]
+            .map(input => [input.dataset.ctaImagePage, input.checked])
+    );
+
+    saveCtaImageButton.disabled = true;
+    setStatus(ctaImageStatus, "Saving CTA image settings...");
+    try {
+        await apiRequest("/site-content", {
+            method: "PATCH",
+            body: JSON.stringify({
+                settings: {
+                    cta_image_url: ctaImageUrl,
+                    cta_image_enabled: String(ctaImageEnabled.checked),
+                    cta_image_pages: JSON.stringify(pages)
+                }
+            })
+        });
+        setStatus(ctaImageStatus, "CTA image settings saved and published.");
+    } catch (error) {
+        console.error("Unable to save CTA image settings:", error);
+        setStatus(
+            ctaImageStatus,
+            error.message || "Unable to save CTA image settings.",
+            true
+        );
+    } finally {
+        saveCtaImageButton.disabled = false;
+    }
+});
 
 async function loadOfficerIdSettings() {
     try {
