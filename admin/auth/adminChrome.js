@@ -45,6 +45,14 @@ function createHeaderActions(profile, email) {
     const actions = document.createElement("div");
     actions.className = "admin-header-actions";
 
+    const searchButton = document.createElement("button");
+    searchButton.type = "button";
+    searchButton.className = "admin-global-search-button";
+    searchButton.setAttribute("aria-label", "Search dashboard");
+    searchButton.setAttribute("aria-expanded", "false");
+    searchButton.setAttribute("aria-controls", "adminGlobalSearch");
+    searchButton.innerHTML = '<i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>';
+
     const notificationArea = document.createElement("div");
     notificationArea.className = "admin-notification-area";
 
@@ -115,10 +123,11 @@ function createHeaderActions(profile, email) {
     profileMenu.append(profileSettingsLink, logoutButton);
     profileArea.append(profileButton, profileMenu);
 
-    actions.append(notificationArea, profileArea);
+    actions.append(searchButton, notificationArea, profileArea);
 
     return {
         actions,
+        searchButton,
         notificationArea,
         notificationButton,
         panel,
@@ -130,6 +139,109 @@ function createHeaderActions(profile, email) {
         profileMenu,
         logoutButton
     };
+}
+
+function createGlobalSearch() {
+    const panel = document.createElement("section");
+    panel.id = "adminGlobalSearch";
+    panel.className = "admin-global-search";
+    panel.hidden = true;
+    panel.setAttribute("role", "dialog");
+    panel.setAttribute("aria-modal", "true");
+    panel.setAttribute("aria-labelledby", "adminGlobalSearchTitle");
+
+    const content = document.createElement("div");
+    content.className = "admin-global-search-content";
+    const heading = document.createElement("h2");
+    heading.id = "adminGlobalSearchTitle";
+    heading.textContent = "Search dashboard";
+
+    const input = document.createElement("input");
+    input.type = "search";
+    input.className = "admin-global-search-input";
+    input.placeholder = "Search dashboard pages and this page";
+    input.setAttribute("aria-label", "Search dashboard pages and current page");
+    input.autocomplete = "off";
+
+    const hint = document.createElement("p");
+    hint.className = "admin-global-search-hint";
+    hint.textContent = "Search dashboard sections and content on the current page. Press Escape to close.";
+
+    const results = document.createElement("ul");
+    results.className = "admin-global-search-results";
+    results.setAttribute("aria-live", "polite");
+
+    content.append(heading, input, hint, results);
+    panel.appendChild(content);
+    document.body.appendChild(panel);
+
+    return { panel, input, results };
+}
+
+function renderGlobalSearchResults(query, results) {
+    results.replaceChildren();
+    const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
+    if (!terms.length) {
+        const prompt = document.createElement("li");
+        prompt.className = "admin-global-search-empty";
+        prompt.textContent = "Type to search dashboard sections and this page.";
+        results.appendChild(prompt);
+        return;
+    }
+
+    let matchCount = 0;
+    const addResult = (label, kind, activate) => {
+        if (matchCount >= 12) {
+            return;
+        }
+        const item = document.createElement("li");
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "admin-global-search-result";
+        const title = document.createElement("span");
+        title.textContent = label.replace(/\s+/g, " ").trim().slice(0, 180);
+        const type = document.createElement("small");
+        type.textContent = kind;
+        button.append(title, type);
+        button.addEventListener("click", activate);
+        item.appendChild(button);
+        results.appendChild(item);
+        matchCount += 1;
+    };
+    const matches = value => {
+        const searchable = value.toLocaleLowerCase();
+        return terms.every(term => searchable.includes(term));
+    };
+
+    for (const link of document.querySelectorAll(".admin-nav a")) {
+        if (matches(link.textContent)) {
+            addResult(link.textContent, "Dashboard page", () => {
+                window.location.assign(link.href);
+            });
+        }
+    }
+
+    const main = document.querySelector("main");
+    const selectors = "h1, h2, h3, tr, article, li, p, [data-searchable='true']";
+    for (const element of main?.querySelectorAll(selectors) || []) {
+        if (
+            element.closest(".admin-notification-panel, .admin-profile-menu") ||
+            element.hidden ||
+            !matches(element.textContent)
+        ) {
+            continue;
+        }
+        addResult(element.textContent, "This page", () => {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+        });
+    }
+
+    if (!matchCount) {
+        const empty = document.createElement("li");
+        empty.className = "admin-global-search-empty";
+        empty.textContent = "No matching dashboard pages or current-page content.";
+        results.appendChild(empty);
+    }
 }
 
 function formatNotificationDate(value) {
@@ -153,6 +265,44 @@ export function mountAdminChrome(admin) {
     const profile = admin.profile || {};
     const elements = createHeaderActions(profile, admin.user?.email || "");
     header.appendChild(elements.actions);
+    const search = createGlobalSearch();
+
+    function closeGlobalSearch(restoreFocus = true) {
+        search.panel.hidden = true;
+        elements.searchButton.setAttribute("aria-expanded", "false");
+        if (restoreFocus) {
+            elements.searchButton.focus();
+        }
+    }
+
+    search.results.addEventListener("click", event => {
+        if (event.target.closest(".admin-global-search-result")) {
+            closeGlobalSearch(false);
+        }
+    });
+
+    elements.searchButton.addEventListener("click", () => {
+        const opening = search.panel.hidden;
+        search.panel.hidden = !opening;
+        elements.searchButton.setAttribute("aria-expanded", String(opening));
+        if (opening) {
+            renderGlobalSearchResults(search.input.value, search.results);
+            search.input.focus();
+        }
+    });
+    search.input.addEventListener("input", () => {
+        renderGlobalSearchResults(search.input.value, search.results);
+    });
+    search.panel.addEventListener("click", event => {
+        if (event.target === search.panel) {
+            closeGlobalSearch();
+        }
+    });
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && !search.panel.hidden) {
+            closeGlobalSearch();
+        }
+    });
 
     const sidebar = document.querySelector(".admin-sidebar");
     const brand = sidebar?.querySelector(".admin-brand");

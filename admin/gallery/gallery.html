@@ -70,7 +70,7 @@
                             <label for="galleryMediaFile">Photo or video *</label>
                             <input id="galleryMediaFile" type="file"
                                 accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime">
-                            <small>Images up to 10 MB; videos up to 100 MB (MP4, WebM, or MOV).</small>
+                            <small>Images up to 10 MB; videos up to 100 MB (MP4, WebM, or MOV). Large videos upload in resumable chunks.</small>
                             <img id="galleryMediaPreview" class="gallery-admin-preview" alt="Selected gallery media preview" hidden>
                         </div>
                         <div class="form-group">
@@ -107,6 +107,11 @@
                             </label>
                         </div>
                     </div>
+                    <div id="galleryUploadProgress" class="gallery-upload-progress" hidden>
+                        <label for="galleryUploadProgressBar">Upload progress</label>
+                        <progress id="galleryUploadProgressBar" max="100" value="0"></progress>
+                        <span id="galleryUploadProgressText" role="status" aria-live="polite"></span>
+                    </div>
                     <p id="galleryFormStatus" class="form-message" role="status" aria-live="polite"></p>
                     <div class="modal-actions">
                         <button type="button" class="secondary-btn" id="cancelGalleryEditBtn" hidden>Cancel Edit</button>
@@ -131,6 +136,7 @@
         </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.3.1/dist/tus.min.js"></script>
     <script type="module" src="../auth/guard.js"></script>
     <script type="module" src="./gallery.js"></script>
 </body>

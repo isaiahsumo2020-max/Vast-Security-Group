@@ -118,6 +118,43 @@
                     </div>
                 </div>
                 <form id="websiteContentForm">
+                    <h3>Public Contact Information</h3>
+                    <p>These details are shown on the public Contact page and its contact header and footer.</p>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="contactPhoneNumbersSetting">Telephone numbers</label>
+                            <textarea id="contactPhoneNumbersSetting" rows="4" maxlength="1200"
+                                data-site-content-key="contact_phone_numbers"></textarea>
+                            <small>Enter one telephone number per line, or leave blank if there are no public numbers. Visitors can tap each number to call.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactEmailSetting">Official email address</label>
+                            <input id="contactEmailSetting" type="email" maxlength="254"
+                                data-site-content-key="contact_email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactBusinessDaysSetting">Business days</label>
+                            <input id="contactBusinessDaysSetting" maxlength="180"
+                                data-site-content-key="contact_business_days" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="contactAddressSetting">Office address</label>
+                            <textarea id="contactAddressSetting" rows="2" maxlength="500"
+                                data-site-content-key="contact_address" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactOpenTimeSetting">Opening time</label>
+                            <input id="contactOpenTimeSetting" type="time"
+                                data-site-content-key="contact_open_time" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactCloseTimeSetting">Closing time</label>
+                            <input id="contactCloseTimeSetting" type="time"
+                                data-site-content-key="contact_close_time" required>
+                        </div>
+                    </div>
+                    <p>Use 24-hour time fields; the public page displays the saved hours in a visitor-friendly format.</p>
+
                     <h3>Platform Name</h3>
                     <div class="form-group">
                         <label for="siteName">Public platform name</label>

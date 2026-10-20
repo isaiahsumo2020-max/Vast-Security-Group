@@ -54,9 +54,10 @@
 
             <div class="top-contact">
 
-                <span>
+                <span id="contactTopPhones">
                     <i class="fa-solid fa-phone"></i>
-                    +231 775 857 702 | +231 776 553 409 
+                    <a href="tel:+231775857702">+231 775 857 702</a> |
+                    <a href="tel:+231776553409">+231 776 553 409</a>
                 </span>
 
                 <span class="social">
@@ -72,7 +73,7 @@
             </div>
 
             <div class="top-social">
-                <a href="mailto:vastsecuritygroup20@gmail.com"> <i class="fa-solid fa-envelope"></i>
+                <a id="contactTopEmail" href="mailto:vastsecuritygroup20@gmail.com"> <i class="fa-solid fa-envelope"></i>
                     vastsecuritygroup20@gmail.com</a>
             </div>
 
@@ -280,17 +281,12 @@ Reach out to us for professional security services, partnership opportunities, o
 
 <h3>Call Us</h3>
 
-<p>
-
-+231 775 857 702<br>
-
-+231 889 222 406<br>
-
-+231 776 553 409<br>
-
-+231 880 866 870
-
-</p>
+<ul id="contactPhoneNumbers" class="managed-contact-list">
+    <li><a href="tel:+231775857702">+231 775 857 702</a></li>
+    <li><a href="tel:+231889222406">+231 889 222 406</a></li>
+    <li><a href="tel:+231776553409">+231 776 553 409</a></li>
+    <li><a href="tel:+231880866870">+231 880 866 870</a></li>
+</ul>
 
 </div>
 
@@ -300,11 +296,7 @@ Reach out to us for professional security services, partnership opportunities, o
 
 <h3>Email</h3>
 
-<p>
-
-vastsecuritygroup20@gmail.com
-
-</p>
+<p><a id="contactEmail" href="mailto:vastsecuritygroup20@gmail.com">vastsecuritygroup20@gmail.com</a></p>
 
 </div>
 
@@ -314,17 +306,7 @@ vastsecuritygroup20@gmail.com
 
 <h3>Office Address</h3>
 
-<p>
-
-Parker Paint Road,
-
-Wood Camp Community,
-
-Paynesville City,
-
-Montserrado, Liberia
-
-</p>
+<p id="contactOfficeAddress" class="managed-contact-address">Parker Paint Road, Wood Camp Community, Paynesville City, Montserrado, Liberia</p>
 
 </div>
 
@@ -334,17 +316,16 @@ Montserrado, Liberia
 
 <h3>Business Hours</h3>
 
-<p>
+<p><span id="contactBusinessDays">Monday - Friday</span><br>
+<span id="contactBusinessHours">8:00 AM - 5:00 PM</span></p>
 
-Monday – Friday
+</div>
 
-8:00 AM – 5:00 PM
+</div>
 
+<p id="contactInfoStatus" class="managed-contact-status" role="status" aria-live="polite">
+    Contact information is loading. Current published details are shown below.
 </p>
-
-</div>
-
-</div>
 
 </div>
 
@@ -574,43 +555,12 @@ Call Now
 
                     <h4>Contact Us</h4>
 
-                    <p>
-
-                        <i class="fa-solid fa-phone"></i>
-
-                        +231 775 857 702
-
-                    </p>
-
-                    <p>
-
-                        <i class="fa-solid fa-phone"></i>
-
-                        +231 776 553 409
-
-                    </p>
-
-                    <p>
-
-                        <i class="fa-solid fa-envelope"></i>
-
-                        vastsecuritygroup20@gmail.com
-
-                    </p>
-
-                    <p>
-
-                        <i class="fa-solid fa-location-dot"></i>
-
-                        Parker Paint Road,
-
-                        Wood Camp Community,
-
-                        Paynesville City,
-
-                        Montserrado, Liberia
-
-                    </p>
+                    <div id="footerContactDetails">
+                        <p><i class="fa-solid fa-phone"></i> <a href="tel:+231775857702">+231 775 857 702</a></p>
+                        <p><i class="fa-solid fa-phone"></i> <a href="tel:+231776553409">+231 776 553 409</a></p>
+                        <p><i class="fa-solid fa-envelope"></i> <a href="mailto:vastsecuritygroup20@gmail.com">vastsecuritygroup20@gmail.com</a></p>
+                        <p><i class="fa-solid fa-location-dot"></i> Parker Paint Road, Wood Camp Community, Paynesville City, Montserrado, Liberia</p>
+                    </div>
 
                     <div class="social-icons">
 
@@ -665,6 +615,7 @@ Call Now
 <script type="module" src="/assests/js/contact.js"></script>
 
     <script type="module" src="/assests/js/publicSiteContent.js"></script>
+    <script type="module" src="/assests/js/contactInfo.js"></script>
     <script src="/assests/js/script.js"></script>
 
 </body>

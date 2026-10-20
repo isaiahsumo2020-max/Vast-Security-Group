@@ -3676,6 +3676,48 @@ CONTACT INFO
 
 }
 
+.contact-card {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.contact-card a {
+    color: #0B2341;
+    text-decoration: none;
+}
+
+.contact-card a:hover,
+.contact-card a:focus-visible {
+    color: #8a7339;
+    text-decoration: underline;
+}
+
+.managed-contact-list {
+    display: grid;
+    gap: 8px;
+    list-style: none;
+    line-height: 1.6;
+}
+
+.managed-contact-address {
+    white-space: pre-line;
+}
+
+.managed-contact-status {
+    margin-top: 18px;
+    color: #526071;
+    font-size: 13px;
+    text-align: center;
+}
+
+.managed-contact-status:empty {
+    display: none;
+}
+
+.managed-contact-status.error {
+    color: #9b2c23;
+}
+
 @media(max-width:992px) {
 
     .contact-grid {
