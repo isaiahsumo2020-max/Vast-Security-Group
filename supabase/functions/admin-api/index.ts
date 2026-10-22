@@ -43,6 +43,12 @@ const ctaImagePageKeys = new Set([
 
 const websiteTextLimits: Record<string, number> = {
     site_name: 160,
+    contact_phone_numbers: 1200,
+    contact_email: 254,
+    contact_address: 500,
+    contact_business_days: 180,
+    contact_open_time: 5,
+    contact_close_time: 5,
     ceo_heading: 200,
     ceo_name: 160,
     ceo_title: 160,
@@ -1610,6 +1616,43 @@ async function handleRequest(
                     };
                 }
 
+                if (
+                    key === "contact_email" &&
+                    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
+                ) {
+                    throw new HttpError(400, "Enter a valid public contact email address.");
+                }
+
+                if (
+                    key === "contact_phone_numbers" &&
+                    value.split(/\r?\n/).some(number =>
+                        number.trim() &&
+                        !/^\+?[0-9][0-9 ()-]{4,29}$/.test(number.trim())
+                    )
+                ) {
+                    throw new HttpError(400, "Enter one valid telephone number per line.");
+                }
+
+                if (
+                    (key === "contact_open_time" || key === "contact_close_time") &&
+                    !/^([01]\d|2[0-3]):[0-5]\d$/.test(value)
+                ) {
+                    throw new HttpError(400, "Business hours must use a valid 24-hour time.");
+                }
+
+                if (
+                    [
+                        "contact_email",
+                        "contact_address",
+                        "contact_business_days",
+                        "contact_open_time",
+                        "contact_close_time"
+                    ].includes(key) &&
+                    !value.trim()
+                ) {
+                    throw new HttpError(400, `${key.replaceAll("_", " ")} is required.`);
+                }
+
                 const maxLength = websiteTextLimits[key];
                 if (value.length > maxLength) {
                     throw new HttpError(
@@ -1649,6 +1692,52 @@ async function handleRequest(
     if (segments[0] === "gallery") {
         requirePermission(admin, "settings_manage");
 
+        if (method === "DELETE" && segments.length === 2 && segments[1] === "assets") {
+            const body = await readJson(request);
+            if (
+                !Array.isArray(body.asset_urls) ||
+                body.asset_urls.length > 20 ||
+                body.asset_urls.some(url => typeof url !== "string")
+            ) {
+                throw new HttpError(400, "Provide valid gallery asset URLs to clean up.");
+            }
+
+            const unusedPaths: string[] = [];
+            for (const url of new Set(body.asset_urls as string[])) {
+                const objectPath = galleryStoragePath(url);
+                if (!objectPath ||
+                    (!objectPath.startsWith("media/") && !objectPath.startsWith("cover/"))) {
+                    throw new HttpError(400, "Gallery asset path is invalid.");
+                }
+                const { data: mediaReference, error: mediaError } = await client
+                    .from("vsg_gallery_items")
+                    .select("id")
+                    .eq("media_url", url)
+                    .maybeSingle();
+                throwIfError(mediaError);
+                const { data: coverReference, error: coverError } = await client
+                    .from("vsg_gallery_items")
+                    .select("id")
+                    .eq("cover_image_url", url)
+                    .maybeSingle();
+                throwIfError(coverError);
+                if (!mediaReference && !coverReference) {
+                    unusedPaths.push(objectPath);
+                }
+            }
+
+            if (unusedPaths.length) {
+                const { error } = await client.storage
+                    .from("vsg-gallery-assets")
+                    .remove(unusedPaths);
+                if (error) {
+                    console.error("Unable to remove unreferenced gallery uploads:", error);
+                    throw new HttpError(500, "Unable to clean up unused gallery uploads.");
+                }
+            }
+            return respond({ success: true, removed: unusedPaths.length });
+        }
+
         if (method === "GET" && segments.length === 1) {
             const { data, error } = await client
                 .from("vsg_gallery_items")
@@ -1660,19 +1749,16 @@ async function handleRequest(
         }
 
         if (method === "POST" && segments.length === 2 && segments[1] === "assets") {
-            let form: FormData;
-            try {
-                form = await request.formData();
-            } catch {
-                throw new HttpError(400, "Upload form data is invalid.");
-            }
-
-            const kind = form.get("kind");
-            const file = form.get("file");
+            const body = await readJson(request);
+            const kind = body.kind;
+            const contentType = body.content_type;
+            const size = body.size;
             if (
                 (kind !== "media" && kind !== "cover") ||
-                !(file instanceof File) ||
-                file.size === 0
+                typeof contentType !== "string" ||
+                typeof size !== "number" ||
+                !Number.isSafeInteger(size) ||
+                size <= 0
             ) {
                 throw new HttpError(400, "Choose a valid gallery media or cover image.");
             }
@@ -1685,8 +1771,8 @@ async function handleRequest(
                 "video/webm": "webm",
                 "video/quicktime": "mov"
             };
-            const extension = extensionByType[file.type];
-            if (!extension || (kind === "cover" && !file.type.startsWith("image/"))) {
+            const extension = extensionByType[contentType];
+            if (!extension || (kind === "cover" && !contentType.startsWith("image/"))) {
                 throw new HttpError(
                     400,
                     kind === "cover"
@@ -1697,49 +1783,34 @@ async function handleRequest(
 
             const maxSize = kind === "cover"
                 ? 10 * 1024 * 1024
-                : file.type.startsWith("video/")
+                : contentType.startsWith("video/")
                     ? 100 * 1024 * 1024
                     : 10 * 1024 * 1024;
-            if (file.size > maxSize) {
+            if (size > maxSize) {
                 throw new HttpError(
                     400,
                     kind === "cover"
                         ? "Cover images must be no larger than 10 MB."
-                        : file.type.startsWith("video/")
+                        : contentType.startsWith("video/")
                             ? "Videos must be no larger than 100 MB."
                             : "Images must be no larger than 10 MB."
                 );
             }
 
             const objectPath = `${kind}/${crypto.randomUUID()}.${extension}`;
-            const { error } = await client.storage
-                .from("vsg-gallery-assets")
-                .upload(objectPath, file, {
-                    contentType: file.type,
-                    cacheControl: "3600",
-                    upsert: false
-                });
-            if (error) {
-                console.error("Gallery media upload failed:", error);
-                throw new HttpError(500, "Unable to upload gallery media.");
-            }
-
-            const { data: publicUrl } = client.storage
-                .from("vsg-gallery-assets")
-                .getPublicUrl(objectPath);
             await recordAudit(
                 client,
                 admin,
-                "gallery.asset_uploaded",
+                "gallery.asset_upload_authorized",
                 "gallery_item",
                 null,
-                { kind, path: objectPath, size: file.size, content_type: file.type }
+                { kind, path: objectPath, size, content_type: contentType }
             );
 
             return respond({
                 success: true,
-                assetUrl: publicUrl.publicUrl,
-                mediaType: file.type.startsWith("video/") ? "video" : "image"
+                objectPath,
+                mediaType: contentType.startsWith("video/") ? "video" : "image"
             }, 201);
         }
 
@@ -1758,6 +1829,7 @@ async function handleRequest(
             const coverImageUrl = typeof body.cover_image_url === "string"
                 ? body.cover_image_url
                 : "";
+            const clientRequestId = body.client_request_id;
 
             if (
                 !title || title.length > 180 ||
@@ -1768,7 +1840,10 @@ async function handleRequest(
                 eventDetails.length > 10000 ||
                 message.length > 20000 ||
                 (body.is_published !== undefined &&
-                    typeof body.is_published !== "boolean")
+                    typeof body.is_published !== "boolean") ||
+                (clientRequestId !== undefined &&
+                    (typeof clientRequestId !== "string" ||
+                        !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(clientRequestId)))
             ) {
                 throw new HttpError(400, "Enter valid gallery details and required media.");
             }
@@ -1788,6 +1863,21 @@ async function handleRequest(
                 );
             }
 
+            if (typeof clientRequestId === "string") {
+                const { data: previous, error: previousError } = await client
+                    .from("vsg_gallery_items")
+                    .select("*")
+                    .eq("client_request_id", clientRequestId)
+                    .maybeSingle();
+                throwIfError(previousError);
+                if (previous) {
+                    if (previous.created_by !== admin.user.id) {
+                        throw new HttpError(409, "This gallery submission identifier is already in use.");
+                    }
+                    return respond({ success: true, item: previous });
+                }
+            }
+
             const { data, error } = await client
                 .from("vsg_gallery_items")
                 .insert({
@@ -1801,10 +1891,25 @@ async function handleRequest(
                     media_url: mediaUrl,
                     cover_image_url: coverImageUrl || null,
                     is_published: body.is_published !== false,
+                    client_request_id: clientRequestId || null,
                     created_by: admin.user.id
                 })
                 .select()
                 .single();
+            if (error?.code === "23505" && typeof clientRequestId === "string") {
+                const { data: previous, error: previousError } = await client
+                    .from("vsg_gallery_items")
+                    .select("*")
+                    .eq("client_request_id", clientRequestId)
+                    .maybeSingle();
+                throwIfError(previousError);
+                if (previous?.created_by === admin.user.id) {
+                    return respond({ success: true, item: previous });
+                }
+                if (previous) {
+                    throw new HttpError(409, "This gallery submission identifier is already in use.");
+                }
+            }
             throwIfError(error);
 
             await recordAudit(
