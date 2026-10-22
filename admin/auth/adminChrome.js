@@ -255,6 +255,32 @@ function formatNotificationDate(value) {
 }
 
 export function mountAdminChrome(admin) {
+    const profile = admin.profile || {};
+    const permissions = profile.permissions || {};
+    const sidebar = document.querySelector(".admin-sidebar");
+    const navigation = sidebar?.querySelector(".admin-nav");
+    const canManageCertificates =
+        profile.role === "Super Admin" ||
+        permissions.all === true ||
+        permissions.certificates_manage === true ||
+        (profile.role === "HR Admin" && permissions.certificates_manage === undefined);
+    if (navigation && canManageCertificates &&
+        !navigation.querySelector('a[href="/admin/certificates/certificates.html"]')) {
+        const link = document.createElement("a");
+        link.href = "/admin/certificates/certificates.html";
+        link.textContent = "Certificate Management";
+        if (window.location.pathname.endsWith("/certificates.html")) {
+            link.classList.add("active");
+            link.setAttribute("aria-current", "page");
+        }
+        const officersLink = navigation.querySelector('a[href$="/officers.html"]');
+        if (officersLink) {
+            officersLink.insertAdjacentElement("afterend", link);
+        } else {
+            navigation.appendChild(link);
+        }
+    }
+
     const header = document.querySelector(
         "main .admin-header, main .dashboard-page-header, main .dashboard-header"
     );
@@ -262,7 +288,6 @@ export function mountAdminChrome(admin) {
         return;
     }
 
-    const profile = admin.profile || {};
     const elements = createHeaderActions(profile, admin.user?.email || "");
     header.appendChild(elements.actions);
     const search = createGlobalSearch();
@@ -304,9 +329,7 @@ export function mountAdminChrome(admin) {
         }
     });
 
-    const sidebar = document.querySelector(".admin-sidebar");
     const brand = sidebar?.querySelector(".admin-brand");
-    const navigation = sidebar?.querySelector(".admin-nav");
     const originalBrandParent = brand?.parentNode;
     const originalBrandNextSibling = brand?.nextSibling;
     const mobileTopbar = document.createElement("div");

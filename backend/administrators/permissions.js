@@ -20,6 +20,7 @@ export const DEFAULT_PERMISSIONS = {
         officers_create: true,
         officers_edit: true,
         officers_delete: false,
+        certificates_manage: true,
 
         recruitment_view: true,
         recruitment_manage: true,
@@ -41,6 +42,7 @@ export const DEFAULT_PERMISSIONS = {
         officers_create: false,
         officers_edit: false,
         officers_delete: false,
+        certificates_manage: false,
 
         recruitment_view: true,
         recruitment_manage: true,
@@ -62,6 +64,7 @@ export const DEFAULT_PERMISSIONS = {
         officers_create: false,
         officers_edit: true,
         officers_delete: false,
+        certificates_manage: false,
 
         recruitment_view: false,
         recruitment_manage: false,
@@ -83,6 +86,7 @@ export const DEFAULT_PERMISSIONS = {
         officers_create: false,
         officers_edit: false,
         officers_delete: false,
+        certificates_manage: false,
 
         recruitment_view: false,
         recruitment_manage: false,
@@ -104,6 +108,7 @@ export const DEFAULT_PERMISSIONS = {
         officers_create: false,
         officers_edit: false,
         officers_delete: false,
+        certificates_manage: false,
 
         recruitment_view: false,
         recruitment_manage: false,

@@ -74,6 +74,30 @@ application records directly.
 Active Super Admins and administrators with recruitment view/manage permissions
 can view applications and their documents from the Admin Recruitment page.
 
+## Training certificates
+
+The Certificate Management page is available to Super Admins and administrators
+with the `certificates_manage` permission. HR Admin defaults include this
+permission; other roles must be explicitly granted access by a Super Admin.
+Apply `20261021000000_certificate_management.sql` and redeploy the
+`admin-api` Edge Function before using training programs, batches, enrollments,
+templates, or certificate issuance.
+
+Certificates can only be issued for completed enrollments. Certificate IDs are
+assigned atomically by the database, and duplicate original issuance for an
+enrollment is blocked. Issued records contain a versioned template/data snapshot;
+corrections use reissuance and revocations retain their history and reason.
+Public lookups are served by `GET /public/certificates/{certificateId}` at
+`/certificate-verification.html`; only issued or revoked certificate details
+needed for public verification are returned.
+
+Certificate background images and approved signature images are stored in the
+private `vsg-certificate-assets` bucket. Signature uploads require explicit
+management approval in the admin interface. Signature images are not shown
+until enabled on a template, and new templates default to empty signature slots.
+Use the certificate print action and the browser's Save as PDF option for a
+print-ready certificate. The QR code links to the live public verification page.
+
 The Edge Function uses the Supabase-provided `SUPABASE_URL` and
 `SUPABASE_SERVICE_ROLE_KEY` secrets. Never put the service-role key in browser
 code. The website is static and can be previewed with Live Server or `npm start`.

@@ -69,6 +69,7 @@ const defaultPermissions: Record<string, Record<string, boolean>> = {
         officers_create: true,
         officers_edit: true,
         officers_delete: false,
+        certificates_manage: true,
         recruitment_view: true,
         recruitment_manage: true,
         posts_view: false,
@@ -85,6 +86,7 @@ const defaultPermissions: Record<string, Record<string, boolean>> = {
         officers_create: false,
         officers_edit: false,
         officers_delete: false,
+        certificates_manage: false,
         recruitment_view: true,
         recruitment_manage: true,
         posts_view: false,
@@ -101,6 +103,7 @@ const defaultPermissions: Record<string, Record<string, boolean>> = {
         officers_create: false,
         officers_edit: true,
         officers_delete: false,
+        certificates_manage: false,
         recruitment_view: false,
         recruitment_manage: false,
         posts_view: true,
@@ -117,6 +120,7 @@ const defaultPermissions: Record<string, Record<string, boolean>> = {
         officers_create: false,
         officers_edit: false,
         officers_delete: false,
+        certificates_manage: false,
         recruitment_view: false,
         recruitment_manage: false,
         posts_view: true,
@@ -133,6 +137,7 @@ const defaultPermissions: Record<string, Record<string, boolean>> = {
         officers_create: false,
         officers_edit: false,
         officers_delete: false,
+        certificates_manage: false,
         recruitment_view: false,
         recruitment_manage: false,
         posts_view: false,
@@ -251,7 +256,14 @@ function requirePermission(
         return;
     }
 
-    if (permissions?.[permission] !== true) {
+    if (
+        permissions?.[permission] !== true &&
+        !(
+            permission === "certificates_manage" &&
+            permissions?.[permission] === undefined &&
+            defaultPermissions[String(admin.profile.role)]?.[permission] === true
+        )
+    ) {
         throw new HttpError(403, `Permission denied: ${permission}`);
     }
 }
@@ -276,6 +288,145 @@ function requireAnyPermission(
 function requireSuperAdmin(admin: AuthenticatedAdmin) {
     if (admin.profile.role !== "Super Admin") {
         throw new HttpError(403, "Super Admin access required.");
+    }
+}
+
+function validateCertificateTemplate(configuration: JsonRecord) {
+    if (
+        typeof configuration.title !== "string" ||
+        !configuration.title.trim() ||
+        configuration.title.length > 100 ||
+        typeof configuration.completion_statement !== "string" ||
+        !configuration.completion_statement.trim() ||
+        configuration.completion_statement.length > 500
+    ) {
+        throw new HttpError(400, "Provide a valid certificate title and completion statement.");
+    }
+
+    const allowedFonts = ["Arial", "Georgia", "Times New Roman"];
+    if (
+        (configuration.name_font !== undefined &&
+            !allowedFonts.includes(String(configuration.name_font))) ||
+        (configuration.body_font !== undefined &&
+            !allowedFonts.includes(String(configuration.body_font)))
+    ) {
+        throw new HttpError(400, "Choose a supported certificate font.");
+    }
+
+    if (
+        configuration.signatories !== undefined &&
+        (!Array.isArray(configuration.signatories) ||
+            configuration.signatories.length > 2 ||
+            configuration.signatories.some((item: unknown) => {
+                if (!item || typeof item !== "object" || Array.isArray(item)) {
+                    return true;
+                }
+                const signatory = item as JsonRecord;
+                return typeof signatory.enabled !== "boolean" ||
+                    typeof signatory.name !== "string" ||
+                    signatory.name.length > 160 ||
+                    typeof signatory.title !== "string" ||
+                    signatory.title.length > 160;
+            }))
+    ) {
+        throw new HttpError(400, "Provide up to two valid certificate signatories.");
+    }
+
+    if (
+        configuration.background_path !== undefined &&
+        configuration.background_path !== "" &&
+        (typeof configuration.background_path !== "string" ||
+            !/^backgrounds\/[0-9a-f-]{36}\.(jpg|png|webp)$/i.test(configuration.background_path))
+    ) {
+        throw new HttpError(400, "Certificate background asset path is invalid.");
+    }
+
+    const layout = configuration.layout;
+    if (layout === undefined) {
+        return;
+    }
+    const allowedFields = new Set([
+        "title", "awarded", "recipient", "training",
+        "statement", "completion", "certificateId"
+    ]);
+    if (!layout || typeof layout !== "object" || Array.isArray(layout)) {
+        throw new HttpError(400, "Certificate field layout is invalid.");
+    }
+    for (const [field, rawPosition] of Object.entries(layout)) {
+        if (!allowedFields.has(field) || !rawPosition ||
+            typeof rawPosition !== "object" || Array.isArray(rawPosition)) {
+            throw new HttpError(400, "Certificate field layout is invalid.");
+        }
+        const position = rawPosition as JsonRecord;
+        const dimensions = ["x", "y", "width", "height"];
+        if (dimensions.some(key => {
+            const value = position[key];
+            return typeof value !== "number" ||
+                !Number.isFinite(value) ||
+                value < 0 ||
+                value > 100;
+        })) {
+            throw new HttpError(400, "Certificate field positions must be between 0 and 100.");
+        }
+        if (
+            (position.font_size !== undefined &&
+                (typeof position.font_size !== "number" ||
+                    !Number.isFinite(position.font_size) ||
+                    position.font_size < 8 || position.font_size > 72)) ||
+            (position.font_family !== undefined &&
+                !["Arial", "Georgia", "Times New Roman"].includes(String(position.font_family))) ||
+            (position.font_weight !== undefined &&
+                !["400", "600", "700", "800"].includes(String(position.font_weight))) ||
+            (position.italic !== undefined && typeof position.italic !== "boolean") ||
+            (position.visible !== undefined && typeof position.visible !== "boolean") ||
+            (position.line_height !== undefined &&
+                (typeof position.line_height !== "number" ||
+                    !Number.isFinite(position.line_height) ||
+                    position.line_height < 0.8 || position.line_height > 2.5)) ||
+            (position.color !== undefined &&
+                (typeof position.color !== "string" ||
+                    !/^#[0-9a-f]{6}$/i.test(position.color))) ||
+            (position.align !== undefined &&
+                !["left", "center", "right"].includes(String(position.align)))
+        ) {
+            throw new HttpError(400, "Certificate field typography is invalid.");
+        }
+        if (
+            Number(position.x) + Number(position.width) > 100 ||
+            Number(position.y) + Number(position.height) > 100 ||
+            Number(position.width) < 1 ||
+            Number(position.height) < 1
+        ) {
+            throw new HttpError(400, "Certificate fields must remain inside the page.");
+        }
+    }
+}
+
+async function verifyCertificateAssetPaths(
+    client: ReturnType<typeof createClient>,
+    configuration: JsonRecord
+) {
+    const signatoryPaths = Array.isArray(configuration.signatories)
+        ? configuration.signatories.map((item: unknown) => {
+            if (!item || typeof item !== "object" || Array.isArray(item)) {
+                return null;
+            }
+            const signatory = item as JsonRecord;
+            return signatory.enabled === true ? signatory.signature_path : null;
+        })
+        : [];
+    const paths = [
+        configuration.background_path,
+        ...signatoryPaths
+    ].filter((path): path is string => typeof path === "string" && Boolean(path));
+
+    for (const path of paths) {
+        const { error } = await client.storage
+            .from("vsg-certificate-assets")
+            .createSignedUrl(path, 60);
+        if (error) {
+            throw new HttpError(400, "A referenced certificate asset is unavailable.");
+        }
     }
 }
 
@@ -519,6 +670,113 @@ async function handlePublicRequest(
         }
 
         return respond({ success: true, officer: data });
+    }
+
+    if (
+        request.method === "GET" &&
+        segments.length === 3 &&
+        segments[0] === "public" &&
+        segments[1] === "certificates"
+    ) {
+        const certificateId = segments[2].toUpperCase();
+        if (!/^VSG-TRN-\d{4}-\d{3,}$/.test(certificateId)) {
+            throw new HttpError(400, "Enter a valid VAST Certificate ID.");
+        }
+
+        const { data, error } = await client
+            .from("vsg_certificates")
+            .select("certificate_id, status, issued_at, revoked_at, revocation_reason, snapshot")
+            .eq("certificate_id", certificateId)
+            .in("status", ["Issued", "Revoked"])
+            .maybeSingle();
+
+        if (error) {
+            console.error("Unable to verify public certificate:", error);
+            throw new HttpError(500, "Unable to verify this certificate right now.");
+        }
+        if (!data) {
+            throw new HttpError(404, "No officially issued certificate was found with that ID.");
+        }
+
+        const snapshot = data.snapshot && typeof data.snapshot === "object"
+            ? data.snapshot as JsonRecord
+            : {};
+        const rawSignatories = Array.isArray(snapshot.signatories)
+            ? snapshot.signatories
+            : [];
+        const signatories = rawSignatories
+            .filter((item): item is JsonRecord =>
+                Boolean(item) && typeof item === "object" && !Array.isArray(item)
+            )
+            .filter(item => item.enabled === true)
+            .map(async item => {
+                const path = typeof item.signature_path === "string"
+                    ? item.signature_path
+                    : "";
+                let signatureUrl: string | null = null;
+                if (path && path.startsWith("signatures/")) {
+                    const { data: signed, error: signedError } = await client.storage
+                        .from("vsg-certificate-assets")
+                        .createSignedUrl(path, 3600);
+                    if (signedError) {
+                        console.error("Unable to create a public certificate signature URL:", signedError);
+                        throw new HttpError(500, "Unable to display this certificate right now.");
+                    }
+                    signatureUrl = signed.signedUrl;
+                }
+                return {
+                    name: typeof item.name === "string" ? item.name : "",
+                    title: typeof item.title === "string" ? item.title : "",
+                    signature_url: signatureUrl
+                };
+            });
+        const publicSignatories = await Promise.all(signatories);
+        const templateConfiguration = snapshot.template_configuration &&
+            typeof snapshot.template_configuration === "object"
+            ? snapshot.template_configuration as JsonRecord
+            : {};
+        let backgroundUrl: string | null = null;
+        const backgroundPath = typeof templateConfiguration.background_path === "string"
+            ? templateConfiguration.background_path
+            : "";
+        if (backgroundPath.startsWith("backgrounds/")) {
+            const { data: signed, error: signedError } = await client.storage
+                .from("vsg-certificate-assets")
+                .createSignedUrl(backgroundPath, 3600);
+            if (signedError) {
+                console.error("Unable to create a public certificate background URL:", signedError);
+                throw new HttpError(500, "Unable to display this certificate right now.");
+            }
+            backgroundUrl = signed.signedUrl;
+        }
+
+        return respond({
+            success: true,
+            certificate: {
+                certificate_id: data.certificate_id,
+                status: data.status,
+                issued_at: data.issued_at,
+                revoked_at: data.revoked_at,
+                revocation_message: data.status === "Revoked"
+                    ? "This certificate has been revoked by VAST Security Group."
+                    : null,
+                snapshot: {
+                    officer_name: snapshot.officer_name,
+                    program_name: snapshot.program_name,
+                    duration_hours: snapshot.duration_hours,
+                    batch_name: snapshot.batch_name,
+                    start_date: snapshot.start_date,
+                    completion_date: snapshot.completion_date,
+                    completion_statement: snapshot.completion_statement,
+                    title: snapshot.title,
+                    name_font: snapshot.name_font,
+                    body_font: snapshot.body_font,
+                    layout: snapshot.layout,
+                    signatories: publicSignatories,
+                    background_url: backgroundUrl
+                }
+            }
+        });
     }
 
     if (
@@ -2659,6 +2917,564 @@ async function handleRequest(
                 message: "Deployment ended successfully.",
                 assignment: data
             });
+        }
+    }
+
+    if (segments[0] === "training") {
+        requirePermission(admin, "certificates_manage");
+
+        if (method === "GET" && segments.length === 2 && segments[1] === "programs") {
+            const { data, error } = await client
+                .from("vsg_training_programs")
+                .select("*")
+                .order("created_at", { ascending: false });
+            throwIfError(error);
+            return respond({ success: true, programs: data || [] });
+        }
+
+        if (method === "POST" && segments.length === 2 && segments[1] === "programs") {
+            const body = await readJson(request);
+            const name = typeof body.name === "string" ? body.name.trim() : "";
+            const durationHours = Number(body.duration_hours);
+            if (!name || name.length > 160 || !Number.isFinite(durationHours) ||
+                durationHours <= 0 || durationHours > 100000) {
+                throw new HttpError(400, "Provide a valid program name and training duration.");
+            }
+            const { data, error } = await client
+                .from("vsg_training_programs")
+                .insert({
+                    name,
+                    duration_hours: durationHours,
+                    description: typeof body.description === "string"
+                        ? body.description.trim().slice(0, 4000) || null
+                        : null,
+                    certificate_template_id: typeof body.certificate_template_id === "string"
+                        ? body.certificate_template_id
+                        : null,
+                    created_by: admin.user.id
+                })
+                .select()
+                .single();
+            throwIfError(error);
+            await recordAudit(client, admin, "training_program.created", "training_program", data.id, {
+                name: data.name
+            });
+            return respond({ success: true, program: data }, 201);
+        }
+
+        if (method === "PATCH" && segments.length === 3 && segments[1] === "programs") {
+            const body = await readJson(request);
+            const updates: JsonRecord = { updated_at: new Date().toISOString() };
+            if (body.name !== undefined) {
+                if (typeof body.name !== "string" || !body.name.trim() || body.name.trim().length > 160) {
+                    throw new HttpError(400, "Provide a valid program name.");
+                }
+                updates.name = body.name.trim();
+            }
+            if (body.duration_hours !== undefined) {
+                const hours = Number(body.duration_hours);
+                if (!Number.isFinite(hours) || hours <= 0 || hours > 100000) {
+                    throw new HttpError(400, "Provide a valid training duration.");
+                }
+                updates.duration_hours = hours;
+            }
+            if (body.description !== undefined) {
+                if (typeof body.description !== "string" || body.description.length > 4000) {
+                    throw new HttpError(400, "Program description is too long.");
+                }
+                updates.description = body.description.trim() || null;
+            }
+            if (body.certificate_template_id !== undefined) {
+                updates.certificate_template_id = body.certificate_template_id || null;
+            }
+            if (body.is_active !== undefined) {
+                if (typeof body.is_active !== "boolean") {
+                    throw new HttpError(400, "Program active status must be true or false.");
+                }
+                updates.is_active = body.is_active;
+            }
+            if (Object.keys(updates).length === 1) {
+                throw new HttpError(400, "No program changes were provided.");
+            }
+            const { data, error } = await client
+                .from("vsg_training_programs")
+                .update(updates)
+                .eq("id", segments[2])
+                .select()
+                .single();
+            throwIfError(error);
+            await recordAudit(client, admin, "training_program.updated", "training_program", data.id, {
+                fields: Object.keys(updates).filter(key => key !== "updated_at")
+            });
+            return respond({ success: true, program: data });
+        }
+
+        if (method === "GET" && segments.length === 2 && segments[1] === "batches") {
+            const { data, error } = await client
+                .from("vsg_training_batches")
+                .select("*, program:vsg_training_programs(id, name, duration_hours)")
+                .order("start_date", { ascending: false });
+            throwIfError(error);
+            return respond({ success: true, batches: data || [] });
+        }
+
+        if (method === "POST" && segments.length === 2 && segments[1] === "batches") {
+            const body = await readJson(request);
+            const name = typeof body.name === "string" ? body.name.trim() : "";
+            const startDate = typeof body.start_date === "string" ? body.start_date : "";
+            if (!name || name.length > 160 || !body.program_id ||
+                !/^\d{4}-\d{2}-\d{2}$/.test(startDate)) {
+                throw new HttpError(400, "Provide a valid batch name, program, and start date.");
+            }
+            const { data, error } = await client
+                .from("vsg_training_batches")
+                .insert({
+                    program_id: body.program_id,
+                    name,
+                    start_date: startDate,
+                    completion_date: typeof body.completion_date === "string"
+                        ? body.completion_date || null
+                        : null,
+                    description: typeof body.description === "string"
+                        ? body.description.trim().slice(0, 4000) || null
+                        : null,
+                    created_by: admin.user.id
+                })
+                .select()
+                .single();
+            throwIfError(error);
+            await recordAudit(client, admin, "training_batch.created", "training_batch", data.id, {
+                name: data.name,
+                program_id: data.program_id
+            });
+            return respond({ success: true, batch: data }, 201);
+        }
+
+        if (method === "PATCH" && segments.length === 3 && segments[1] === "batches") {
+            const body = await readJson(request);
+            const updates: JsonRecord = { updated_at: new Date().toISOString() };
+            if (body.name !== undefined) {
+                if (typeof body.name !== "string" || !body.name.trim() || body.name.trim().length > 160) {
+                    throw new HttpError(400, "Provide a valid batch name.");
+                }
+                updates.name = body.name.trim();
+            }
+            if (body.start_date !== undefined) {
+                if (typeof body.start_date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(body.start_date)) {
+                    throw new HttpError(400, "Provide a valid batch start date.");
+                }
+                updates.start_date = body.start_date;
+            }
+            if (body.completion_date !== undefined) {
+                if (body.completion_date &&
+                    (typeof body.completion_date !== "string" ||
+                        !/^\d{4}-\d{2}-\d{2}$/.test(body.completion_date))) {
+                    throw new HttpError(400, "Provide a valid batch completion date.");
+                }
+                updates.completion_date = body.completion_date || null;
+            }
+            if (body.description !== undefined) {
+                if (typeof body.description !== "string" || body.description.length > 4000) {
+                    throw new HttpError(400, "Batch description is too long.");
+                }
+                updates.description = body.description.trim() || null;
+            }
+            if (body.status !== undefined) {
+                if (!["Planned", "In Progress", "Completed", "Cancelled"].includes(String(body.status))) {
+                    throw new HttpError(400, "Select a valid batch status.");
+                }
+                updates.status = body.status;
+            }
+            if (Object.keys(updates).length === 1) {
+                throw new HttpError(400, "No batch changes were provided.");
+            }
+            const { data, error } = await client
+                .from("vsg_training_batches")
+                .update(updates)
+                .eq("id", segments[2])
+                .select()
+                .single();
+            throwIfError(error);
+            await recordAudit(client, admin, "training_batch.updated", "training_batch", data.id, {
+                fields: Object.keys(updates).filter(key => key !== "updated_at")
+            });
+            return respond({ success: true, batch: data });
+        }
+
+        if (method === "GET" && segments.length === 2 && segments[1] === "enrollments") {
+            const batchId = new URL(request.url).searchParams.get("batch_id");
+            if (!batchId) {
+                throw new HttpError(400, "Select a training batch.");
+            }
+            const { data, error } = await client
+                .from("vsg_training_enrollments")
+                .select("*, officer:officers(id, officer_id, name), batch:vsg_training_batches(id, name, program_id)")
+                .eq("batch_id", batchId)
+                .order("created_at", { ascending: false });
+            throwIfError(error);
+            return respond({ success: true, enrollments: data || [] });
+        }
+
+        if (method === "POST" && segments.length === 2 && segments[1] === "enrollments") {
+            const body = await readJson(request);
+            const officerIds = Array.isArray(body.officer_ids)
+                ? [...new Set(body.officer_ids.filter(id => typeof id === "string"))]
+                : [];
+            if (!body.batch_id || !officerIds.length || officerIds.length > 100) {
+                throw new HttpError(400, "Select a batch and between 1 and 100 officers.");
+            }
+            const { data, error } = await client
+                .from("vsg_training_enrollments")
+                .insert(officerIds.map(officerId => ({
+                    batch_id: body.batch_id,
+                    officer_id: officerId,
+                    created_by: admin.user.id
+                })))
+                .select("id, batch_id, officer_id, enrollment_status");
+            throwIfError(error);
+            await recordAudit(client, admin, "training_enrollments.created", "training_batch", String(body.batch_id), {
+                count: data?.length || 0
+            });
+            return respond({ success: true, enrollments: data || [] }, 201);
+        }
+
+        if (
+            method === "PATCH" &&
+            segments.length === 3 &&
+            segments[1] === "enrollments"
+        ) {
+            const body = await readJson(request);
+            const allowedStatuses = ["Enrolled", "In Progress", "Completed", "Withdrawn"];
+            if (!allowedStatuses.includes(String(body.enrollment_status))) {
+                throw new HttpError(400, "Select a valid enrollment status.");
+            }
+            const completionDate = body.enrollment_status === "Completed"
+                ? body.completion_date
+                : null;
+            if (body.enrollment_status === "Completed" &&
+                (typeof completionDate !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(completionDate))) {
+                throw new HttpError(400, "A valid completion date is required.");
+            }
+            const { data, error } = await client
+                .from("vsg_training_enrollments")
+                .update({
+                    enrollment_status: body.enrollment_status,
+                    completion_date: completionDate || null,
+                    updated_at: new Date().toISOString()
+                })
+                .eq("id", segments[2])
+                .select()
+                .single();
+            throwIfError(error);
+            await recordAudit(client, admin, "training_enrollment.updated", "training_enrollment", data.id, {
+                status: data.enrollment_status
+            });
+            return respond({ success: true, enrollment: data });
+        }
+
+        if (method === "GET" && segments.length === 2 && segments[1] === "templates") {
+            const { data, error } = await client
+                .from("vsg_certificate_templates")
+                .select("*, versions:vsg_certificate_template_versions(id, version, configuration, created_at)")
+                .order("name");
+            throwIfError(error);
+            return respond({ success: true, templates: data || [] });
+        }
+
+        if (method === "POST" && segments.length === 2 && segments[1] === "templates") {
+            const body = await readJson(request);
+            const name = typeof body.name === "string" ? body.name.trim() : "";
+            const configuration = body.configuration && typeof body.configuration === "object" &&
+                !Array.isArray(body.configuration)
+                ? body.configuration as JsonRecord
+                : {};
+            const signatories: unknown[] = Array.isArray(configuration.signatories)
+                ? configuration.signatories
+                : [];
+            if (signatories.some(item => {
+                if (!item || typeof item !== "object" || Array.isArray(item)) {
+                    return true;
+                }
+                const signature = item as JsonRecord;
+                return signature.enabled === true &&
+                    (!signature.name || !signature.title ||
+                        typeof signature.signature_path !== "string" ||
+                        !/^signatures\/[0-9a-f-]{36}\.(jpg|png|webp)$/i.test(signature.signature_path));
+            })) {
+                throw new HttpError(400, "Enabled signature slots need an approved signature image, name, and title.");
+            }
+            if (!name || name.length > 160 || !body.configuration ||
+                typeof body.configuration !== "object" || Array.isArray(body.configuration) ||
+                JSON.stringify(body.configuration).length > 30000) {
+                throw new HttpError(400, "Provide a valid template name and configuration.");
+            }
+            validateCertificateTemplate(configuration);
+            await verifyCertificateAssetPaths(client, configuration);
+            const { data, error } = await client.rpc("vsg_create_certificate_template", {
+                p_name: name,
+                p_configuration: configuration,
+                p_actor_user_id: admin.user.id
+            });
+            throwIfError(error);
+            const template = data.template;
+            const version = data.version;
+            await recordAudit(client, admin, "certificate_template.created", "certificate_template", template.id, {
+                name
+            });
+            return respond({ success: true, template, version }, 201);
+        }
+
+        if (
+            method === "POST" &&
+            segments.length === 3 &&
+            segments[1] === "templates"
+        ) {
+            const body = await readJson(request);
+            const configuration = body.configuration && typeof body.configuration === "object" &&
+                !Array.isArray(body.configuration)
+                ? body.configuration as JsonRecord
+                : {};
+            const signatories: unknown[] = Array.isArray(configuration.signatories)
+                ? configuration.signatories
+                : [];
+            if (signatories.some(item => {
+                if (!item || typeof item !== "object" || Array.isArray(item)) {
+                    return true;
+                }
+                const signature = item as JsonRecord;
+                return signature.enabled === true &&
+                    (!signature.name || !signature.title ||
+                        typeof signature.signature_path !== "string" ||
+                        !/^signatures\/[0-9a-f-]{36}\.(jpg|png|webp)$/i.test(signature.signature_path));
+            })) {
+                throw new HttpError(400, "Enabled signature slots need an approved signature image, name, and title.");
+            }
+            if (!body.configuration || typeof body.configuration !== "object" ||
+                Array.isArray(body.configuration) ||
+                JSON.stringify(body.configuration).length > 30000) {
+                throw new HttpError(400, "Provide a valid template configuration.");
+            }
+            validateCertificateTemplate(configuration);
+            await verifyCertificateAssetPaths(client, configuration);
+            const { data, error } = await client.rpc("vsg_add_certificate_template_version", {
+                p_template_id: segments[2],
+                p_configuration: configuration,
+                p_actor_user_id: admin.user.id
+            });
+            throwIfError(error);
+            const template = data.template;
+            const version = data.version;
+            await recordAudit(client, admin, "certificate_template.version_created", "certificate_template", template.id, {
+                version: version.version
+            });
+            return respond({ success: true, template, version }, 201);
+        }
+    }
+
+    if (segments[0] === "certificates") {
+        requirePermission(admin, "certificates_manage");
+
+        if (method === "POST" && segments.length === 3 &&
+            segments[1] === "assets" && segments[2] === "sign") {
+            const body = await readJson(request);
+            const path = typeof body.path === "string" ? body.path : "";
+            if (!/^((backgrounds|signatures)\/)[0-9a-f-]{36}\.(jpg|png|webp)$/i.test(path)) {
+                throw new HttpError(400, "Certificate asset path is invalid.");
+            }
+            const { data, error } = await client.storage
+                .from("vsg-certificate-assets")
+                .createSignedUrl(path, 3600);
+            if (error) {
+                console.error("Unable to create certificate asset preview URL:", error);
+                throw new HttpError(404, "Certificate asset could not be found.");
+            }
+            return respond({ success: true, signed_url: data.signedUrl });
+        }
+
+        if (method === "POST" && segments.length === 2 && segments[1] === "assets") {
+            let form: FormData;
+            try {
+                form = await request.formData();
+            } catch {
+                throw new HttpError(400, "Certificate asset upload is invalid.");
+            }
+            const file = form.get("file");
+            const assetType = form.get("asset_type");
+            if (!(file instanceof File) ||
+                !["background", "signature"].includes(String(assetType))) {
+                throw new HttpError(400, "Choose a certificate background or signature image.");
+            }
+            if (assetType === "signature" && form.get("management_approved") !== "true") {
+                throw new HttpError(400, "Confirm management approval before uploading a signature.");
+            }
+            const maxSize = assetType === "background" ? 8 * 1024 * 1024 : 2 * 1024 * 1024;
+            if (file.size <= 0 || file.size > maxSize ||
+                !["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+                throw new HttpError(400, "Use a JPEG, PNG, or WebP image within the allowed size.");
+            }
+            const bytes = new Uint8Array(await file.arrayBuffer());
+            const isPng = bytes.length >= 8 &&
+                bytes[0] === 0x89 && bytes[1] === 0x50 &&
+                bytes[2] === 0x4e && bytes[3] === 0x47 &&
+                bytes[4] === 0x0d && bytes[5] === 0x0a &&
+                bytes[6] === 0x1a && bytes[7] === 0x0a;
+            const isJpeg = bytes.length >= 3 &&
+                bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+            const isWebp = bytes.length >= 12 &&
+                String.fromCharCode(...bytes.slice(0, 4)) === "RIFF" &&
+                String.fromCharCode(...bytes.slice(8, 12)) === "WEBP";
+            if (
+                (file.type === "image/png" && !isPng) ||
+                (file.type === "image/jpeg" && !isJpeg) ||
+                (file.type === "image/webp" && !isWebp)
+            ) {
+                throw new HttpError(400, "The uploaded file does not match its image type.");
+            }
+
+            const extension = file.type === "image/jpeg" ? "jpg" : file.type.slice("image/".length);
+            const directory = assetType === "background" ? "backgrounds" : "signatures";
+            const objectPath = `${directory}/${crypto.randomUUID()}.${extension}`;
+            const { error: uploadError } = await client.storage
+                .from("vsg-certificate-assets")
+                .upload(objectPath, file, {
+                    contentType: file.type,
+                    upsert: false
+                });
+            if (uploadError) {
+                console.error("Unable to upload certificate asset:", uploadError);
+                throw new HttpError(500, "Unable to save the certificate asset.");
+            }
+            const { data: signed, error: signedError } = await client.storage
+                .from("vsg-certificate-assets")
+                .createSignedUrl(objectPath, 3600);
+            if (signedError) {
+                console.error("Unable to create certificate asset preview URL:", signedError);
+                throw new HttpError(500, "The asset was uploaded but could not be previewed.");
+            }
+            await recordAudit(client, admin, "certificate_asset.uploaded", "certificate_asset", objectPath, {
+                asset_type: assetType,
+                approved: assetType === "signature"
+            });
+            return respond({
+                success: true,
+                path: objectPath,
+                signed_url: signed.signedUrl
+            }, 201);
+        }
+
+        if (method === "GET" && segments.length === 1) {
+            const { data, error } = await client
+                .from("vsg_certificates")
+                .select("*, officer:officers(id, officer_id, name), program:vsg_training_programs(id, name, certificate_template_id), batch:vsg_training_batches(id, name)")
+                .order("created_at", { ascending: false })
+                .limit(500);
+            throwIfError(error);
+            return respond({ success: true, certificates: data || [] });
+        }
+
+        if (method === "POST" && segments.length === 2 && segments[1] === "issue") {
+            const body = await readJson(request);
+            const enrollmentIds = Array.isArray(body.enrollment_ids)
+                ? [...new Set(body.enrollment_ids.filter(id => typeof id === "string"))]
+                : typeof body.enrollment_id === "string"
+                    ? [body.enrollment_id]
+                    : [];
+            if (!enrollmentIds.length || enrollmentIds.length > 100 ||
+                typeof body.template_version_id !== "string") {
+                throw new HttpError(400, "Select completed enrollments and a certificate template.");
+            }
+            const issued = [];
+            const failed = [];
+            for (const enrollmentId of enrollmentIds) {
+                const { data, error } = await client.rpc("vsg_issue_certificate", {
+                    p_enrollment_id: enrollmentId,
+                    p_template_version_id: body.template_version_id,
+                    p_actor_user_id: admin.user.id,
+                    p_reissued_from: null
+                });
+                if (error) {
+                    failed.push({ enrollment_id: enrollmentId, message: error.message });
+                    continue;
+                }
+                issued.push(data);
+                await recordAudit(client, admin, "certificate.issued", "certificate", data.id, {
+                    certificate_id: data.certificate_id
+                });
+            }
+            if (!issued.length) {
+                throw new HttpError(400, failed[0]?.message || "No eligible certificates were issued.");
+            }
+            return respond({
+                success: true,
+                issued,
+                failed,
+                message: `${issued.length} certificate${issued.length === 1 ? "" : "s"} issued.`
+            }, 201);
+        }
+
+        if (method === "POST" && segments.length === 2 && segments[1] === "reissue") {
+            const body = await readJson(request);
+            if (typeof body.enrollment_id !== "string" ||
+                typeof body.template_version_id !== "string" ||
+                typeof body.reissued_from !== "string") {
+                throw new HttpError(400, "Reissue requires an enrollment, template, and prior certificate.");
+            }
+            const { data, error } = await client.rpc("vsg_issue_certificate", {
+                p_enrollment_id: body.enrollment_id,
+                p_template_version_id: body.template_version_id,
+                p_actor_user_id: admin.user.id,
+                p_reissued_from: body.reissued_from
+            });
+            throwIfError(error);
+            await recordAudit(client, admin, "certificate.reissued", "certificate", data.id, {
+                certificate_id: data.certificate_id,
+                reissued_from: body.reissued_from
+            });
+            return respond({ success: true, certificate: data }, 201);
+        }
+
+        if (
+            method === "POST" &&
+            segments.length === 3 &&
+            segments[2] === "revoke"
+        ) {
+            const body = await readJson(request);
+            const reason = typeof body.reason === "string" ? body.reason.trim() : "";
+            if (!reason || reason.length > 2000) {
+                throw new HttpError(400, "A revocation reason is required.");
+            }
+            const { data: existing, error: existingError } = await client
+                .from("vsg_certificates")
+                .select("id, certificate_id, status")
+                .eq("id", segments[1])
+                .maybeSingle();
+            throwIfError(existingError);
+            if (!existing) {
+                throw new HttpError(404, "Certificate not found.");
+            }
+            if (existing.status !== "Issued") {
+                throw new HttpError(409, "Only an issued certificate can be revoked.");
+            }
+            const { data, error } = await client.rpc("vsg_revoke_certificate", {
+                p_certificate_id: existing.id,
+                p_reason: reason,
+                p_actor_user_id: admin.user.id
+            });
+            if (error) {
+                if (error.message.includes("Only an issued certificate")) {
+                    throw new HttpError(409, "Only an issued certificate can be revoked.");
+                }
+                if (error.message.includes("Certificate not found")) {
+                    throw new HttpError(404, "Certificate not found.");
+                }
+                console.error("Unable to revoke certificate:", error);
+                throw new HttpError(500, "Unable to revoke this certificate.");
+            }
+            await recordAudit(client, admin, "certificate.revoked", "certificate", data.id, {
+                certificate_id: data.certificate_id,
+                reason
+            });
+            return respond({ success: true, certificate: data });
         }
     }
 

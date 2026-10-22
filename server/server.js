@@ -20,6 +20,7 @@ app.use("/recruitment", express.static(path.join(projectRoot, "recruitment")));
 
 const publicPages = [
     "about.html",
+    "certificate-verification.html",
     "contact.html",
     "gallery.html",
     "index.html",

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Verify an officially issued VAST Security Group training certificate.">
+    <title>Certificate Verification | VAST Security Group</title>
+    <link rel="stylesheet" href="/admin/certificates/certificates.css">
+    <link rel="stylesheet" href="/assests/css/certificate-verification.css">
+</head>
+<body class="public-certificate-page">
+    <header class="verification-header">
+        <a href="/" class="verification-brand">
+            <img src="/assests/images/VAST%20LOGO.png" alt="VAST Security Group">
+            <span>VAST SECURITY GROUP <small>Vigilance Asset Security Team</small></span>
+        </a>
+        <a href="/verification.html">Verify an Officer</a>
+    </header>
+    <main class="verification-main">
+        <section class="verification-search-card" aria-labelledby="certificateHeading">
+            <p class="eyebrow">OFFICIAL TRAINING RECORD</p>
+            <h1 id="certificateHeading">Certificate Verification</h1>
+            <p>Enter the Certificate ID printed on a VAST Security Group training certificate.</p>
+            <form id="certificateVerifyForm">
+                <label for="certificateId">Certificate ID</label>
+                <div class="verification-input-row">
+                    <input id="certificateId" name="certificateId" type="text" maxlength="40"
+                        placeholder="VSG-TRN-2026-015" autocomplete="off" required>
+                    <button id="verifyCertificateButton" type="submit">Verify certificate</button>
+                </div>
+            </form>
+            <p id="certificateVerifyMessage" class="verification-message" role="status" aria-live="polite"></p>
+        </section>
+
+        <section id="certificateResult" class="certificate-result" hidden aria-live="polite">
+            <div class="result-heading">
+                <div>
+                    <p class="eyebrow">DATABASE VERIFICATION</p>
+                    <h2 id="certificateResultTitle">Certificate status</h2>
+                </div>
+                <span id="certificateStatusBadge" class="verification-badge"></span>
+            </div>
+            <p id="revocationMessage" class="revocation-message" hidden></p>
+            <dl class="certificate-details">
+                <div><dt>Certificate ID</dt><dd id="resultCertificateId"></dd></div>
+                <div><dt>Officer</dt><dd id="resultOfficerName"></dd></div>
+                <div><dt>Training program</dt><dd id="resultProgramName"></dd></div>
+                <div><dt>Training duration</dt><dd id="resultDuration"></dd></div>
+                <div><dt>Completion date</dt><dd id="resultCompletionDate"></dd></div>
+                <div><dt>Issue date</dt><dd id="resultIssueDate"></dd></div>
+            </dl>
+            <h3>Official certificate</h3>
+            <div id="certificatePreview" class="certificate-canvas" aria-label="Verified certificate"></div>
+            <div class="result-actions">
+                <button id="printVerifiedCertificate" type="button">Print / Save as PDF</button>
+            </div>
+        </section>
+    </main>
+    <footer class="verification-footer">Certificate results are retrieved from the official VAST Security Group record.</footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script type="module" src="/backend/certificate-verification.js"></script>
+</body>
+</html>
