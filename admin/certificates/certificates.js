@@ -310,9 +310,11 @@ function renderCertificate(snapshot, certificateId, certificate = {}) {
     const watermark = el("img", "certificate-watermark");
     watermark.src = "/assests/images/VAST%20LOGO.png";
     watermark.alt = "";
+    watermark.loading = "eager";
     const logo = el("img", "certificate-logo");
     logo.src = "/assests/images/VAST%20LOGO.png";
     logo.alt = "VAST Security Group";
+    logo.loading = "eager";
     const title = el("h2", "certificate-title", config.title || snapshot.title || "CERTIFICATE OF COMPLETION");
     title.dataset.layoutField = "title";
     title.style.fontFamily = bodyFont;
@@ -872,7 +874,15 @@ async function showIssuedCertificate(certificate) {
         renderCertificate(publicRecord.snapshot, publicRecord.certificate_id, publicRecord);
         certificateCanvas.scrollIntoView({ behavior: "smooth", block: "center" });
         byId("printCertificateButton").hidden = false;
-        byId("printCertificateButton").onclick = () => {
+        byId("printCertificateButton").onclick = async () => {
+            try {
+                await Promise.all(
+                    [...certificateCanvas.querySelectorAll("img")].map(image => image.decode())
+                );
+            } catch {
+                showStatus("A certificate image could not be loaded. Refresh before printing.", true);
+                return;
+            }
             document.body.classList.add("print-certificate");
             window.addEventListener("afterprint", () => document.body.classList.remove("print-certificate"), { once: true });
             window.print();
@@ -957,6 +967,7 @@ async function loadData() {
     renderPrograms();
     renderBatches();
     renderTemplates();
+    renderSampleCertificatePreview();
 
     const officerSelect = byId("enrollmentOfficers");
     officerSelect.replaceChildren();
@@ -970,6 +981,28 @@ async function loadData() {
     if (byId("enrollmentBatch").value) {
         await loadEnrollments();
     }
+}
+
+function renderSampleCertificatePreview() {
+    renderCertificate({
+        officer_name: "Officer Full Name",
+        program_name: "Mandatory Security Training",
+        duration_hours: 672,
+        start_date: "2026-08-01",
+        completion_date: "2026-08-31",
+        completion_statement: byId("templateStatement").value,
+        template_configuration: {
+            title: byId("templateTitle").value,
+            completion_statement: byId("templateStatement").value,
+            name_font: byId("nameFont").value,
+            body_font: byId("bodyFont").value,
+            layout: templateLayout
+        },
+        signatories: []
+    }, "VSG-TRN-2026-015");
+    setTemplateEditing(true);
+    byId("printCertificateButton").hidden = true;
+    updateFieldStyleControls();
 }
 
 byId("programForm").addEventListener("submit", async event => {

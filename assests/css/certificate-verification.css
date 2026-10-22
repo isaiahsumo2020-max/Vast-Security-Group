@@ -243,6 +243,7 @@ body.public-certificate-page {
 
 .certificate-watermark {
     z-index: 1;
+    opacity: .12;
 }
 
 .certificate-title,

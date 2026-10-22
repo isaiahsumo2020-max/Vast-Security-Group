@@ -75,9 +75,11 @@ function renderCertificate(snapshot, certificateId, certificate) {
     const watermark = add("img", "certificate-watermark");
     watermark.src = "/assests/images/VAST%20LOGO.png";
     watermark.alt = "";
+    watermark.loading = "eager";
     const logo = add("img", "certificate-logo");
     logo.src = "/assests/images/VAST%20LOGO.png";
     logo.alt = "VAST Security Group";
+    logo.loading = "eager";
     const title = add("h2", "certificate-title", config.title);
     title.style.fontFamily = config.body_font;
     add("div", "certificate-awarded", "Awarded TO");
@@ -203,7 +205,16 @@ async function verifyCertificate(event) {
 }
 
 form.addEventListener("submit", verifyCertificate);
-document.getElementById("printVerifiedCertificate").addEventListener("click", () => {
+document.getElementById("printVerifiedCertificate").addEventListener("click", async () => {
+    try {
+        await Promise.all(
+            [...certificateCanvas.querySelectorAll("img")].map(image => image.decode())
+        );
+    } catch {
+        message.textContent = "A certificate image could not be loaded. Refresh before printing.";
+        message.classList.add("error");
+        return;
+    }
     document.body.classList.add("print-certificate");
     window.addEventListener("afterprint", () =>
         document.body.classList.remove("print-certificate"),
